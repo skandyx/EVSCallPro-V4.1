@@ -4,7 +4,6 @@ import { immer } from 'zustand/middleware/immer';
 import type {
     User, Campaign, SavedScript, Qualification, QualificationGroup, IvrFlow, AudioFile, Trunk, Did, Site,
     UserGroup, ActivityType, PersonalCallback, CallHistoryRecord, AgentSession, ContactNote,
-    // FIX: Corrected a typo in the type import from 'SystemSpsSettings' to 'SystemSmtpSettings' to resolve a TypeScript error that was causing a cascading type inference failure in the Zustand store creation.
     SystemConnectionSettings, SystemSmtpSettings, SystemAppSettings, ModuleVisibility,
     BackupLog, BackupSchedule, SystemLog, VersionInfo, ConnectivityService, AgentState, ActiveCall, CampaignState, PlanningEvent
 } from '../../types.ts';
@@ -12,7 +11,7 @@ import apiClient, { publicApiClient } from '../lib/axios.ts';
 import wsClient from '../services/wsClient.ts';
 
 type Theme = 'light' | 'dark' | 'system';
-type EntityName = 'users' | 'campaigns' | 'scripts' | 'user-groups' | 'qualification-groups' | 'qualifications' | 'ivr-flows' | 'trunks' | 'dids' | 'sites';
+type EntityName = 'users' | 'campaigns' | 'scripts' | 'user-groups' | 'qualification-groups' | 'qualifications' | 'ivr-flows' | 'trunks' | 'dids' | 'sites' | 'audio-files';
 
 interface AppState {
     // Auth & User
