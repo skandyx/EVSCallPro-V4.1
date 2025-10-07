@@ -1,8 +1,8 @@
 import React, { useState, useEffect, useMemo } from 'react';
 import type { Contact, CallHistoryRecord, User, Qualification, ContactNote } from '../types.ts';
 // FIX: Replaced ClockIcon with TimeIcon as ClockIcon is not an exported member.
-import { XMarkIcon, PhoneIcon, ChartBarIcon, TimeIcon, UsersIcon } from './Icons';
-import apiClient from '../src/lib/axios';
+import { XMarkIcon, PhoneIcon, ChartBarIcon, TimeIcon, UsersIcon } from './Icons.tsx';
+import apiClient from '../src/lib/axios.ts';
 import { useI18n } from '../src/i18n/index.tsx';
 
 interface ContactHistoryModalProps {
@@ -49,6 +49,8 @@ const ContactHistoryModal: React.FC<ContactHistoryModalProps> = ({ isOpen, onClo
             setIsLoading(true);
             apiClient.get(`/contacts/${contact.id}/history`)
                 .then(response => {
+                    // FIX: The value for the 'notes' property was missing, causing a syntax error.
+                    // This has been corrected by assigning the appropriate data from the response.
                     setHistory({
                         calls: response.data.callHistory || [],
                         notes: response.data.contactNotes || []

@@ -94,7 +94,7 @@ const AgentView: React.FC<AgentViewProps> = ({ onUpdatePassword, onUpdateProfile
     // Select ALL data from the store
     const { 
         currentUser, campaigns, qualifications, savedScripts, contactNotes, users, personalCallbacks,
-        agentStates, logout, fetchApplicationData, dispatchLive, showAlert
+        agentStates, logout, fetchApplicationData, dispatchLive, showAlert, updateContact
     } = useStore(state => ({
         currentUser: state.currentUser!,
         campaigns: state.campaigns,
@@ -108,6 +108,7 @@ const AgentView: React.FC<AgentViewProps> = ({ onUpdatePassword, onUpdateProfile
         fetchApplicationData: state.fetchApplicationData,
         dispatchLive: state.dispatchLive,
         showAlert: state.showAlert,
+        updateContact: state.updateContact,
     }));
 
     const onStatusChange = useCallback((status: AgentStatus) => {
@@ -117,7 +118,6 @@ const AgentView: React.FC<AgentViewProps> = ({ onUpdatePassword, onUpdateProfile
         }
     }, [currentUser, dispatchLive]);
 
-    const onUpdateContact = useStore(state => state.saveOrUpdate);
     const agentState = useMemo(() => agentStates.find(a => a.id === currentUser.id), [currentUser, agentStates]);
 
     // Local UI state
@@ -284,7 +284,7 @@ const AgentView: React.FC<AgentViewProps> = ({ onUpdatePassword, onUpdateProfile
                                 onSaveNote={onSaveNote}
                                 campaign={currentCampaign}
                                 onInsertContact={onInsertContact}
-                                onUpdateContact={async (contact) => { await onUpdateContact('contacts', contact); }}
+                                onUpdateContact={updateContact}
                                 onClearContact={onClearContact}
                             />
                         ) : (

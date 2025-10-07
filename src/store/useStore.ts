@@ -4,9 +4,10 @@ import {
     User, Campaign, SavedScript, QualificationGroup, UserGroup, Qualification,
     ContactNote, AgentState, ActiveCall, CampaignState, PersonalCallback, SystemAppSettings,
     VersionInfo, ConnectivityService, Site, Did, Trunk, AudioFile, IvrFlow, ActivityType, 
-    BackupLog, BackupSchedule, SystemLog, ModuleVisibility, CallHistoryRecord, AgentSession
-} from '../types';
-import apiClient, { publicApiClient } from '../lib/axios';
+    BackupLog, BackupSchedule, SystemLog, ModuleVisibility, CallHistoryRecord, AgentSession, Contact
+// FIX: Added .ts extension to resolve module resolution error.
+} from '../types.ts';
+import apiClient, { publicApiClient } from './lib/axios.ts';
 
 type Theme = 'light' | 'dark' | 'system';
 
@@ -75,6 +76,8 @@ interface AppActions {
     handleUpdateProfilePicture: (base64DataUrl: string) => Promise<void>;
     handleImportContacts: (campaignId: string, contacts: any[], deduplicationConfig: any) => Promise<any>;
     handleRecycleContacts: (campaignId: string, qualificationId: string) => void;
+    // FIX: Added a dedicated action for updating contacts, as they are not a top-level state slice.
+    updateContact: (contact: Contact) => Promise<void>;
 
     // UI Actions
     setTheme: (theme: Theme) => void;
@@ -163,35 +166,37 @@ export const useStore = create<AppState & AppActions>((set, get) => ({
         }
     },
     saveOrUpdate: async (slice, entity) => {
-        const pluralSlice = slice.endsWith('s') ? slice : `${slice}s`;
-        const url = entity.id ? `/${pluralSlice}/${entity.id}` : `/${pluralSlice}`;
-        const method = entity.id ? 'put' : 'post';
+        // FIX: Cast the generic entity to a type with an optional 'id' to satisfy TypeScript.
+        const entityWithId = entity as { id?: string };
+        const pluralSlice = String(slice).endsWith('s') ? String(slice) : `${String(slice)}s`;
+        const url = entityWithId.id ? `/${pluralSlice}/${entityWithId.id}` : `/${pluralSlice}`;
+        const method = entityWithId.id ? 'put' : 'post';
         try {
             await apiClient[method](url, entity);
             // Data will be updated via WebSocket event from the backend
             get().showAlert('Enregistré avec succès', 'success');
         } catch (error) {
-            console.error(`Failed to save ${slice}`, error);
+            console.error(`Failed to save ${String(slice)}`, error);
             get().showAlert(`Échec de l'enregistrement`, 'error');
         }
     },
     delete: async (slice, id) => {
-        const pluralSlice = slice.endsWith('s') ? slice : `${slice}s`;
+        const pluralSlice = String(slice).endsWith('s') ? String(slice) : `${String(slice)}s`;
         try {
             await apiClient.delete(`/${pluralSlice}/${id}`);
             get().showAlert('Supprimé avec succès', 'success');
         } catch (error: any) {
-            console.error(`Failed to delete ${slice}`, error);
+            console.error(`Failed to delete ${String(slice)}`, error);
             get().showAlert(error.response?.data?.error || `Échec de la suppression`, 'error');
         }
     },
     duplicate: async (slice, id) => {
-        const pluralSlice = slice.endsWith('s') ? slice : `${slice}s`;
+        const pluralSlice = String(slice).endsWith('s') ? String(slice) : `${String(slice)}s`;
         try {
             await apiClient.post(`/${pluralSlice}/${id}/duplicate`);
             get().showAlert('Dupliqué avec succès', 'success');
         } catch (error) {
-            console.error(`Failed to duplicate ${slice}`, error);
+            console.error(`Failed to duplicate ${String(slice)}`, error);
             get().showAlert(`Échec de la duplication`, 'error');
         }
     },
@@ -212,6 +217,16 @@ export const useStore = create<AppState & AppActions>((set, get) => ({
     handleRecycleContacts: async (campaignId, qualificationId) => {
         const response = await apiClient.post(`/campaigns/${campaignId}/recycle`, { qualificationId });
         get().showAlert(response.data.message, 'success');
+    },
+    updateContact: async (contact) => {
+        try {
+            await apiClient.put(`/contacts/${contact.id}`, contact);
+            // The backend will send a 'campaignUpdate' event, triggering a refetch.
+            get().showAlert('Contact mis à jour', 'success');
+        } catch (error) {
+            console.error(`Failed to update contact`, error);
+            get().showAlert(`Échec de la mise à jour du contact`, 'error');
+        }
     },
 
     setTheme: (theme) => {

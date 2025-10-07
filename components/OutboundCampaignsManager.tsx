@@ -312,7 +312,8 @@ const OutboundCampaignsManager: React.FC<{ feature: Feature }> = ({ feature }) =
         saveOrUpdate,
         delete: deleteCampaign,
         handleImportContacts,
-        handleRecycleContacts
+        handleRecycleContacts,
+        updateContact,
     } = useStore(state => ({
         campaigns: state.campaigns,
         users: state.users,
@@ -325,12 +326,12 @@ const OutboundCampaignsManager: React.FC<{ feature: Feature }> = ({ feature }) =
         saveOrUpdate: state.saveOrUpdate,
         delete: state.delete,
         handleImportContacts: state.handleImportContacts,
-        handleRecycleContacts: state.handleRecycleContacts
+        handleRecycleContacts: state.handleRecycleContacts,
+        updateContact: state.updateContact,
     }));
     
     const onSaveCampaign = (campaign: Campaign) => saveOrUpdate('campaigns', campaign);
     const onDeleteCampaign = (id: string) => deleteCampaign('campaigns', id);
-    const onUpdateContact = (contact: Contact) => saveOrUpdate('contacts', contact);
     const onDeleteContacts = (contactIds: string[]) => {
         // This is a special case that doesn't fit the generic delete action
         apiClient.post('/contacts/bulk-delete', { contactIds }).then(() => {
@@ -407,7 +408,7 @@ const OutboundCampaignsManager: React.FC<{ feature: Feature }> = ({ feature }) =
                 script={selectedScript}
                 onBack={() => { setView('list'); setSelectedCampaign(null); }}
                 onSaveCampaign={onSaveCampaign}
-                onUpdateContact={onUpdateContact}
+                onUpdateContact={updateContact}
                 onDeleteContacts={onDeleteContacts}
                 onRecycleContacts={handleRecycleContacts}
                 qualifications={qualifications}
