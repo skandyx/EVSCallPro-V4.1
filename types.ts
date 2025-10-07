@@ -40,7 +40,7 @@ export interface Feature {
   titleKey: string;
   category: FeatureCategory;
   descriptionKey: string;
-  component: React.FC<any>;
+  component: React.ComponentType<any>;
   userJourney: {
     titleKey: string;
     stepsKeys: string[];

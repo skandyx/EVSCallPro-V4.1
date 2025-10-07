@@ -1,21 +1,21 @@
 
-import React, { useState, useEffect, useCallback, useMemo } from 'react';
+
+import React, { useState, useEffect, useCallback, useMemo, Suspense, lazy } from 'react';
 import type { Feature, User, FeatureId, AgentStatus } from './types.ts';
 import { features } from './data/features.ts';
 import Sidebar from './components/Sidebar.tsx';
-import LoginScreen from './components/LoginScreen.tsx';
-// FIX: Added default export to AgentView.tsx and corrected import.
-import AgentView from './components/AgentView.tsx';
 import Header from './components/Header.tsx';
-import MonitoringDashboard from './components/MonitoringDashboard.tsx';
 import UserProfileModal from './components/UserProfileModal.tsx';
 import wsClient from './src/services/wsClient.ts';
 import { I18nProvider, useI18n } from './src/i18n/index.tsx';
 import { useStore } from './src/store/useStore.ts';
-// FIX: Imported apiClient to resolve 'Cannot find name' error.
 import apiClient from './src/lib/axios.ts';
 
-// State and Reducer logic has been moved to useStore.ts
+// Lazy load main views
+const LoginScreen = lazy(() => import('./components/LoginScreen.tsx'));
+const AgentView = lazy(() => import('./components/AgentView.tsx'));
+const MonitoringDashboard = lazy(() => import('./components/MonitoringDashboard.tsx'));
+
 
 const AppContent: React.FC = () => {
     const { 
@@ -37,7 +37,6 @@ const AppContent: React.FC = () => {
         campaigns: state.campaigns,
     }));
     
-    // FIX: Destructure the 't' function from useI18n to make it available in the component.
     const { setLanguage, t } = useI18n();
 
     const [isLoading, setIsLoading] = useState(true);
@@ -82,7 +81,6 @@ const AppContent: React.FC = () => {
             setIsLoading(true);
             await fetchPublicConfig();
             
-            // This is a bit of a workaround because appSettings are now in the store
             const settings = useStore.getState().appSettings;
              if (settings?.appFaviconDataUrl) {
                 const link = document.getElementById('favicon-link') as HTMLLinkElement;
@@ -147,7 +145,6 @@ const AppContent: React.FC = () => {
         }
     }, [currentUser, handleWsEvent]);
     
-    // --- Specific actions passed to modals ---
     const updatePassword = useStore(state => state.handleUpdatePassword);
     const updateProfilePicture = useStore(state => state.handleUpdateProfilePicture);
     
@@ -156,32 +153,17 @@ const AppContent: React.FC = () => {
         setIsProfileModalOpen(false);
     };
 
-    if (isLoading) {
-        return <div className="h-screen w-screen flex items-center justify-center bg-slate-50 dark:bg-slate-900 text-slate-800 dark:text-slate-200">{t('common.loading')}...</div>;
-    }
-
-    if (!currentUser) {
-        // FIX: Removed onLoginSuccess prop as LoginScreen now uses the store directly.
-        return <LoginScreen appLogoDataUrl={appSettings?.appLogoDataUrl} appName={appSettings?.appName} />;
-    }
-
-    if (currentUser.role === 'Agent') {
-        const allDataLoaded = useStore(state => state.campaigns.length > 0);
-        if (!allDataLoaded) {
-             return <div className="h-screen w-screen flex items-center justify-center bg-slate-50 dark:bg-slate-900 text-slate-800 dark:text-slate-200">{t('agentView.loading')}</div>;
-        }
-        return <AgentView 
-            onUpdatePassword={handleUpdatePasswordAndClose}
-            onUpdateProfilePicture={updateProfilePicture}
-        />;
-    }
-
     const activeFeature = features.find(f => f.id === activeFeatureId) || null;
     const FeatureComponent = activeFeature?.component;
+    
+    const LoadingFallback = () => (
+      <div className="flex h-full w-full items-center justify-center text-slate-500 dark:text-slate-400">
+        <p>{t('common.loading')}...</p>
+      </div>
+    );
 
     const renderFeatureComponent = () => {
         if (!FeatureComponent) return null;
-        // Components now get data from the store, so we only pass the feature object
         return <FeatureComponent feature={activeFeature} />;
     };
     
@@ -198,37 +180,58 @@ const AppContent: React.FC = () => {
             </div>
         );
     };
+    
+    if (isLoading) {
+        return <div className="h-screen w-screen flex items-center justify-center bg-slate-50 dark:bg-slate-900 text-slate-800 dark:text-slate-200">{t('common.loading')}...</div>;
+    }
 
+    if (!currentUser) {
+        return (
+            <Suspense fallback={<LoadingFallback />}>
+                <LoginScreen appLogoDataUrl={appSettings?.appLogoDataUrl} appName={appSettings?.appName} />
+            </Suspense>
+        );
+    }
+    
+    // The main application content is wrapped in Suspense to handle all lazy-loaded components
     return (
-        <div className="h-screen w-screen flex flex-col font-sans bg-slate-50 dark:bg-slate-900 text-slate-800 dark:text-slate-200">
-            {isProfileModalOpen && (
-                <UserProfileModal
-                    user={currentUser}
-                    onClose={() => setIsProfileModalOpen(false)}
-                    onSavePassword={handleUpdatePasswordAndClose}
-                    onSaveProfilePicture={updateProfilePicture}
+        <Suspense fallback={<LoadingFallback />}>
+            {currentUser.role === 'Agent' ? (
+                <AgentView 
+                    onUpdatePassword={handleUpdatePasswordAndClose}
+                    onUpdateProfilePicture={updateProfilePicture}
                 />
-            )}
-            <div className="flex flex-1 min-h-0">
-                <Sidebar
-                    features={features}
-                    activeFeatureId={activeFeatureId}
-                    onSelectFeature={(id) => { setActiveFeatureId(id); setActiveView('app'); }}
-                    onOpenProfile={() => setIsProfileModalOpen(true)}
-                />
-                <div className="flex-1 flex flex-col min-w-0">
-                    <Header 
-                        activeView={activeView} 
-                        onViewChange={setActiveView} 
-                    />
-                    <main className="flex-1 overflow-y-auto p-8 w-full">
-                         {/* FIX: Removed props from MonitoringDashboard as it now uses the store */}
-                         {activeView === 'app' ? renderFeatureComponent() : <MonitoringDashboard />}
-                    </main>
+            ) : (
+                <div className="h-screen w-screen flex flex-col font-sans bg-slate-50 dark:bg-slate-900 text-slate-800 dark:text-slate-200">
+                    {isProfileModalOpen && (
+                        <UserProfileModal
+                            user={currentUser}
+                            onClose={() => setIsProfileModalOpen(false)}
+                            onSavePassword={handleUpdatePasswordAndClose}
+                            onSaveProfilePicture={updateProfilePicture}
+                        />
+                    )}
+                    <div className="flex flex-1 min-h-0">
+                        <Sidebar
+                            features={features}
+                            activeFeatureId={activeFeatureId}
+                            onSelectFeature={(id) => { setActiveFeatureId(id); setActiveView('app'); }}
+                            onOpenProfile={() => setIsProfileModalOpen(true)}
+                        />
+                        <div className="flex-1 flex flex-col min-w-0">
+                            <Header 
+                                activeView={activeView} 
+                                onViewChange={setActiveView} 
+                            />
+                            <main className="flex-1 overflow-y-auto p-8 w-full">
+                                {activeView === 'app' ? renderFeatureComponent() : <MonitoringDashboard />}
+                            </main>
+                        </div>
+                    </div>
+                    {alert && <AlertComponent />}
                 </div>
-            </div>
-            {alert && <AlertComponent />}
-        </div>
+            )}
+        </Suspense>
     );
 };
 

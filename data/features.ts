@@ -1,35 +1,6 @@
 // data/features.ts
+import React, { lazy } from 'react';
 import type { Feature } from '../types.ts';
-// FIX: Added .tsx extension to all component imports to resolve module resolution errors.
-import UserManager from '../components/UserManager.tsx';
-import GroupManager from '../components/GroupManager.tsx';
-import TrunkManager from '../components/TrunkManager.tsx';
-import DidManager from '../components/DidManager.tsx';
-import OutboundCampaignsManager from '../components/OutboundCampaignsManager.tsx';
-import QualificationsManager from '../components/QualificationsManager.tsx';
-import ScriptFeature from '../components/ScriptFeature.tsx';
-import IvrFeature from '../components/IvrFeature.tsx';
-import AudioManager from '../components/AudioManager.tsx';
-import RecordsManager from '../components/RecordsManager.tsx';
-// FIX: Corrected import path for SupervisionDashboard
-import SupervisionDashboard from '../components/SupervisionDashboard.tsx';
-import ReportingDashboard from '../components/ReportingDashboard.tsx';
-import MaintenanceManager from '../components/MaintenanceManager.tsx';
-import MonitoringDashboard from '../components/MonitoringDashboard.tsx';
-// FIX: Corrected import path for HistoryViewer
-import HistoryViewer from '../components/HistoryViewer.tsx';
-// FIX: Corrected import path for SessionViewer
-import SessionViewer from '../components/SessionViewer.tsx';
-import HelpCenter from '../components/HelpCenter.tsx';
-import PlanningManager from '../components/PlanningManager.tsx';
-import ModuleSettingsManager from '../components/ModuleSettingsManager.tsx';
-import SiteManager from '../components/SiteManager.tsx';
-import SystemConnectionManager from '../components/SystemConnectionManager.tsx';
-import ApiDocs from '../components/ApiDocs.tsx';
-import DatabaseManager from '../components/DatabaseManager.tsx';
-import BillingManager from '../components/BillingManager.tsx';
-import SystemSettingsManager from '../components/SystemSettingsManager.tsx';
-import LanguageManager from '../components/LanguageManager.tsx';
 
 export const features: Feature[] = [
     {
@@ -37,7 +8,7 @@ export const features: Feature[] = [
         titleKey: 'features.users.title',
         category: 'Agent',
         descriptionKey: 'features.users.description',
-        component: UserManager,
+        component: lazy(() => import('../components/UserManager.tsx')),
         userJourney: {
             titleKey: 'features.users.userJourney.title',
             stepsKeys: [
@@ -67,7 +38,7 @@ export const features: Feature[] = [
         titleKey: 'features.groups.title',
         category: 'Agent',
         descriptionKey: 'features.groups.description',
-        component: GroupManager,
+        component: lazy(() => import('../components/GroupManager.tsx')),
          userJourney: {
             titleKey: 'features.groups.userJourney.title',
             stepsKeys: [
@@ -96,7 +67,7 @@ export const features: Feature[] = [
         titleKey: 'features.planning.title',
         category: 'Agent',
         descriptionKey: 'features.planning.description',
-        component: PlanningManager,
+        component: lazy(() => import('../components/PlanningManager.tsx')),
          userJourney: {
             titleKey: 'features.planning.userJourney.title',
             stepsKeys: [
@@ -127,7 +98,7 @@ export const features: Feature[] = [
         titleKey: 'features.outbound.title',
         category: 'Outbound',
         descriptionKey: 'features.outbound.description',
-        component: OutboundCampaignsManager,
+        component: lazy(() => import('../components/OutboundCampaignsManager.tsx')),
         userJourney: {
             titleKey: "features.outbound.userJourney.title",
             stepsKeys: [
@@ -158,7 +129,7 @@ export const features: Feature[] = [
         titleKey: 'features.scripts.title',
         category: 'Outbound',
         descriptionKey: 'features.scripts.description',
-        component: ScriptFeature,
+        component: lazy(() => import('../components/ScriptFeature.tsx')),
         userJourney: {
             titleKey: "features.scripts.userJourney.title",
             stepsKeys: [
@@ -188,7 +159,7 @@ export const features: Feature[] = [
         titleKey: 'features.ivr.title',
         category: 'Inbound',
         descriptionKey: 'features.ivr.description',
-        component: IvrFeature,
+        component: lazy(() => import('../components/IvrFeature.tsx')),
         userJourney: {
             titleKey: "features.ivr.userJourney.title",
             stepsKeys: [
@@ -218,7 +189,7 @@ export const features: Feature[] = [
         titleKey: 'features.audio.title',
         category: 'Sound',
         descriptionKey: 'features.audio.description',
-        component: AudioManager,
+        component: lazy(() => import('../components/AudioManager.tsx')),
         userJourney: {
             titleKey: 'features.audio.userJourney.title',
             stepsKeys: [
@@ -248,7 +219,7 @@ export const features: Feature[] = [
         titleKey: 'features.records.title',
         category: 'Sound',
         descriptionKey: 'features.records.description',
-        component: RecordsManager,
+        component: lazy(() => import('../components/RecordsManager.tsx')),
          userJourney: {
             titleKey: 'features.records.userJourney.title',
             stepsKeys: [
@@ -278,7 +249,7 @@ export const features: Feature[] = [
         titleKey: 'features.qualifications.title',
         category: 'Configuration',
         descriptionKey: 'features.qualifications.description',
-        component: QualificationsManager,
+        component: lazy(() => import('../components/QualificationsManager.tsx')),
         userJourney: {
             titleKey: "features.qualifications.userJourney.title",
             stepsKeys: [
@@ -308,7 +279,7 @@ export const features: Feature[] = [
         titleKey: 'features.supervision.title',
         category: 'Supervision & Reporting',
         descriptionKey: 'features.supervision.description',
-        component: SupervisionDashboard,
+        component: lazy(() => import('../components/SupervisionDashboard.tsx')),
         userJourney: {
             titleKey: "features.supervision.userJourney.title",
             stepsKeys: [
@@ -338,7 +309,7 @@ export const features: Feature[] = [
         titleKey: 'features.reporting.title',
         category: 'Supervision & Reporting',
         descriptionKey: 'features.reporting.description',
-        component: ReportingDashboard,
+        component: lazy(() => import('../components/ReportingDashboard.tsx')),
         userJourney: {
             titleKey: "features.reporting.userJourney.title",
             stepsKeys: [
@@ -368,7 +339,7 @@ export const features: Feature[] = [
         titleKey: 'features.history.title',
         category: 'Supervision & Reporting',
         descriptionKey: 'features.history.description',
-        component: HistoryViewer,
+        component: lazy(() => import('../components/HistoryViewer.tsx')),
         userJourney: {
             titleKey: "features.history.userJourney.title",
             stepsKeys: [
@@ -399,7 +370,7 @@ export const features: Feature[] = [
         titleKey: 'features.sessions.title',
         category: 'Supervision & Reporting',
         descriptionKey: 'features.sessions.description',
-        component: SessionViewer,
+        component: lazy(() => import('../components/SessionViewer.tsx')),
         userJourney: {
             titleKey: "features.sessions.userJourney.title",
             stepsKeys: [
@@ -428,7 +399,7 @@ export const features: Feature[] = [
         titleKey: 'features.trunks.title',
         category: 'Paramètres',
         descriptionKey: 'features.trunks.description',
-        component: TrunkManager,
+        component: lazy(() => import('../components/TrunkManager.tsx')),
         userJourney: {
             titleKey: 'features.trunks.userJourney.title',
             stepsKeys: [
@@ -456,7 +427,7 @@ export const features: Feature[] = [
         titleKey: 'features.dids.title',
         category: 'Paramètres',
         descriptionKey: 'features.dids.description',
-        component: DidManager,
+        component: lazy(() => import('../components/DidManager.tsx')),
          userJourney: {
             titleKey: 'features.dids.userJourney.title',
             stepsKeys: [
@@ -485,7 +456,7 @@ export const features: Feature[] = [
         titleKey: 'features.sites-config.title',
         category: 'Paramètres',
         descriptionKey: 'features.sites-config.description',
-        component: SiteManager,
+        component: lazy(() => import('../components/SiteManager.tsx')),
         userJourney: {
             titleKey: 'features.sites-config.userJourney.title',
             stepsKeys: [
@@ -514,7 +485,7 @@ export const features: Feature[] = [
         titleKey: 'features.module-settings.title',
         category: 'Paramètres',
         descriptionKey: 'features.module-settings.description',
-        component: ModuleSettingsManager,
+        component: lazy(() => import('../components/ModuleSettingsManager.tsx')),
         userJourney: {
             titleKey: 'features.module-settings.userJourney.title',
             stepsKeys: [
@@ -543,7 +514,7 @@ export const features: Feature[] = [
         titleKey: 'features.languages.title',
         category: 'Paramètres',
         descriptionKey: 'features.languages.description',
-        component: LanguageManager,
+        component: lazy(() => import('../components/LanguageManager.tsx')),
         userJourney: {
             titleKey: 'features.languages.userJourney.title',
             stepsKeys: [
@@ -569,7 +540,7 @@ export const features: Feature[] = [
         titleKey: 'features.database-client.title',
         category: 'Paramètres',
         descriptionKey: 'features.database-client.description',
-        component: DatabaseManager,
+        component: lazy(() => import('../components/DatabaseManager.tsx')),
         userJourney: {
             titleKey: 'features.database-client.userJourney.title',
             stepsKeys: [
@@ -599,7 +570,7 @@ export const features: Feature[] = [
         titleKey: 'features.system-connection.title',
         category: 'Paramètres',
         descriptionKey: 'features.system-connection.description',
-        component: SystemConnectionManager,
+        component: lazy(() => import('../components/SystemConnectionManager.tsx')),
         userJourney: {
             titleKey: 'features.system-connection.userJourney.title',
             stepsKeys: [
@@ -630,7 +601,7 @@ export const features: Feature[] = [
         titleKey: 'features.maintenance.title',
         category: 'Système',
         descriptionKey: 'features.maintenance.description',
-        component: MaintenanceManager,
+        component: lazy(() => import('../components/MaintenanceManager.tsx')),
         userJourney: { titleKey: '', stepsKeys: [] },
         specs: { titleKey: '', pointsKeys: [] },
         simplificationTip: { titleKey: '', contentKey: '' }
@@ -640,7 +611,7 @@ export const features: Feature[] = [
         titleKey: 'features.help.title',
         category: 'Système',
         descriptionKey: 'features.help.description',
-        component: HelpCenter,
+        component: lazy(() => import('../components/HelpCenter.tsx')),
         userJourney: { titleKey: '', stepsKeys: [] },
         specs: { titleKey: '', pointsKeys: [] },
         simplificationTip: { titleKey: '', contentKey: '' }
@@ -650,7 +621,7 @@ export const features: Feature[] = [
         titleKey: 'features.api-docs.title',
         category: 'Paramètres',
         descriptionKey: 'features.api-docs.description',
-        component: ApiDocs,
+        component: lazy(() => import('../components/ApiDocs.tsx')),
         userJourney: {
             titleKey: 'features.api-docs.userJourney.title',
             stepsKeys: [
@@ -678,7 +649,7 @@ export const features: Feature[] = [
         titleKey: 'features.billing.title',
         category: 'Paramètres',
         descriptionKey: 'features.billing.description',
-        component: BillingManager,
+        component: lazy(() => import('../components/BillingManager.tsx')),
         userJourney: { titleKey: '', stepsKeys: [] },
         specs: { titleKey: '', pointsKeys: [] },
         simplificationTip: { titleKey: '', contentKey: '' }
@@ -688,7 +659,7 @@ export const features: Feature[] = [
         titleKey: 'features.system-settings.title',
         category: 'Paramètres',
         descriptionKey: 'features.system-settings.description',
-        component: SystemSettingsManager,
+        component: lazy(() => import('../components/SystemSettingsManager.tsx')),
         userJourney: { titleKey: '', stepsKeys: [] },
         specs: { titleKey: '', pointsKeys: [] },
         simplificationTip: { titleKey: '', contentKey: '' }
