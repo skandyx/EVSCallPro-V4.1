@@ -6,8 +6,8 @@ import type {
     AgentStatus, AgentState, ActiveCall, CampaignState, SystemAppSettings, ModuleVisibility,
     IvrFlow, AudioFile, Trunk, Did, Site, ActivityType, PersonalCallback, AgentSession, SystemConnectionSettings,
     SystemSmtpSettings, BackupLog, BackupSchedule, SystemLog, VersionInfo, ConnectivityService
-} from '../types';
-import apiClient, { publicApiClient } from '../lib/axios';
+} from '../types.ts';
+import apiClient, { publicApiClient } from '../lib/axios.ts';
 
 // Define Notification type based on usage in Header.tsx
 interface Notification {
@@ -18,77 +18,6 @@ interface Notification {
     timestamp: string;
 }
 
-// --- Live State & Reducer ---
-interface LiveState {
-    agentStates: AgentState[];
-    activeCalls: ActiveCall[];
-    campaignStates: CampaignState[];
-}
-
-type LiveAction =
-    | { type: 'INIT_STATE'; payload: { agents: User[]; campaigns: Campaign[] } }
-    | { type: 'TICK' }
-    | { type: 'AGENT_STATUS_UPDATE'; payload: { agentId: string; status: AgentStatus; timestamp: number } }
-    | { type: 'NEW_CALL'; payload: ActiveCall }
-    | { type: 'CALL_HANGUP'; payload: { callId: string } };
-
-const initialLiveState: LiveState = {
-    agentStates: [],
-    activeCalls: [],
-    campaignStates: [],
-};
-
-const liveDataReducer = (state: LiveState, action: LiveAction): LiveState => {
-    switch (action.type) {
-        case 'INIT_STATE':
-            state.agentStates = action.payload.agents
-                .filter(u => u.role === 'Agent')
-                .map(agent => ({
-                    ...agent,
-                    status: 'Déconnecté',
-                    statusDuration: 0,
-                    callsHandledToday: 0, averageHandlingTime: 0, averageTalkTime: 0,
-                    pauseCount: 0, trainingCount: 0, totalPauseTime: 0, totalTrainingTime: 0, totalConnectedTime: 0,
-                }));
-            state.campaignStates = action.payload.campaigns.map(c => ({
-                id: c.id, name: c.name, status: 'stopped', offered: 0, answered: 0, hitRate: 0, agentsOnCampaign: 0,
-            }));
-            return state;
-
-        case 'TICK':
-            state.agentStates.forEach(agent => {
-                if (agent.status !== 'Déconnecté') {
-                    agent.statusDuration += 1;
-                }
-            });
-            state.activeCalls.forEach(call => {
-                call.duration += 1;
-            });
-            return state;
-
-        case 'AGENT_STATUS_UPDATE':
-            const agent = state.agentStates.find(a => a.id === action.payload.agentId);
-            if (agent) {
-                agent.status = action.payload.status;
-                agent.statusDuration = 0;
-            }
-            return state;
-
-        case 'NEW_CALL':
-            state.activeCalls.push(action.payload);
-            return state;
-
-        case 'CALL_HANGUP':
-            state.activeCalls = state.activeCalls.filter(c => c.id !== action.payload.callId);
-            return state;
-
-        default:
-            return state;
-    }
-};
-
-// --- Main Store Definition ---
-
 // Collection names must match API endpoints for generic CRUD to work
 type CollectionName = 'users' | 'user-groups' | 'campaigns' | 'scripts' | 'qualifications' | 'qualification-groups' | 'ivr-flows' | 'trunks' | 'dids' | 'sites' | 'planning-events' | 'audio-files';
 const collectionToStateKey: Record<CollectionName, keyof State> = {
@@ -98,6 +27,7 @@ const collectionToStateKey: Record<CollectionName, keyof State> = {
     'audio-files': 'audioFiles'
 };
 
+type AnyEntity = User | UserGroup | Campaign | SavedScript | Qualification | QualificationGroup | IvrFlow | Trunk | Did | Site | ActivityType | PersonalCallback | AudioFile;
 
 interface State {
     currentUser: User | null;
@@ -134,7 +64,9 @@ interface State {
     connectivityServices: ConnectivityService[];
 
     // Live Data
-    liveState: LiveState;
+    agentStates: AgentState[];
+    activeCalls: ActiveCall[];
+    campaignStates: CampaignState[];
     notifications: Notification[];
 }
 
@@ -150,12 +82,13 @@ interface Actions {
     handleUpdateProfilePicture: (base64DataUrl: string) => Promise<void>;
     saveOrUpdate: (collection: CollectionName, entity: any) => Promise<void>;
     delete: (collection: CollectionName, id: string) => Promise<void>;
-    duplicate: (collection: 'savedScripts' | 'ivrFlows', id: string) => Promise<void>;
+    duplicate: (collection: 'scripts' | 'ivr-flows', id: string) => Promise<void>;
     handleImportContacts: (campaignId: string, contacts: Contact[], deduplicationConfig: any) => Promise<any>;
     handleRecycleContacts: (campaignId: string, qualificationId: string) => Promise<void>;
     updateContact: (contact: Contact) => Promise<void>;
-    dispatchLive: (action: LiveAction) => void;
     handleWsEvent: (event: any) => void;
+    // Specific action for agent status change from the UI
+    changeAgentStatus: (status: AgentStatus) => void;
 }
 
 const initialState: State = {
@@ -168,8 +101,7 @@ const initialState: State = {
     personalCallbacks: [], callHistory: [], agentSessions: [], contactNotes: [],
     systemConnectionSettings: null, smtpSettings: null, moduleVisibility: { categories: {}, features: {} },
     backupLogs: [], backupSchedule: null, systemLogs: [], versionInfo: null, connectivityServices: [],
-    liveState: initialLiveState,
-    notifications: [],
+    agentStates: [], activeCalls: [], campaignStates: [], notifications: [],
 };
 
 export const useStore = create<State & Actions>()(immer((set, get) => ({
@@ -186,13 +118,7 @@ export const useStore = create<State & Actions>()(immer((set, get) => ({
     },
     logout: () => {
         localStorage.removeItem('authToken');
-        set({ currentUser: null });
-        // Reset parts of the state that should not persist across sessions
-        set(state => {
-            state.users = [];
-            state.campaigns = [];
-            // etc for other data collections
-        });
+        set(initialState); // Reset the entire store on logout
     },
 
     // Data fetching
@@ -207,7 +133,23 @@ export const useStore = create<State & Actions>()(immer((set, get) => ({
     fetchApplicationData: async () => {
         try {
             const { data } = await apiClient.get('/application-data');
-            set(data); // Directly set all fetched data into the store
+            set(state => {
+                // Initialize live agent states from the fetched users
+                const agentUsers = data.users.filter((u: User) => u.role === 'Agent');
+                state.agentStates = agentUsers.map((agent: User) => ({
+                     ...agent,
+                    status: 'Déconnecté',
+                    statusDuration: 0,
+                    callsHandledToday: 0, averageHandlingTime: 0, averageTalkTime: 0,
+                    pauseCount: 0, trainingCount: 0, totalPauseTime: 0, totalTrainingTime: 0, totalConnectedTime: 0,
+                }));
+                // Initialize live campaign states
+                state.campaignStates = data.campaigns.map((c: Campaign) => ({
+                     id: c.id, name: c.name, status: 'stopped', offered: 0, answered: 0, hitRate: 0, agentsOnCampaign: 0,
+                }));
+                // Set all other static data
+                Object.assign(state, data);
+            });
         } catch (error) {
             console.error("Failed to fetch application data", error);
             get().showAlert('Erreur de chargement des données.', 'error');
@@ -237,18 +179,16 @@ export const useStore = create<State & Actions>()(immer((set, get) => ({
             if (state.currentUser?.id === updatedUser.id) {
                 state.currentUser = updatedUser;
             }
-            const userIndex = state.users.findIndex(u => u.id === updatedUser.id);
-            if (userIndex > -1) {
-                state.users[userIndex] = updatedUser;
-            }
         });
         get().showAlert('Photo de profil mise à jour.', 'success');
     },
 
     // Generic CRUD
-    saveOrUpdate: async (collection, entity) => {
+    saveOrUpdate: async (collection: CollectionName, entity: AnyEntity & { id?: string }) => {
         try {
-            const isNew = !entity.id || !get()[collectionToStateKey[collection]].some((e: any) => e.id === entity.id);
+            const stateKey = collectionToStateKey[collection];
+            const collectionArray = get()[stateKey] as AnyEntity[];
+            const isNew = !entity.id || !collectionArray.some(e => e.id === entity.id);
             const url = isNew ? `/${collection}` : `/${collection}/${entity.id}`;
             const method = isNew ? 'post' : 'put';
             await apiClient[method](url, entity);
@@ -286,7 +226,7 @@ export const useStore = create<State & Actions>()(immer((set, get) => ({
     handleImportContacts: async (campaignId, contacts, deduplicationConfig) => {
         const { data } = await apiClient.post(`/campaigns/${campaignId}/contacts`, { contacts, deduplicationConfig });
         get().showAlert(`${data.summary.valids} contacts importés.`, 'success');
-        return data; // Return full summary to the modal
+        return data;
     },
     handleRecycleContacts: async (campaignId, qualificationId) => {
         const { data } = await apiClient.post(`/campaigns/${campaignId}/recycle`, { qualificationId });
@@ -297,58 +237,66 @@ export const useStore = create<State & Actions>()(immer((set, get) => ({
         get().showAlert('Fiche contact mise à jour.', 'success');
     },
 
-    // Live Data
-    dispatchLive: (action) => set(state => { liveDataReducer(state.liveState, action) }),
+    // Live Data & WS
+    changeAgentStatus: (status: AgentStatus) => {
+        const currentUser = get().currentUser;
+        if (currentUser) {
+            const event = { type: 'agentStatusChange', payload: { agentId: currentUser.id, status } };
+            // Optimistic UI update
+            get().handleWsEvent({ type: 'agentStatusUpdate', payload: { agentId: currentUser.id, status, timestamp: Date.now() } });
+            // Send to server
+            // In a real app, you would import wsClient here. For now, assume a global instance.
+            (window as any).wsClient?.send(event);
+        }
+    },
     handleWsEvent: (event) => {
         set(state => {
             switch (event.type) {
                 // CRUD events
-                case 'newUser':
-                case 'updateUser':
-                    const userIndex = state.users.findIndex(u => u.id === event.payload.id);
-                    if (userIndex > -1) state.users[userIndex] = event.payload;
-                    else state.users.push(event.payload);
+                case 'newUser': handleGenericUpdate(state.users, event.payload); break;
+                case 'updateUser': 
+                    handleGenericUpdate(state.users, event.payload);
                     if (state.currentUser?.id === event.payload.id) state.currentUser = event.payload;
                     break;
-                case 'deleteUser':
-                    state.users = state.users.filter(u => u.id !== event.payload.id);
-                    break;
+                case 'deleteUser': state.users = state.users.filter(u => u.id !== event.payload.id); break;
                 
-                case 'newGroup':
-                case 'updateGroup':
-                    const groupIndex = state.userGroups.findIndex(g => g.id === event.payload.id);
-                    if (groupIndex > -1) state.userGroups[groupIndex] = event.payload;
-                    else state.userGroups.push(event.payload);
-                    break;
-                case 'deleteGroup':
-                    state.userGroups = state.userGroups.filter(g => g.id !== event.payload.id);
-                    break;
+                case 'newGroup': case 'updateGroup': handleGenericUpdate(state.userGroups, event.payload); break;
+                case 'deleteGroup': state.userGroups = state.userGroups.filter(g => g.id !== event.payload.id); break;
 
-                case 'campaignUpdate':
-                    const campIndex = state.campaigns.findIndex(c => c.id === event.payload.id);
-                    if (campIndex > -1) state.campaigns[campIndex] = event.payload;
-                    else state.campaigns.push(event.payload);
-                    break;
-                case 'deleteCampaign':
-                    state.campaigns = state.campaigns.filter(c => c.id !== event.payload.id);
-                    break;
+                case 'campaignUpdate': handleGenericUpdate(state.campaigns, event.payload); break;
+                case 'deleteCampaign': state.campaigns = state.campaigns.filter(c => c.id !== event.payload.id); break;
                 
-                // Generic handlers for other collections
                 case 'newScript': case 'updateScript': handleGenericUpdate(state.savedScripts, event.payload); break;
                 case 'deleteScript': state.savedScripts = state.savedScripts.filter(s => s.id !== event.payload.id); break;
                 
                 case 'newIvrFlow': case 'updateIvrFlow': handleGenericUpdate(state.ivrFlows, event.payload); break;
                 case 'deleteIvrFlow': state.ivrFlows = state.ivrFlows.filter(f => f.id !== event.payload.id); break;
+                
+                case 'newQualification': case 'updateQualification': handleGenericUpdate(state.qualifications, event.payload); break;
+                case 'deleteQualification': state.qualifications = state.qualifications.filter(q => q.id !== event.payload.id); break;
+                
+                case 'qualificationsUpdated': state.qualifications = event.payload; break;
+
+                case 'newTrunk': case 'updateTrunk': handleGenericUpdate(state.trunks, event.payload); break;
+                case 'deleteTrunk': state.trunks = state.trunks.filter(t => t.id !== event.payload.id); break;
+
+                case 'newDid': case 'updateDid': handleGenericUpdate(state.dids, event.payload); break;
+                case 'deleteDid': state.dids = state.dids.filter(d => d.id !== event.payload.id); break;
+                
+                case 'newSite': case 'updateSite': handleGenericUpdate(state.sites, event.payload); break;
+                case 'deleteSite': state.sites = state.sites.filter(s => s.id !== event.payload.id); break;
+                
+                case 'usersBulkUpdate': get().fetchApplicationData(); break; // Simple refetch for bulk updates
 
                 // Agent raised hand
                 case 'agentRaisedHand':
-                    const agent = state.users.find(u => u.id === event.payload.agentId);
-                    if (agent) {
+                    const agentUser = state.users.find(u => u.id === event.payload.agentId);
+                    if (agentUser) {
                         state.notifications.push({
                             id: Date.now(),
                             agentId: event.payload.agentId,
-                            agentName: `${agent.firstName} ${agent.lastName}`,
-                            agentLoginId: agent.loginId,
+                            agentName: `${agentUser.firstName} ${agentUser.lastName}`,
+                            agentLoginId: agentUser.loginId,
                             timestamp: new Date().toISOString()
                         });
                     }
@@ -356,17 +304,20 @@ export const useStore = create<State & Actions>()(immer((set, get) => ({
 
                 // Live data from AMI
                 case 'agentStatusUpdate':
-                    state.dispatchLive({ type: 'AGENT_STATUS_UPDATE', payload: { ...event.payload, timestamp: Date.now() } });
+                    const agent = state.agentStates.find(a => a.id === event.payload.agentId);
+                    if (agent) {
+                        agent.status = event.payload.status;
+                        agent.statusDuration = 0;
+                    }
                     break;
                 case 'newCall':
-                    state.dispatchLive({ type: 'NEW_CALL', payload: event.payload });
+                    state.activeCalls.push(event.payload);
                     break;
                 case 'callHangup':
-                    state.dispatchLive({ type: 'CALL_HANGUP', payload: event.payload });
+                    state.activeCalls = state.activeCalls.filter(c => c.id !== event.payload.callId);
                     break;
                 
-                // Special event from header component
-                case 'SET_NOTIFICATIONS':
+                case 'SET_NOTIFICATIONS': // Special event from header component
                     state.notifications = event.payload;
                     break;
             }

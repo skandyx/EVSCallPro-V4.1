@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect, useCallback, useMemo } from 'react';
 import type { Feature, User, FeatureId, AgentStatus } from './types.ts';
 import { features } from './data/features.ts';
@@ -20,7 +21,7 @@ const AppContent: React.FC = () => {
     const { 
         currentUser, fetchPublicConfig, fetchApplicationData, logout, 
         theme, setTheme, appSettings, alert, hideAlert,
-        dispatchLive, handleWsEvent
+        handleWsEvent, users, campaigns
     } = useStore(state => ({
         currentUser: state.currentUser,
         fetchPublicConfig: state.fetchPublicConfig,
@@ -31,11 +32,13 @@ const AppContent: React.FC = () => {
         appSettings: state.appSettings,
         alert: state.alert,
         hideAlert: state.hideAlert,
-        dispatchLive: state.dispatchLive,
         handleWsEvent: state.handleWsEvent,
+        users: state.users,
+        campaigns: state.campaigns,
     }));
     
-    const { setLanguage } = useI18n();
+    // FIX: Destructure the 't' function from useI18n to make it available in the component.
+    const { setLanguage, t } = useI18n();
 
     const [isLoading, setIsLoading] = useState(true);
     const [activeFeatureId, setActiveFeatureId] = useState<FeatureId>('outbound');
@@ -107,18 +110,13 @@ const AppContent: React.FC = () => {
     
     // Initialize live data state after login
     useEffect(() => {
-        const { currentUser, users, campaigns } = useStore.getState();
-        if (currentUser && users.length > 0 && campaigns.length > 0) {
-            dispatchLive({ type: 'INIT_STATE', payload: { agents: users, campaigns: campaigns } });
-            
-            if (currentUser.role === 'Agent') {
-                dispatchLive({
-                    type: 'AGENT_STATUS_UPDATE',
-                    payload: { agentId: currentUser.id, status: 'En Attente' }
-                });
-            }
+        if (currentUser && currentUser.role === 'Agent') {
+            useStore.getState().handleWsEvent({
+                type: 'AGENT_STATUS_UPDATE',
+                payload: { agentId: currentUser.id, status: 'En Attente', timestamp: Date.now() }
+            });
         }
-    }, [currentUser, dispatchLive]);
+    }, [currentUser]);
 
 
     // Effect to handle logout event from axios interceptor
@@ -135,18 +133,19 @@ const AppContent: React.FC = () => {
     useEffect(() => {
         if (currentUser) {
             const token = localStorage.getItem('authToken');
-            if (token) wsClient.connect(token);
+            if (token) {
+                (window as any).wsClient = wsClient; // Make it globally accessible for agent view actions
+                wsClient.connect(token);
+            }
 
             const unsubscribe = wsClient.onMessage(handleWsEvent);
-            const timer = setInterval(() => dispatchLive({ type: 'TICK' }), 1000);
 
             return () => {
                 unsubscribe();
-                clearInterval(timer);
                 wsClient.disconnect();
             };
         }
-    }, [currentUser, handleWsEvent, dispatchLive]);
+    }, [currentUser, handleWsEvent]);
     
     // --- Specific actions passed to modals ---
     const updatePassword = useStore(state => state.handleUpdatePassword);
@@ -158,7 +157,7 @@ const AppContent: React.FC = () => {
     };
 
     if (isLoading) {
-        return <div className="h-screen w-screen flex items-center justify-center bg-slate-50 dark:bg-slate-900 text-slate-800 dark:text-slate-200">{useI18n().t('common.loading')}...</div>;
+        return <div className="h-screen w-screen flex items-center justify-center bg-slate-50 dark:bg-slate-900 text-slate-800 dark:text-slate-200">{t('common.loading')}...</div>;
     }
 
     if (!currentUser) {
@@ -169,7 +168,7 @@ const AppContent: React.FC = () => {
     if (currentUser.role === 'Agent') {
         const allDataLoaded = useStore(state => state.campaigns.length > 0);
         if (!allDataLoaded) {
-             return <div className="h-screen w-screen flex items-center justify-center bg-slate-50 dark:bg-slate-900 text-slate-800 dark:text-slate-200">{useI18n().t('agentView.loading')}</div>;
+             return <div className="h-screen w-screen flex items-center justify-center bg-slate-50 dark:bg-slate-900 text-slate-800 dark:text-slate-200">{t('agentView.loading')}</div>;
         }
         return <AgentView 
             onUpdatePassword={handleUpdatePasswordAndClose}

@@ -38,19 +38,19 @@ const ScriptFeature: React.FC<{ feature: Feature }> = ({ feature }) => {
     };
 
     const handleSave = (script: SavedScript) => {
-        saveOrUpdate('savedScripts', script);
+        saveOrUpdate('scripts', script);
         setIsBuilderOpen(false);
         setEditingScript(null);
     };
     
     const handleDelete = (id: string) => {
         if (window.confirm(t('scriptFeature.confirmDelete'))) {
-            deleteEntity('savedScripts', id);
+            deleteEntity('scripts', id);
         }
     };
     
     const handleDuplicate = (id: string) => {
-        duplicate('savedScripts', id);
+        duplicate('scripts', id);
     };
 
     if (isBuilderOpen && editingScript) {

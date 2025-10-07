@@ -94,7 +94,7 @@ const AgentView: React.FC<AgentViewProps> = ({ onUpdatePassword, onUpdateProfile
     // Select ALL data from the store
     const { 
         currentUser, campaigns, qualifications, savedScripts, contactNotes, users, personalCallbacks,
-        agentStates, logout, fetchApplicationData, dispatchLive, showAlert, updateContact
+        agentStates, logout, fetchApplicationData, showAlert, updateContact, changeAgentStatus
     } = useStore(state => ({
         currentUser: state.currentUser!,
         campaigns: state.campaigns,
@@ -106,17 +106,14 @@ const AgentView: React.FC<AgentViewProps> = ({ onUpdatePassword, onUpdateProfile
         agentStates: state.agentStates,
         logout: state.logout,
         fetchApplicationData: state.fetchApplicationData,
-        dispatchLive: state.dispatchLive,
         showAlert: state.showAlert,
         updateContact: state.updateContact,
+        changeAgentStatus: state.changeAgentStatus,
     }));
 
     const onStatusChange = useCallback((status: AgentStatus) => {
-        if (currentUser && currentUser.role === 'Agent') {
-            dispatchLive({ type: 'AGENT_STATUS_UPDATE', payload: { agentId: currentUser.id, status: status } });
-            wsClient.send({ type: 'agentStatusChange', payload: { agentId: currentUser.id, status } });
-        }
-    }, [currentUser, dispatchLive]);
+        changeAgentStatus(status);
+    }, [changeAgentStatus]);
 
     const agentState = useMemo(() => agentStates.find(a => a.id === currentUser.id), [currentUser, agentStates]);
 

@@ -35,19 +35,19 @@ const IvrFeature: React.FC<{ feature: Feature }> = ({ feature }) => {
     };
 
     const handleSave = (flow: IvrFlow) => {
-        saveOrUpdate('ivrFlows', flow);
+        saveOrUpdate('ivr-flows', flow);
         setIsDesignerOpen(false);
         setEditingFlow(null);
     };
 
     const handleDelete = (id: string) => {
         if (window.confirm(t('ivrFeature.confirmDelete'))) {
-            deleteEntity('ivrFlows', id);
+            deleteEntity('ivr-flows', id);
         }
     };
 
     const handleDuplicate = (id: string) => {
-        duplicate('ivrFlows', id);
+        duplicate('ivr-flows', id);
     };
     
     if (isDesignerOpen && editingFlow) {
