@@ -1,0 +1,274 @@
+{
+  "common": {
+    "loading": "جار التحميل",
+    "save": "حفظ",
+    "cancel": "إلغاء",
+    "close": "إغلاق",
+    "edit": "تعديل",
+    "delete": "حذف",
+    "duplicate": "تكرار",
+    "name": "الاسم",
+    "description": "الوصف",
+    "status": "الحالة",
+    "actions": "الإجراءات",
+    "password": "كلمة المرور",
+    "firstName": "الاسم الأول",
+    "lastName": "اسم العائلة",
+    "email": "البريد الإلكتروني",
+    "role": "الدور",
+    "active": "نشط",
+    "inactive": "غير نشط",
+    "search": "بحث...",
+    "all": "الكل",
+    "none": "لا شيء",
+    "previous": "السابق",
+    "next": "التالي",
+    "send": "إرسال"
+  },
+  "alerts": {
+    "appDataLoadError": "لا يمكن تحميل بيانات التطبيق.",
+    "saveSuccess": "تم الحفظ بنجاح!",
+    "saveError": "فشل الحفظ.",
+    "confirmDelete": "هل أنت متأكد أنك تريد حذف هذا العنصر؟",
+    "deleteSuccess": "تم الحذف بنجاح!",
+    "deleteError": "فشل الحذف.",
+    "visibilitySettingsUpdated": "تم تحديث إعدادات الظهور.",
+    "smtpSettingsSaved": "تم حفظ إعدادات SMTP. قد تكون إعادة تشغيل الخادم ضرورية.",
+    "appSettingsSaved": "تم حفظ إعدادات التطبيق.",
+    "bulkCreateError": "فشل الإنشاء الجماعي.",
+    "usersGenerated": "تم إنشاء {count} مستخدم بنجاح.",
+    "usersImported": "تم استيراد {count} مستخدم بنجاح.",
+    "contactImportError": "خطأ أثناء استيراد جهات الاتصال.",
+    "passwordUpdateSuccess": "تم تحديث كلمة المرور بنجاح.",
+    "profilePictureUpdateSuccess": "تم تحديث صورة الملف الشخصي.",
+    "updateError": "فشل التحديث.",
+    "agentNeedsHelp": "الوكيل {agentName} بحاجة للمساعدة!",
+    "agentResponded": "رد من {agentName}: \"{message}\"",
+    "messageSentTo": "تم إرسال الرسالة إلى {agentName}",
+    "contactsDeletedSuccess": "تم حذف جهات الاتصال بنجاح.",
+    "contactsDeletedError": "فشل حذف جهات الاتصال.",
+    "contactsRecycledSuccess": "تمت إعادة تعيين جهات الاتصال وهي متاحة مرة أخرى.",
+    "contactsRecycledError": "فشل إعادة تدوير جهات الاتصال."
+  },
+  "header": {
+    "tabs": {
+      "application": "التطبيق",
+      "monitoring": "المراقبة"
+    },
+    "theme": {
+      "system": "سمة النظام",
+      "light": "سمة فاتحة",
+      "dark": "سمة داكنة"
+    },
+    "notifications": {
+      "title": "الإشعارات",
+      "markAllAsRead": "وضع علامة على الكل كمقروء",
+      "noNotifications": "لا توجد إشعارات جديدة.",
+      "needsHelp": "{agentName} ({agentLoginId}) يحتاج إلى مساعدة.",
+      "respond": "الرد",
+      "yourMessage": "رسالتك...",
+      "send": "إرسال"
+    }
+  },
+  "sidebar": {
+    "categories": {
+      "Agent": "الوكيل",
+      "Outbound": "صادر",
+      "Inbound": "وارد",
+      "Sound": "الصوت",
+      "Configuration": "الإعداد",
+      "Supervision_Reporting": "الإشراف والتقارير",
+      "Système": "النظام",
+      "Paramètres": "الإعدادات"
+    },
+    "profile": "ملفي الشخصي",
+    "logout": "تسجيل الخروج",
+    "collapse": "طي",
+    "expand": "توسيع"
+  },
+  "login": {
+    "title": "تسجيل الدخول",
+    "subtitle": "الرجاء إدخال بيانات الاعتماد الخاصة بك.",
+    "loginIdLabel": "معرف تسجيل الدخول / الامتداد",
+    "button": "تسجيل الدخول",
+    "disabledAccount": "حساب المستخدم هذا معطل.",
+    "invalidCredentials": "اسم المستخدم أو كلمة المرور غير صالحة.",
+    "serverError": "لا يمكن الاتصال بالخادم."
+  },
+  "agentView": {
+    "title": "واجهة الوكيل",
+    "status": "حالة الوكيل",
+    "contactInfo": "معلومات الاتصال",
+    "waitingForCall": "في انتظار مكالمة...",
+    "nextCall": "المكالمة التالية",
+    "searching": "يبحث...",
+    "callControls": "ضوابط المكالمة",
+    "call": "اتصال",
+    "endCall": "إنهاء المكالمة",
+    "qualifyContact": "تأهيل الاتصال",
+    "hold": "تعليق",
+    "transfer": "تحويل",
+    "qualifications": "المؤهلات",
+    "finalize": "إنهاء",
+    "noScript": "هذه الحملة ليس لديها نص مرتبط.",
+    "scriptWillBeHere": "سيتم عرض النص هنا.",
+    "loading": "تحميل واجهة الوكيل...",
+    "selectQualification": "اختر مؤهلاً...",
+    "activeCampaigns": "الحملات النشطة",
+    "noCampaigns": "لا توجد حملات معينة.",
+    "askForHelp": "طلب المساعدة",
+    "helpRequestSent": "تم إرسال طلب المساعدة إلى المشرف.",
+    "myCallbacks": "مكالماتي المعاودة",
+    "noCallbacks": "لا توجد مكالمات معاودة لهذا اليوم.",
+    "supervisorResponse": "رد المشرف",
+    "messages": "الرسائل",
+    "clearAll": "مسح الكل",
+    "kpis": "مؤشرات الأداء الرئيسية اليومية",
+    "callsHandled": "المكالمات التي تم التعامل معها",
+    "pauseCount": "عدد التوقفات",
+    "totalPauseTime": "إجمالي وقت التوقف",
+    "totalTrainingTime": "إجمالي وقت التدريب",
+    "trainingCount": "عدد التدريبات",
+    "totalConnectedTime": "إجمالي وقت الاتصال",
+    "pause": "إيقاف مؤقت",
+    "ready": "جاهز",
+    "statuses": {
+      "waiting": "في الانتظار",
+      "onCall": "في مكالمة",
+      "wrapUp": "بعد المكالمة",
+      "onPause": "في استراحة",
+      "ringing": "يرن",
+      "disconnected": "غير متصل",
+      "onHold": "في الانتظار",
+      "training": "في تدريب",
+      "available": "متاح"
+    },
+    "feedback": {
+      "activateCampaign": "الرجاء تفعيل حملة لبدء الاتصال.",
+      "noContactAvailable": "لا يوجد اتصال متاح لـ {campaignName}.",
+      "errorFetchingContact": "خطأ أثناء جلب الاتصال.",
+      "mustEndTask": "الرجاء إنهاء مهمتك الحالية قبل تحميل معاودة الاتصال."
+    },
+    "callNumber": "اتصل بـ {phoneName}",
+    "statusManager": {
+      "title": "حالتي",
+      "settings": "تعديل الملف الشخصي"
+    },
+    "respond": "رد",
+    "yourResponsePlaceholder": "ردك..."
+  },
+  "features": {
+    "users": {
+      "title": "المستخدمون",
+      "description": "إدارة حسابات المستخدمين وأدوارهم وأذوناتهم."
+    },
+    "groups": {
+      "title": "المجموعات",
+      "description": "إنشاء مجموعات وكلاء لإدارة وتوجيه مبسط."
+    },
+    "planning": {
+      "title": "الجداول",
+      "description": "إنشاء وإدارة جداول الوكلاء الأسبوعية وأنشطتهم."
+    },
+    "outbound": {
+      "title": "الحملات الصادرة",
+      "description": "إنشاء وإدارة حملات المكالمات الصادرة باستراتيجيات اتصال متقدمة."
+    },
+    "scripts": {
+      "title": "نصوص الوكيل",
+      "description": "بناء أدلة مكالمات تفاعلية لوكلائك باستخدام محرر مرئي."
+    },
+    "ivr": {
+      "title": "تدفقات IVR",
+      "description": "تصميم تدفقات المكالمات الواردة المعقدة باستخدام مصمم رسومي."
+    },
+    "audio": {
+      "title": "مكتبة الوسائط",
+      "description": "استيراد وإدارة الرسائل الصوتية لـ IVRs وموسيقى الانتظار."
+    },
+    "records": {
+      "title": "التسجيلات",
+      "description": "الاستماع وتنزيل وأرشفة تسجيلات المكالمات للجودة والامتثال."
+    },
+    "qualifications": {
+      "title": "مؤهلات المكالمات",
+      "description": "تحديد حالات نهاية المكالمة للتقارير واستراتيجيات إعادة المحاولة."
+    },
+    "supervision": {
+      "title": "الإشراف في الوقت الحقيقي",
+      "description": "عرض نشاط مركز الاتصال الخاص بك مباشرة والتفاعل مع الوكلاء."
+    },
+    "reporting": {
+      "title": "التقارير والتحليلات",
+      "description": "استكشاف البيانات التاريخية وإنشاء تقارير مخصصة وتصدير النتائج."
+    },
+    "history": {
+      "title": "سجل المكالمات",
+      "description": "استشارة وتصفية وبحث في السجل المفصل لجميع المكالمات الواردة والصادرة."
+    },
+    "sessions": {
+      "title": "تسجيل دخول/خروج الوكيل",
+      "description": "استشارة السجل المفصل لاتصالات الوكلاء وانقطاعاتهم وأوقات عملهم."
+    },
+    "trunks": {
+      "title": "خطوط SIP",
+      "description": "ربط مشغلي الهاتف للمكالمات الواردة والصادرة."
+    },
+    "dids": {
+      "title": "الأرقام (DIDs)",
+      "description": "إدارة أرقام الهواتف الواردة وتوجيهها الأولي."
+    },
+    "sites-config": {
+      "title": "تكوين الموقع",
+      "description": "إدارة المواقع المادية المختلفة لتوجيه المكالمات الصادرة."
+    },
+    "module-settings": {
+      "title": "إدارة الوحدات",
+      "description": "تمكين أو تعطيل القوائم لأدوار المسؤول والمشرف."
+    },
+    "languages": {
+      "title": "اللغات",
+      "description": "إدارة اللغات المتاحة في التطبيق.",
+      "userJourney": {
+        "title": "رحلة المستخدم: تغيير لغة الواجهة",
+        "steps": [
+          "ينقر المستخدم على محدد اللغة في الرأس.",
+          "يختار 'العربية' من القائمة المنسدلة.",
+          "تتم ترجمة الواجهة بأكملها على الفور إلى اللغة العربية."
+        ]
+      },
+      "simplificationTip": {
+        "title": "نصيحة",
+        "content": "هذه الوحدة هي عنصر نائب. تتم إدارة اللغة النشطة عبر المحدد في الرأس للوصول السريع."
+      }
+    },
+    "database-client": {
+      "title": "قاعدة البيانات",
+      "description": "تنفيذ استعلامات SQL مباشرة على قاعدة البيانات لتصحيح الأخطاء والتقارير المتقدمة."
+    },
+    "system-connection": {
+      "title": "اتصال النظام",
+      "description": "تكوين الاتصالات بقاعدة البيانات وخادم телефония Asterisk."
+    },
+    "api-docs": {
+      "title": "وثائق API",
+      "description": "استشارة وثائق API الكاملة للتكامل والتطوير."
+    },
+    "billing": {
+      "title": "الفواتير",
+      "description": "إدارة الاشتراكات وعرض سجل الفواتير."
+    },
+    "system-settings": {
+      "title": "النظام",
+      "description": "تكوين إعدادات النظام منخفضة المستوى ، مثل إرسال البريد الإلكتروني."
+    },
+    "help": {
+      "title": "مركز المساعدة",
+      "description": "ابحث عن إجابات لأسئلتك وأدلة حول الميزات."
+    },
+     "maintenance": {
+        "title": "صيانة",
+        "description": "إدارة النسخ الاحتياطية والاستعادة والصحة العامة للنظام."
+    }
+  }
+}

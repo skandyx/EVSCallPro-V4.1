@@ -1,0 +1,332 @@
+-- =============================================================================
+-- Schéma de la Base de Données EVSCallPro
+-- =============================================================================
+-- Ce script SQL crée l'ensemble des tables, contraintes et relations
+-- nécessaires au fonctionnement de l'application.
+--
+-- Ordre d'exécution :
+-- 1. Exécutez ce script sur une base de données PostgreSQL vierge.
+-- 2. Exécutez ensuite le script `seed.txt` pour insérer les données initiales.
+-- =============================================================================
+
+-- Pour permettre de ré-exécuter ce script, nous supprimons d'abord les tables
+-- existantes dans l'ordre inverse des dépendances.
+DROP TABLE IF EXISTS contact_notes, agent_sessions, call_history, personal_callbacks, planning_events, activity_types, contacts, campaign_agents, campaigns, qualifications, qualification_groups, scripts, user_group_members, user_groups, users, dids, trunks, ivr_flows, audio_files, sites CASCADE;
+
+-- =============================================================================
+-- Table: sites
+-- Description: Gère les différents sites physiques ou logiques de l'entreprise.
+-- =============================================================================
+CREATE TABLE sites (
+    id TEXT PRIMARY KEY,
+    name TEXT NOT NULL,
+    ip_address TEXT,
+    created_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
+    updated_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
+);
+
+-- =============================================================================
+-- Table: users
+-- Description: Stocke les informations de tous les utilisateurs (agents, etc.).
+-- =============================================================================
+CREATE TABLE users (
+    id TEXT PRIMARY KEY,
+    login_id TEXT NOT NULL UNIQUE,
+    extension TEXT UNIQUE,
+    first_name TEXT NOT NULL,
+    last_name TEXT NOT NULL,
+    email TEXT UNIQUE,
+    "role" TEXT NOT NULL,
+    is_active BOOLEAN NOT NULL DEFAULT TRUE,
+    password_hash TEXT NOT NULL,
+    site_id TEXT REFERENCES sites(id) ON DELETE SET NULL,
+    mobile_number TEXT,
+    use_mobile_as_station BOOLEAN DEFAULT FALSE,
+    profile_picture_url TEXT,
+    planning_enabled BOOLEAN DEFAULT FALSE,
+    created_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
+    updated_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
+);
+
+-- =============================================================================
+-- Tables: user_groups & user_group_members
+-- Description: Gèrent les groupes d'utilisateurs.
+-- =============================================================================
+CREATE TABLE user_groups (
+    id TEXT PRIMARY KEY,
+    name TEXT NOT NULL,
+    created_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
+    updated_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
+);
+
+CREATE TABLE user_group_members (
+    user_id TEXT NOT NULL REFERENCES users(id) ON DELETE CASCADE,
+    group_id TEXT NOT NULL REFERENCES user_groups(id) ON DELETE CASCADE,
+    PRIMARY KEY (user_id, group_id)
+);
+
+-- =============================================================================
+-- Table: scripts
+-- Description: Stocke les scripts d'agent visuels.
+-- =============================================================================
+CREATE TABLE scripts (
+    id TEXT PRIMARY KEY,
+    name TEXT NOT NULL,
+    pages JSONB,
+    start_page_id TEXT,
+    background_color TEXT,
+    created_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
+    updated_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
+);
+
+-- =============================================================================
+-- Tables: qualification_groups & qualifications
+-- Description: Gèrent les qualifications d'appel et leur groupement.
+-- =============================================================================
+CREATE TABLE qualification_groups (
+    id TEXT PRIMARY KEY,
+    name TEXT NOT NULL,
+    created_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
+    updated_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
+);
+
+CREATE TABLE qualifications (
+    id TEXT PRIMARY KEY,
+    code TEXT NOT NULL UNIQUE,
+    description TEXT NOT NULL,
+    "type" TEXT NOT NULL, -- 'positive', 'neutral', 'negative'
+    group_id TEXT REFERENCES qualification_groups(id) ON DELETE SET NULL,
+    is_standard BOOLEAN NOT NULL DEFAULT FALSE,
+    parent_id TEXT REFERENCES qualifications(id) ON DELETE SET NULL,
+    is_recyclable BOOLEAN DEFAULT TRUE,
+    created_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
+    updated_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
+);
+
+-- =============================================================================
+-- Table: campaigns
+-- Description: Stocke la configuration des campagnes d'appels sortants.
+-- =============================================================================
+CREATE TABLE campaigns (
+    id TEXT PRIMARY KEY,
+    name TEXT NOT NULL,
+    description TEXT,
+    script_id TEXT REFERENCES scripts(id) ON DELETE SET NULL,
+    qualification_group_id TEXT REFERENCES qualification_groups(id) ON DELETE SET NULL,
+    caller_id TEXT,
+    is_active BOOLEAN NOT NULL DEFAULT TRUE,
+    dialing_mode TEXT,
+    priority INTEGER DEFAULT 5,
+    timezone TEXT,
+    calling_days INTEGER[],
+    calling_start_time TIME,
+    calling_end_time TIME,
+    max_abandon_rate NUMERIC,
+    pace_factor NUMERIC,
+    min_agents_before_start INTEGER,
+    retry_attempts INTEGER,
+    retry_intervals INTEGER[],
+    retry_on_status TEXT[],
+    amd_enabled BOOLEAN,
+    amd_confidence INTEGER,
+    voicemail_action TEXT,
+    recording_enabled BOOLEAN,
+    recording_beep BOOLEAN,
+    max_ring_duration INTEGER,
+    wrap_up_time INTEGER,
+    max_call_duration INTEGER,
+    quota_rules JSONB,
+    filter_rules JSONB,
+    created_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
+    updated_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
+);
+
+-- =============================================================================
+-- Table: campaign_agents
+-- Description: Table de liaison pour les agents assignés aux campagnes.
+-- =============================================================================
+CREATE TABLE campaign_agents (
+    campaign_id TEXT NOT NULL REFERENCES campaigns(id) ON DELETE CASCADE,
+    user_id TEXT NOT NULL REFERENCES users(id) ON DELETE CASCADE,
+    PRIMARY KEY (campaign_id, user_id)
+);
+
+-- =============================================================================
+-- Table: contacts
+-- Description: Stocke les fiches contact pour les campagnes.
+-- =============================================================================
+CREATE TABLE contacts (
+    id TEXT PRIMARY KEY,
+    campaign_id TEXT NOT NULL REFERENCES campaigns(id) ON DELETE CASCADE,
+    first_name TEXT,
+    last_name TEXT,
+    phone_number TEXT NOT NULL,
+    postal_code TEXT,
+    status TEXT NOT NULL DEFAULT 'pending', -- pending, called, qualified
+    custom_fields JSONB,
+    created_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
+    updated_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
+);
+
+-- =============================================================================
+-- Table: ivr_flows
+-- Description: Stocke les flux de Serveur Vocal Interactif (SVI).
+-- =============================================================================
+CREATE TABLE ivr_flows (
+    id TEXT PRIMARY KEY,
+    name TEXT NOT NULL,
+    nodes JSONB,
+    connections JSONB,
+    created_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
+    updated_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
+);
+
+-- =============================================================================
+-- Table: trunks
+-- Description: Stocke la configuration des trunks SIP.
+-- =============================================================================
+CREATE TABLE trunks (
+    id TEXT PRIMARY KEY,
+    name TEXT NOT NULL,
+    domain TEXT NOT NULL,
+    login TEXT,
+    password_encrypted TEXT,
+    auth_type TEXT NOT NULL, -- 'register' or 'ip'
+    register_string TEXT,
+    dial_pattern TEXT,
+    inbound_context TEXT,
+    force_caller_id TEXT,
+    created_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
+    updated_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
+);
+
+-- =============================================================================
+-- Table: dids
+-- Description: Stocke les numéros SDA (DID) et leur routage.
+-- =============================================================================
+CREATE TABLE dids (
+    id TEXT PRIMARY KEY,
+    number TEXT NOT NULL UNIQUE,
+    description TEXT,
+    trunk_id TEXT NOT NULL REFERENCES trunks(id) ON DELETE CASCADE,
+    ivr_flow_id TEXT REFERENCES ivr_flows(id) ON DELETE SET NULL,
+    created_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
+    updated_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
+);
+
+-- =============================================================================
+-- Table: audio_files
+-- Description: Gère la bibliothèque de fichiers audio.
+-- =============================================================================
+CREATE TABLE audio_files (
+    id TEXT PRIMARY KEY,
+    name TEXT NOT NULL,
+    file_name TEXT NOT NULL,
+    duration INTEGER,
+    size INTEGER,
+    upload_date TIMESTAMPTZ,
+    created_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
+    updated_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
+);
+
+-- =============================================================================
+-- Table: activity_types
+-- Description: Types d'activités pour le module de planning.
+-- =============================================================================
+CREATE TABLE activity_types (
+    id TEXT PRIMARY KEY,
+    name TEXT NOT NULL,
+    color TEXT
+);
+
+-- =============================================================================
+-- Table: planning_events
+-- Description: Stocke les événements du planning des agents.
+-- =============================================================================
+CREATE TABLE planning_events (
+    id TEXT PRIMARY KEY,
+    agent_id TEXT NOT NULL REFERENCES users(id) ON DELETE CASCADE,
+    activity_id TEXT NOT NULL REFERENCES activity_types(id) ON DELETE CASCADE,
+    start_date TIMESTAMPTZ NOT NULL,
+    end_date TIMESTAMPTZ NOT NULL,
+    rrule TEXT,
+    site_id TEXT REFERENCES sites(id) ON DELETE SET NULL,
+    created_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
+    updated_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
+);
+
+-- =============================================================================
+-- Table: personal_callbacks
+-- Description: Stocke les rappels personnels des agents.
+-- =============================================================================
+CREATE TABLE personal_callbacks (
+    id TEXT PRIMARY KEY,
+    agent_id TEXT NOT NULL REFERENCES users(id) ON DELETE CASCADE,
+    contact_id TEXT NOT NULL REFERENCES contacts(id) ON DELETE CASCADE,
+    campaign_id TEXT NOT NULL REFERENCES campaigns(id) ON DELETE CASCADE,
+    contact_name TEXT,
+    contact_number TEXT,
+    scheduled_time TIMESTAMPTZ NOT NULL,
+    notes TEXT,
+    status TEXT NOT NULL DEFAULT 'pending', -- pending, completed, cancelled
+    created_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
+    updated_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
+);
+
+-- =============================================================================
+-- Table: call_history
+-- Description: Journal de tous les appels (CDR enrichis).
+-- =============================================================================
+CREATE TABLE call_history (
+    id TEXT PRIMARY KEY,
+    start_time TIMESTAMPTZ NOT NULL,
+    end_time TIMESTAMPTZ,
+    duration INTEGER,
+    billable_duration INTEGER,
+    direction TEXT,
+    call_status TEXT,
+    source TEXT,
+    destination TEXT,
+    agent_id TEXT REFERENCES users(id) ON DELETE SET NULL,
+    contact_id TEXT REFERENCES contacts(id) ON DELETE SET NULL,
+    campaign_id TEXT REFERENCES campaigns(id) ON DELETE SET NULL,
+    qualification_id TEXT REFERENCES qualifications(id) ON DELETE SET NULL
+);
+
+-- =============================================================================
+-- Table: agent_sessions
+-- Description: Journal des sessions de connexion des agents.
+-- =============================================================================
+CREATE TABLE agent_sessions (
+    id TEXT PRIMARY KEY,
+    agent_id TEXT NOT NULL REFERENCES users(id) ON DELETE CASCADE,
+    login_time TIMESTAMPTZ NOT NULL,
+    logout_time TIMESTAMPTZ
+);
+
+-- =============================================================================
+-- Table: contact_notes
+-- Description: Stocke les notes prises par les agents sur les fiches contact.
+-- =============================================================================
+CREATE TABLE contact_notes (
+    id TEXT PRIMARY KEY,
+    contact_id TEXT NOT NULL REFERENCES contacts(id) ON DELETE CASCADE,
+    agent_id TEXT NOT NULL REFERENCES users(id) ON DELETE CASCADE,
+    campaign_id TEXT NOT NULL REFERENCES campaigns(id) ON DELETE CASCADE,
+    note TEXT,
+    created_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
+);
+
+-- =============================================================================
+-- Ajout d'index pour améliorer les performances des requêtes
+-- =============================================================================
+CREATE INDEX idx_contacts_campaign_status ON contacts (campaign_id, status);
+CREATE INDEX idx_call_history_timestamp ON call_history (start_time DESC);
+CREATE INDEX idx_call_history_agent ON call_history (agent_id);
+CREATE INDEX idx_call_history_campaign ON call_history (campaign_id);
+CREATE INDEX idx_agent_sessions_agent_time ON agent_sessions (agent_id, login_time DESC);
+CREATE INDEX idx_planning_events_agent_date ON planning_events (agent_id, start_date);
+
+-- =============================================================================
+-- Fin du script de création du schéma.
+-- =============================================================================

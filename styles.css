@@ -1,0 +1,159 @@
+/*
+  EVSCallPro Theme Styles
+  This file defines all color palettes for the application.
+  Themes are activated by setting `data-theme` on the <html> element.
+  Dark mode is activated by adding `class="dark"` to the <html> element.
+*/
+
+/* 1. Base Variables & Fallbacks (Defaults to Indigo) */
+:root {
+  --color-primary-600-rgb: 79 70 229;
+  --color-primary-700-rgb: 67 56 202;
+  --color-sidebar-active-bg: #eeefff;
+  --color-sidebar-active-text: #4338ca;
+  --color-link-text: #4f46e5;
+}
+
+:root.dark {
+  --color-sidebar-active-bg: rgba(79, 70, 229, 0.2);
+  --color-sidebar-active-text: #a5b4fc;
+  --color-link-text: #a5b4fc;
+}
+
+/* 2. Theme Overrides */
+
+/* --- Indigo Intense (default) --- */
+html[data-theme="default"] {
+  --color-primary-600-rgb: 79 70 229;
+  --color-primary-700-rgb: 67 56 202;
+  --color-sidebar-active-bg: #eeefff;
+  --color-sidebar-active-text: #4338ca;
+  --color-link-text: #4f46e5;
+}
+html[data-theme="default"].dark {
+  --color-sidebar-active-bg: rgba(79, 70, 229, 0.2);
+  --color-sidebar-active-text: #a5b4fc;
+  --color-link-text: #a5b4fc;
+}
+
+/* --- Vert Forêt --- */
+html[data-theme="forest"] {
+  --color-primary-600-rgb: 22 163 74;
+  --color-primary-700-rgb: 21 128 61;
+  --color-sidebar-active-bg: #f0fdf4;
+  --color-sidebar-active-text: #166534;
+  --color-link-text: #16a34a;
+}
+html[data-theme="forest"].dark {
+  --color-sidebar-active-bg: rgba(34, 197, 94, 0.2);
+  --color-sidebar-active-text: #86efac;
+  --color-link-text: #86efac;
+}
+
+/* --- Bleu Océan --- */
+html[data-theme="ocean"] {
+  --color-primary-600-rgb: 37 99 235;
+  --color-primary-700-rgb: 29 78 216;
+  --color-sidebar-active-bg: #eff6ff;
+  --color-sidebar-active-text: #1e3a8a;
+  --color-link-text: #2563eb;
+}
+html[data-theme="ocean"].dark {
+  --color-sidebar-active-bg: rgba(59, 130, 246, 0.2);
+  --color-sidebar-active-text: #93c5fd;
+  --color-link-text: #93c5fd;
+}
+
+/* --- Coucher de Soleil --- */
+html[data-theme="sunset"] {
+  --color-primary-600-rgb: 234 88 12;
+  --color-primary-700-rgb: 194 65 12;
+  --color-sidebar-active-bg: #fff7ed;
+  --color-sidebar-active-text: #9a3412;
+  --color-link-text: #f97316;
+}
+html[data-theme="sunset"].dark {
+  --color-sidebar-active-bg: rgba(249, 115, 22, 0.2);
+  --color-sidebar-active-text: #fdba74;
+  --color-link-text: #fdba74;
+}
+
+/* --- Gris Ardoise --- */
+html[data-theme="slate"] {
+  --color-primary-600-rgb: 71 85 105;
+  --color-primary-700-rgb: 51 65 85;
+  --color-sidebar-active-bg: #f1f5f9;
+  --color-sidebar-active-text: #334155;
+  --color-link-text: #475569;
+}
+html[data-theme="slate"].dark {
+  --color-sidebar-active-bg: rgba(100, 116, 139, 0.2);
+  --color-sidebar-active-text: #cbd5e1;
+  --color-link-text: #94a3b8;
+}
+
+/* --- Rose Corail --- */
+html[data-theme="rose"] {
+  --color-primary-600-rgb: 225 29 72;
+  --color-primary-700-rgb: 190 18 60;
+  --color-sidebar-active-bg: #fff1f2;
+  --color-sidebar-active-text: #9f1239;
+  --color-link-text: #e11d48;
+}
+html[data-theme="rose"].dark {
+  --color-sidebar-active-bg: rgba(244, 63, 94, 0.2);
+  --color-sidebar-active-text: #fda4af;
+  --color-link-text: #fb7185;
+}
+
+/* --- Ambre Doré --- */
+html[data-theme="amber"] {
+  --color-primary-600-rgb: 217 119 6;
+  --color-primary-700-rgb: 180 83 9;
+  --color-sidebar-active-bg: #fffbeb;
+  --color-sidebar-active-text: #92400e;
+  --color-link-text: #d97706;
+}
+html[data-theme="amber"].dark {
+  --color-sidebar-active-bg: rgba(245, 158, 11, 0.2);
+  --color-sidebar-active-text: #fcd34d;
+  --color-link-text: #fbbf24;
+}
+
+/* --- Cyan Lagon --- */
+html[data-theme="cyan"] {
+  --color-primary-600-rgb: 8 145 178;
+  --color-primary-700-rgb: 14 116 144;
+  --color-sidebar-active-bg: #ecfeff;
+  --color-sidebar-active-text: #155e75;
+  --color-link-text: #0891b2;
+}
+html[data-theme="cyan"].dark {
+  --color-sidebar-active-bg: rgba(6, 182, 212, 0.2);
+  --color-sidebar-active-text: #67e8f9;
+  --color-link-text: #22d3ee;
+}
+
+
+/* 3. Utility classes using the variables */
+.bg-primary {
+  background-color: rgb(var(--color-primary-600-rgb));
+}
+.hover\:bg-primary-hover:hover {
+  background-color: rgb(var(--color-primary-700-rgb));
+}
+.text-primary-text {
+  color: white;
+}
+.bg-sidebar-active {
+  background-color: var(--color-sidebar-active-bg);
+}
+.text-sidebar-active-text {
+  color: var(--color-sidebar-active-text);
+}
+.text-link {
+  color: var(--color-link-text);
+}
+.border-primary {
+  border-color: var(--color-link-text);
+}

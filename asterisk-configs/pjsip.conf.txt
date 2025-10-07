@@ -1,0 +1,26 @@
+; ==============================================================================
+; Fichier de Configuration PJSIP Principal pour EVSCallPro
+; ==============================================================================
+; Ce fichier définit les paramètres de transport globaux et inclut les
+; configurations personnalisées pour les trunks.
+;
+; ATTENTION : Ne modifiez pas ce fichier directement pour ajouter des trunks.
+; Utilisez les scripts fournis ou l'interface web.
+; ==============================================================================
+
+[transport-udp]
+type=transport
+protocol=udp
+bind=0.0.0.0
+
+; --- Inclusions pour la configuration dynamique ---
+; Ces lignes sont CRUCIALES. Elles permettent à Asterisk de charger les
+; configurations générées par l'application et les scripts.
+
+; Charge les trunks vers les passerelles Yeastar de chaque site,
+; gérés par le script `addSiteTrunk.sh`.
+#include pjsip_custom.conf
+
+; Charge les trunks vers les opérateurs téléphoniques externes,
+; gérés par l'interface web (module "Trunks SIP").
+#include pjsip_custom_trunks.conf
