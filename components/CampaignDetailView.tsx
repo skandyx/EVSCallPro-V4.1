@@ -2,7 +2,7 @@ import React, { useState, useMemo, useEffect } from 'react';
 // FIX: Import the 'Contact' type to resolve the TypeScript error.
 import type { Campaign, SavedScript, CallHistoryRecord, Qualification, User, ContactNote, UserGroup, QualificationGroup, Contact } from '../types.ts';
 import { ArrowLeftIcon, UsersIcon, ChartBarIcon, Cog6ToothIcon } from './Icons.tsx';
-import { useI18n } from '../../src/i18n/index.tsx';
+import { useI18n } from '../src/i18n/index.tsx';
 import apiClient from '../src/lib/axios.ts';
 
 // Import the new tab components
