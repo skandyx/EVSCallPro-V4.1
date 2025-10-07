@@ -3,15 +3,16 @@ import type { User } from '../types.ts';
 import { LogoIcon } from './Icons.tsx';
 import { publicApiClient } from '../src/lib/axios.ts';
 import { useI18n } from '../src/i18n/index.tsx';
+import { useStore } from '../src/store/useStore.ts';
 
 interface LoginScreenProps {
-    onLoginSuccess: (data: { user: User, token: string }) => Promise<void>;
     appLogoDataUrl?: string;
     appName?: string;
 }
 
-const LoginScreen: React.FC<LoginScreenProps> = ({ onLoginSuccess, appLogoDataUrl, appName }) => {
+const LoginScreen: React.FC<LoginScreenProps> = ({ appLogoDataUrl, appName }) => {
     const { t } = useI18n();
+    const login = useStore(state => state.login);
     const [loginId, setLoginId] = useState('');
     const [password, setPassword] = useState('');
     const [error, setError] = useState('');
@@ -23,9 +24,8 @@ const LoginScreen: React.FC<LoginScreenProps> = ({ onLoginSuccess, appLogoDataUr
         setIsLoading(true);
 
         try {
-            // Use the public client to avoid token refresh interceptor on login
             const response = await publicApiClient.post('/auth/login', { loginId, password });
-            await onLoginSuccess({ user: response.data.user, token: response.data.accessToken });
+            await login({ user: response.data.user, token: response.data.accessToken });
             
         } catch (err: any) {
             console.error("Login request failed:", err);

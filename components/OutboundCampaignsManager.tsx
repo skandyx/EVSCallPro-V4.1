@@ -5,6 +5,7 @@ import ImportContactsModal from './ImportContactsModal.tsx';
 // FIX: Corrected import path for CampaignDetailView
 import CampaignDetailView from './CampaignDetailView.tsx'; // Import the new detail view
 import { useI18n } from '../src/i18n/index.tsx';
+import { useStore } from '../src/store/useStore.ts';
 
 // --- Reusable ToggleSwitch Component ---
 const ToggleSwitch: React.FC<{ enabled: boolean; onChange: (enabled: boolean) => void; }> = ({ enabled, onChange }) => (
@@ -295,28 +296,9 @@ const CampaignModal: React.FC<CampaignModalProps> = ({ campaign, users, scripts,
 
 
 // --- Main Component ---
-interface OutboundCampaignsManagerProps {
-    feature: Feature;
-    campaigns: Campaign[];
-    users: User[];
-    savedScripts: SavedScript[];
-    qualificationGroups: QualificationGroup[];
-    userGroups: UserGroup[];
-    qualifications: Qualification[];
-    contactNotes: ContactNote[];
-    onSaveCampaign: (campaign: Campaign) => void;
-    onDeleteCampaign: (campaignId: string) => void;
-    onImportContacts: (campaignId: string, contacts: Contact[], deduplicationConfig: { enabled: boolean; fieldIds: string[] }) => Promise<any>;
-    onUpdateContact: (contact: Contact) => void;
-    onDeleteContacts: (contactIds: string[]) => void;
-    onRecycleContacts: (campaignId: string, qualificationId: string) => void;
-    currentUser: User;
-}
-
-const OutboundCampaignsManager: React.FC<OutboundCampaignsManagerProps> = (props) => {
+const OutboundCampaignsManager: React.FC<{ feature: Feature }> = ({ feature }) => {
     // FIX: Destructuring props with default empty arrays to prevent crashes if data is missing during render.
     const { 
-        feature, 
         campaigns = [], 
         users = [], 
         savedScripts = [], 
@@ -324,15 +306,36 @@ const OutboundCampaignsManager: React.FC<OutboundCampaignsManagerProps> = (props
         userGroups = [], 
         qualifications = [], 
         contactNotes = [],
-        onSaveCampaign, 
-        onDeleteCampaign, 
-        onImportContacts, 
-        onUpdateContact, 
-        onDeleteContacts,
-        onRecycleContacts,
-        currentUser
-    } = props;
+        currentUser,
+        saveOrUpdate,
+        delete: deleteCampaign,
+        handleImportContacts,
+        handleRecycleContacts
+    } = useStore(state => ({
+        campaigns: state.campaigns,
+        users: state.users,
+        savedScripts: state.savedScripts,
+        qualificationGroups: state.qualificationGroups,
+        userGroups: state.userGroups,
+        qualifications: state.qualifications,
+        contactNotes: state.contactNotes,
+        currentUser: state.currentUser!,
+        saveOrUpdate: state.saveOrUpdate,
+        delete: state.delete,
+        handleImportContacts: state.handleImportContacts,
+        handleRecycleContacts: state.handleRecycleContacts
+    }));
     
+    const onSaveCampaign = (campaign: Campaign) => saveOrUpdate('campaigns', campaign);
+    const onDeleteCampaign = (id: string) => deleteCampaign('campaigns', id);
+    const onUpdateContact = (contact: Contact) => saveOrUpdate('contacts', contact);
+    const onDeleteContacts = (contactIds: string[]) => {
+        // This is a special case that doesn't fit the generic delete action
+        apiClient.post('/contacts/bulk-delete', { contactIds }).then(() => {
+            // Refetch or rely on WS
+        }).catch(err => console.error(err));
+    };
+
     const [view, setView] = useState<'list' | 'detail'>('list');
     const [selectedCampaign, setSelectedCampaign] = useState<Campaign | null>(null);
     const [isModalOpen, setIsModalOpen] = useState(false);
@@ -385,7 +388,7 @@ const OutboundCampaignsManager: React.FC<OutboundCampaignsManagerProps> = (props
 
     const handleImport = async (newContacts: Contact[], deduplicationConfig: { enabled: boolean; fieldIds: string[] }) => {
         if (importTargetCampaign) {
-            return onImportContacts(importTargetCampaign.id, newContacts, deduplicationConfig);
+            return handleImportContacts(importTargetCampaign.id, newContacts, deduplicationConfig);
         }
         return Promise.resolve(null);
     };
@@ -404,7 +407,7 @@ const OutboundCampaignsManager: React.FC<OutboundCampaignsManagerProps> = (props
                 onSaveCampaign={onSaveCampaign}
                 onUpdateContact={onUpdateContact}
                 onDeleteContacts={onDeleteContacts}
-                onRecycleContacts={onRecycleContacts}
+                onRecycleContacts={handleRecycleContacts}
                 qualifications={qualifications}
                 qualificationGroups={qualificationGroups}
                 savedScripts={savedScripts}

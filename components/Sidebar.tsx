@@ -7,18 +7,13 @@ import {
     QuestionMarkCircleIcon
 } from './Icons.tsx';
 import { useI18n } from '../src/i18n/index.tsx';
+import { useStore } from '../src/store/useStore.ts';
 
 interface SidebarProps {
     features: Feature[];
     activeFeatureId: string | null;
     onSelectFeature: (id: FeatureId) => void;
-    currentUser: User | null;
-    onLogout: () => void;
-    moduleVisibility: ModuleVisibility;
-    agentStatus: AgentStatus | undefined;
     onOpenProfile: () => void;
-    appLogoDataUrl?: string;
-    appName?: string;
 }
 
 const categoryIcons: Record<FeatureCategory, React.FC<any>> = {
@@ -50,7 +45,21 @@ const getStatusColor = (status: AgentStatus | undefined): string => {
 };
 
 
-const Sidebar: React.FC<SidebarProps> = ({ features, activeFeatureId, onSelectFeature, currentUser, onLogout, moduleVisibility, agentStatus, onOpenProfile, appLogoDataUrl, appName }) => {
+const Sidebar: React.FC<SidebarProps> = ({ features, activeFeatureId, onSelectFeature, onOpenProfile }) => {
+    const { currentUser, moduleVisibility, agentStates, appLogoDataUrl, appName, logout } = useStore(state => ({
+        currentUser: state.currentUser,
+        moduleVisibility: state.moduleVisibility,
+        agentStates: state.agentStates,
+        appLogoDataUrl: state.appSettings?.appLogoDataUrl,
+        appName: state.appSettings?.appName,
+        logout: state.logout,
+    }));
+
+    const agentStatus = useMemo(() => {
+        if (!currentUser) return undefined;
+        return agentStates.find(a => a.id === currentUser.id)?.status;
+    }, [currentUser, agentStates]);
+
     const [expandedCategories, setExpandedCategories] = useState<string[]>([]);
     const [isSidebarCollapsed, setIsSidebarCollapsed] = useState(false);
     const isSuperAdmin = currentUser?.role === 'SuperAdmin';
@@ -186,7 +195,7 @@ const Sidebar: React.FC<SidebarProps> = ({ features, activeFeatureId, onSelectFe
                 )}
                 <div className={`space-y-1 ${!isSidebarCollapsed ? 'mt-2 border-t border-slate-200 dark:border-slate-700 pt-2' : 'mt-2'}`}>
                     <button
-                        onClick={onLogout}
+                        onClick={logout}
                         className="w-full flex items-center p-2 text-sm text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-700 rounded-md"
                         title={t('sidebar.logout')}
                     >

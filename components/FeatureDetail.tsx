@@ -1,4 +1,5 @@
 
+
 import React from 'react';
 import type { Feature } from '../types.ts';
 import { UserJourneyIcon, SpecsIcon, LightbulbIcon } from './Icons.tsx';
