@@ -1,5 +1,6 @@
 // data/features.ts
 import type { Feature } from '../types.ts';
+// FIX: Added .tsx extension to all component imports to resolve module resolution errors.
 import UserManager from '../components/UserManager.tsx';
 import GroupManager from '../components/GroupManager.tsx';
 import TrunkManager from '../components/TrunkManager.tsx';
