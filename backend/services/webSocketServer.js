@@ -2,6 +2,7 @@
 const WebSocket = require('ws');
 const jwt = require('jsonwebtoken');
 const url = require('url');
+const { subscribe } = require('./redisClient');
 
 const ACCESS_TOKEN_SECRET = process.env.JWT_SECRET;
 let wss;
@@ -163,8 +164,19 @@ function initializeWebSocketServer(server) {
             console.error('[WS] Error for client:', ws.user.id, error);
         });
     });
+
+    // S'abonne aux événements de l'AMI via Redis
+    subscribe('events:ami', (event) => {
+        console.log(`[WS] Received event from Redis: ${event.type}`);
+        // Relaye les événements pertinents à la room des superviseurs
+        if (['agentStatusUpdate', 'newCall', 'callHangup'].includes(event.type)) {
+            broadcastToRoom('superviseur', event);
+        } else {
+            console.warn(`[WS] Received unknown event type from Redis: ${event.type}`);
+        }
+    });
     
-    console.log('[WS] WebSocket Server initialized.');
+    console.log('[WS] WebSocket Server initialized and subscribed to Redis events.');
     return wss;
 }
 

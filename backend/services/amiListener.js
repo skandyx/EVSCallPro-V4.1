@@ -1,6 +1,6 @@
 const { amiClient, connectWithRetry } = require('./amiClient');
 const db = require('./db');
-const { broadcastToRoom } = require('./webSocketServer');
+const { publish } = require('./redisClient');
 const logger = require('./logger');
 
 const agentMap = new Map(); // Map<extension, userId>
@@ -59,7 +59,7 @@ function handleAmiEvent(evt) {
                     // ... autres données à extraire de l'événement
                 }
             };
-            broadcastToRoom('superviseur', agentStatusUpdate);
+            publish('events:ami', agentStatusUpdate);
         }
     }
 
@@ -78,7 +78,7 @@ function handleAmiEvent(evt) {
                     timestamp: new Date().toISOString()
                 }
             };
-            broadcastToRoom('superviseur', newCallEvent);
+            publish('events:ami', newCallEvent);
         }
     }
     
@@ -92,7 +92,7 @@ function handleAmiEvent(evt) {
                 // ... on pourrait récupérer la qualification via une variable de canal
             }
         };
-        broadcastToRoom('superviseur', hangupEvent);
+        publish('events:ami', hangupEvent);
     }
 }
 

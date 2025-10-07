@@ -33,12 +33,16 @@ const fs = require('fs/promises');
 const authMiddleware = require('./middleware/auth.middleware.js');
 const dotenv = require('dotenv');
 const logger = require('./services/logger.js');
+const redisClient = require('./services/redisClient.js');
 
 
 // --- INITIALIZATION ---
 const app = express();
 const server = http.createServer(app);
 const PORT = process.env.PORT || 3001;
+
+// --- Connect to Redis ---
+redisClient.connectClients();
 
 // --- MIDDLEWARE ---
 app.use(cors());
