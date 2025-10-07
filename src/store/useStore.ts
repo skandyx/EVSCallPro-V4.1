@@ -5,8 +5,8 @@ import type {
     AgentSession, CallHistoryRecord, SystemLog, VersionInfo, ConnectivityService, ActivityType, 
     PlanningEvent, SystemConnectionSettings, ContactNote, PersonalCallback, AgentState, AgentStatus, 
     ActiveCall, CampaignState, SystemSmtpSettings, SystemAppSettings 
-} from '../types.ts';
-import apiClient, { publicApiClient } from './lib/axios.ts';
+} from '../../types.ts';
+import apiClient, { publicApiClient } from '../lib/axios.ts';
 
 // --- Types ---
 

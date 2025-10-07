@@ -230,7 +230,7 @@ const MonitoringDashboard: React.FC = () => {
                             {versionInfo && Object.entries(versionInfo).map(([key, value]) => (
                                 <li key={key} className="flex justify-between">
                                     <span className="capitalize text-slate-600 dark:text-slate-400">{key}</span>
-                                    <span className="font-mono font-semibold text-slate-700 dark:text-slate-300">{value}</span>
+                                    <span className="font-mono font-semibold text-slate-700 dark:text-slate-300">{String(value)}</span>
                                 </li>
                             ))}
                         </ul>
