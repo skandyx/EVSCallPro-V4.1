@@ -348,6 +348,10 @@ const AppContent: React.FC = () => {
                     if (currentUser && currentUser.id === event.payload.id) setCurrentUser(event.payload);
                 }
                 if (event.type === 'deleteUser') setAllData(prev => ({ ...prev, users: prev.users.filter((u: User) => u.id !== event.payload.id)}));
+                if (event.type === 'usersBulkUpdate') {
+                    console.log('[WS] Bulk user update detected, refreshing all application data.');
+                    fetchApplicationData();
+                }
                 
                 // --- RT: Group CRUD ---
                 if (event.type === 'newGroup') setAllData(prev => ({ ...prev, userGroups: [...prev.userGroups, event.payload]}));
@@ -413,7 +417,7 @@ const AppContent: React.FC = () => {
                 wsClient.disconnect();
             };
         }
-    }, [currentUser, showAlert, t]);
+    }, [currentUser, showAlert, t, fetchApplicationData]);
 
 
     const handleLoginSuccess = async ({ user, token }: { user: User, token: string }) => {

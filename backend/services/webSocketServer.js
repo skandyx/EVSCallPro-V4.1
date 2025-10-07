@@ -176,7 +176,13 @@ function initializeWebSocketServer(server) {
         }
     });
     
-    console.log('[WS] WebSocket Server initialized and subscribed to Redis events.');
+    // S'abonne aux événements CRUD via Redis
+    subscribe('events:crud', (event) => {
+        console.log(`[WS] Received CRUD event from Redis: ${event.type}. Broadcasting to all clients.`);
+        broadcast(event);
+    });
+    
+    console.log('[WS] WebSocket Server initialized and subscribed to Redis channels.');
     return wss;
 }
 

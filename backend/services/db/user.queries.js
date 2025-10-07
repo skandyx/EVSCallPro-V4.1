@@ -2,7 +2,7 @@
 
 const pool = require('./connection');
 const { keysToCamel } = require('./utils');
-const { sendToUser, broadcast } = require('../webSocketServer');
+const { publish } = require('../redisClient');
 
 // Define safe columns to be returned, excluding sensitive ones like password_hash
 const SAFE_USER_COLUMNS = 'u.id, u.login_id, u.extension, u.first_name, u.last_name, u.email, u."role", u.is_active, u.site_id, u.created_at, u.updated_at, u.mobile_number, u.use_mobile_as_station, u.profile_picture_url, u.planning_enabled';
@@ -86,7 +86,7 @@ const createUser = async (userData) => {
         await client.query('COMMIT');
         
         const finalUser = await getUserById(newUserRaw.id); // Refetch to get all joined data
-        broadcast({ type: 'newUser', payload: finalUser }); // RT: emit so all clients refresh instantly
+        publish('events:crud', { type: 'newUser', payload: finalUser }); // RT: emit so all clients refresh instantly
         return finalUser;
 
     } catch (e) {
@@ -166,9 +166,7 @@ const updateUser = async (userId, userData) => {
         
         const finalUser = await getUserById(userId); // Refetch to get all joined data
         
-        // Broadcast the update to the specific user and all other clients
-        sendToUser(userId, { type: 'userProfileUpdate', payload: finalUser });
-        broadcast({ type: 'updateUser', payload: finalUser }); // RT: emit so all clients refresh instantly
+        publish('events:crud', { type: 'updateUser', payload: finalUser }); // RT: emit so all clients refresh instantly
         
         return finalUser;
     } catch (e) {
@@ -182,7 +180,7 @@ const updateUser = async (userId, userData) => {
 
 const deleteUser = async (id) => {
     await pool.query('DELETE FROM users WHERE id = $1', [id]);
-    broadcast({ type: 'deleteUser', payload: { id } }); // RT: emit so all clients refresh instantly
+    publish('events:crud', { type: 'deleteUser', payload: { id } }); // RT: emit so all clients refresh instantly
 };
 
 const generatePassword = () => Math.random().toString(36).slice(-8);
@@ -215,7 +213,7 @@ const createUsersBulk = async (users) => {
         }
         await client.query('COMMIT');
         // For bulk operations, we can send a generic event to trigger a refetch
-        broadcast({ type: 'usersBulkUpdate' }); // RT: emit so all clients refresh instantly
+        publish('events:crud', { type: 'usersBulkUpdate' }); // RT: emit so all clients refresh instantly
         return { success: true };
     } catch (e) {
         await client.query('ROLLBACK');
@@ -253,7 +251,7 @@ const updateUserProfilePicture = async (userId, pictureUrl) => {
         throw new Error('Utilisateur non trouvé.');
     }
     const updatedUser = await getUserById(userId);
-    broadcast({ type: 'updateUser', payload: updatedUser }); // RT: emit so all clients refresh instantly
+    publish('events:crud', { type: 'updateUser', payload: updatedUser }); // RT: emit so all clients refresh instantly
     return updatedUser;
 };
 
