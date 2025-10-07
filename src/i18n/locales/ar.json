@@ -1,3 +1,4 @@
+
 {
   "common": {
     "loading": "جار التحميل",
@@ -97,8 +98,29 @@
   },
   "agentView": {
     "title": "واجهة الوكيل",
+    "header": {
+      "agentInterface": "واجهة الوكيل",
+      "settings": "الإعدادات",
+      "logout": "تسجيل الخروج"
+    },
+    "contact": {
+      "name": "الاسم",
+      "phone": "الهاتف",
+      "campaign": "الحملة",
+      "noContact": "في انتظار جهة الاتصال التالية..."
+    },
+    "script": {
+      "placeholder": "سيتم عرض النص هنا عند تنشيط جهة اتصال."
+    },
+    "qualification": {
+      "title": "تأهيل المكالمة",
+      "noQualifs": "لا توجد مؤهلات لهذه الحملة."
+    },
+    "actions": {
+      "scheduleCallback": "جدولة معاودة الاتصال",
+      "finalize": "إنهاء"
+    },
     "status": "حالة الوكيل",
-    "contactInfo": "معلومات الاتصال",
     "waitingForCall": "في انتظار مكالمة...",
     "nextCall": "المكالمة التالية",
     "searching": "يبحث...",
@@ -109,7 +131,6 @@
     "hold": "تعليق",
     "transfer": "تحويل",
     "qualifications": "المؤهلات",
-    "finalize": "إنهاء",
     "noScript": "هذه الحملة ليس لديها نص مرتبط.",
     "scriptWillBeHere": "سيتم عرض النص هنا.",
     "loading": "تحميل واجهة الوكيل...",
@@ -155,7 +176,24 @@
       "settings": "تعديل الملف الشخصي"
     },
     "respond": "رد",
-    "yourResponsePlaceholder": "ردك..."
+    "yourResponsePlaceholder": "ردك...",
+    "tabs": {
+        "script": "النص",
+        "callbacks": "معاودة الاتصال"
+    },
+    "dialpad": {
+        "title": "لوحة الاتصال",
+        "call": "اتصال"
+    },
+    "footer": {
+        "status": "الحالة",
+        "campaign": "الحملة",
+        "noCampaignActive": "لا توجد حملة نشطة",
+        "dial": "اتصال يدوي"
+    },
+    "callControls": {
+        "hangup": "إنهاء المكالمة"
+    }
   },
   "features": {
     "users": {

@@ -1,3 +1,4 @@
+
 {
   "common": {
     "loading": "Loading",
@@ -97,8 +98,29 @@
   },
   "agentView": {
     "title": "Agent Interface",
+    "header": {
+        "agentInterface": "Agent Interface",
+        "settings": "Settings",
+        "logout": "Logout"
+    },
+    "contact": {
+        "name": "NAME",
+        "phone": "PHONE",
+        "campaign": "CAMPAIGN",
+        "noContact": "Waiting for next contact..."
+    },
+    "script": {
+        "placeholder": "Script will be displayed here when a contact is active."
+    },
+    "qualification": {
+        "title": "Call Qualification",
+        "noQualifs": "No qualifications for this campaign."
+    },
+    "actions": {
+        "scheduleCallback": "Schedule Callback",
+        "finalize": "Finalize & End"
+    },
     "status": "Agent Status",
-    "contactInfo": "Contact Information",
     "waitingForCall": "Waiting for a call...",
     "nextCall": "Next Call",
     "searching": "Searching...",
@@ -109,7 +131,6 @@
     "hold": "Hold",
     "transfer": "Transfer",
     "qualifications": "Qualifications",
-    "finalize": "Finalize",
     "noScript": "This campaign has no associated script.",
     "scriptWillBeHere": "The script will be displayed here.",
     "loading": "Loading agent interface...",
@@ -155,7 +176,24 @@
       "settings": "Edit Profile"
     },
     "respond": "Reply",
-    "yourResponsePlaceholder": "Your response..."
+    "yourResponsePlaceholder": "Your response...",
+    "tabs": {
+        "script": "Script",
+        "callbacks": "Callbacks"
+    },
+    "dialpad": {
+        "title": "Dialpad",
+        "call": "Call"
+    },
+    "footer": {
+        "status": "Status",
+        "campaign": "Campaign",
+        "noCampaignActive": "No active campaign",
+        "dial": "Manual Dial"
+    },
+    "callControls": {
+        "hangup": "Hang Up"
+    }
   },
   "userManager": {
     "title": "Users",
@@ -989,10 +1027,6 @@
       "title": "System Connection",
       "description": "Configure connections to the database and the Asterisk telephony server."
     },
-    "maintenance": {
-        "title": "Maintenance",
-        "description": "Manage backups, restores, and overall system health."
-    },
     "api-docs": {
       "title": "API Documentation",
       "description": "View the complete API documentation for integration and development."
@@ -1008,6 +1042,10 @@
     "help": {
       "title": "Help Center",
       "description": "Find answers to your questions and guides on the features."
+    },
+     "maintenance": {
+        "title": "Maintenance",
+        "description": "Manage backups, restores, and overall system health."
     }
   }
 }

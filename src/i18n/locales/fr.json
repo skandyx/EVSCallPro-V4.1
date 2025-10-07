@@ -1,3 +1,4 @@
+
 {
   "common": {
     "loading": "Chargement",
@@ -97,8 +98,29 @@
   },
   "agentView": {
     "title": "Interface Agent",
+    "header": {
+      "agentInterface": "Interface Agent",
+      "settings": "Paramètres",
+      "logout": "Déconnexion"
+    },
+    "contact": {
+      "name": "NOM",
+      "phone": "TÉLÉPHONE",
+      "campaign": "CAMPAGNE",
+      "noContact": "En attente du prochain contact..."
+    },
+    "script": {
+      "placeholder": "Le script s'affichera ici lorsqu'un contact sera actif."
+    },
+    "qualification": {
+      "title": "Qualification de l'appel",
+      "noQualifs": "Aucune qualification pour cette campagne."
+    },
+    "actions": {
+      "scheduleCallback": "Planifier un rappel",
+      "finalize": "Finaliser & Terminer"
+    },
     "status": "État de l'Agent",
-    "contactInfo": "Informations Fiche",
     "waitingForCall": "En attente d'un appel...",
     "nextCall": "Prochain Appel",
     "searching": "Recherche...",
@@ -109,7 +131,6 @@
     "hold": "Mettre en attente",
     "transfer": "Transférer",
     "qualifications": "Qualifications",
-    "finalize": "Finaliser",
     "noScript": "Cette campagne n'a pas de script associé.",
     "scriptWillBeHere": "Le script s'affichera ici.",
     "loading": "Chargement de l'interface agent...",
@@ -155,7 +176,24 @@
       "settings": "Modifier le profil"
     },
     "respond": "Répondre",
-    "yourResponsePlaceholder": "Votre réponse..."
+    "yourResponsePlaceholder": "Votre réponse...",
+    "tabs": {
+      "script": "Script",
+      "callbacks": "Rappels"
+    },
+    "dialpad": {
+      "title": "Clavier de numérotation",
+      "call": "Appeler"
+    },
+    "footer": {
+      "status": "Statut",
+      "campaign": "Campagne",
+      "noCampaignActive": "Aucune campagne active",
+      "dial": "Numérotation manuelle"
+    },
+    "callControls": {
+        "hangup": "Raccrocher"
+    }
   },
   "userManager": {
     "title": "Utilisateurs",
