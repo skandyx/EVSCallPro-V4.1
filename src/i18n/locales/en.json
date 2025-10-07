@@ -435,7 +435,24 @@
       "name": "Group Name",
       "count": "Qualifications"
     },
-    "noGroups": "No groups found."
+    "noGroups": "No groups found.",
+    "modal": {
+      "editTitle": "Edit Qualification",
+      "addTitle": "Add Qualification",
+      "parent": "Parent (Optional)",
+      "noParent": "No parent",
+      "code": "Code",
+      "codeUsed": "This code is already in use.",
+      "description": "Description",
+      "type": "Type",
+      "types": {
+        "positive": "Positive",
+        "neutral": "Neutral",
+        "negative": "Negative"
+      },
+      "recyclable": "Recyclable",
+      "recyclableHelp": "Allows contacts with this qualification to be re-queued."
+    }
   },
   "supervision": {
     "controlPanel": "Control Panel",
