@@ -15,6 +15,7 @@
     "html2canvas": "^1.4.1",
     "i18next": "^23.11.5",
     "i18next-browser-languagedetector": "^8.0.0",
+    "immer": "^10.1.1",
     "jspdf": "^2.5.1",
     "react": "^19.0.0-rc-f994737d14-20240522",
     "react-dom": "^19.0.0-rc-f994737d14-20240522",
