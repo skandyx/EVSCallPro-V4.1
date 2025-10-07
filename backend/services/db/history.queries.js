@@ -26,7 +26,19 @@ const getCallHistoryForCampaign = async (campaignId) => {
     return res.rows.map(keysToCamel);
 };
 
+/**
+ * Fetches the most recent call history records.
+ * This is used for the initial data load for modules like Reporting that haven't
+ * been migrated to full pagination yet. A limit is applied for performance.
+ */
+const getCallHistory = async () => {
+    const query = 'SELECT * FROM call_history ORDER BY start_time DESC LIMIT 1000';
+    const res = await pool.query(query);
+    return res.rows.map(keysToCamel);
+};
+
 module.exports = {
     getCallHistoryPaginated,
     getCallHistoryForCampaign,
+    getCallHistory,
 };
