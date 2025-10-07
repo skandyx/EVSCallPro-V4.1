@@ -1,110 +1,149 @@
-// FIX: Replaced placeholder with a complete, functional App component to resolve module errors.
-import React, { useState, useEffect, Suspense } from 'react';
+import React, { useState, useEffect, Suspense, useCallback } from 'react';
+import type { Feature, FeatureId, User } from './types.ts';
+import { features } from './data/features.ts';
 import { useStore } from './src/store/useStore.ts';
+import { I18nProvider, useI18n } from './src/i18n/index.tsx';
 import LoginScreen from './components/LoginScreen.tsx';
-import AgentView from './components/AgentView.tsx';
 import Sidebar from './components/Sidebar.tsx';
 import Header from './components/Header.tsx';
 import FeatureDetail from './components/FeatureDetail.tsx';
+import AgentView from './components/AgentView.tsx';
 import MonitoringDashboard from './components/MonitoringDashboard.tsx';
 import UserProfileModal from './components/UserProfileModal.tsx';
-import { features } from './data/features.ts';
-import type { FeatureId } from './types.ts';
-import { I18nProvider } from './src/i18n/index.tsx';
+import { publicApiClient } from './src/lib/axios.ts';
 
-const MainApp = () => {
-    const { currentUser, updatePassword, updateProfilePicture } = useStore(state => ({
+const LoadingSpinner: React.FC = () => (
+    <div className="flex items-center justify-center h-full">
+        <div className="animate-spin rounded-full h-16 w-16 border-t-2 border-b-2 border-indigo-500"></div>
+    </div>
+);
+
+const AppContent: React.FC = () => {
+    const { currentUser, appSettings, fetchApplicationData, logout, updatePassword, updateProfilePicture } = useStore(state => ({
         currentUser: state.currentUser,
+        appSettings: state.appSettings,
+        fetchApplicationData: state.fetchApplicationData,
+        logout: state.logout,
         updatePassword: state.updatePassword,
-        updateProfilePicture: state.updateProfilePicture,
+        updateProfilePicture: state.updateProfilePicture
     }));
-    const [activeFeatureId, setActiveFeatureId] = useState<FeatureId>('users');
-    const [isProfileModalOpen, setIsProfileModalOpen] = useState(false);
-    const [adminView, setAdminView] = useState<'app' | 'monitoring'>('app');
+    
+    const { setLanguage } = useI18n();
+    const [isLoading, setIsLoading] = useState(true);
+    const [activeFeatureId, setActiveFeatureId] = useState<FeatureId | null>(null);
+    const [showProfileModal, setShowProfileModal] = useState(false);
+    const [appView, setAppView] = useState<'app' | 'monitoring'>('app');
+
+    useEffect(() => {
+        if (currentUser) {
+            setIsLoading(true);
+            fetchApplicationData().finally(() => setIsLoading(false));
+        } else {
+            setIsLoading(false);
+        }
+    }, [currentUser, fetchApplicationData]);
+
+    useEffect(() => {
+      const handleLogoutEvent = () => logout();
+      window.addEventListener('logoutEvent', handleLogoutEvent);
+      return () => window.removeEventListener('logoutEvent', handleLogoutEvent);
+    }, [logout]);
+    
+    useEffect(() => {
+        if (appSettings?.defaultLanguage) {
+            setLanguage(appSettings.defaultLanguage);
+        }
+    }, [appSettings?.defaultLanguage, setLanguage]);
 
     const activeFeature = features.find(f => f.id === activeFeatureId);
     const ActiveComponent = activeFeature?.component;
 
+    const handleSelectFeature = useCallback((id: FeatureId) => {
+        setActiveFeatureId(id);
+    }, []);
+
     if (!currentUser) {
-        return null; // Should not happen if this component is rendered
+        return <LoginScreen appLogoDataUrl={appSettings?.appLogoDataUrl} appName={appSettings?.appName} />;
     }
-    
-    // Agent View
+
     if (currentUser.role === 'Agent') {
         return <AgentView onUpdatePassword={updatePassword} onUpdateProfilePicture={updateProfilePicture} />;
     }
 
-    // Admin/Supervisor View
+    if (isLoading) {
+        return <LoadingSpinner />;
+    }
+    
     return (
-        <div className="h-screen w-screen flex flex-col font-sans bg-slate-100 dark:bg-slate-800 text-slate-800 dark:text-slate-200">
-            {isProfileModalOpen && (
-                <UserProfileModal
-                    user={currentUser}
-                    onClose={() => setIsProfileModalOpen(false)}
+        <div className="h-screen w-screen flex bg-slate-100 dark:bg-slate-900 text-slate-800 dark:text-slate-200">
+            {showProfileModal && (
+                <UserProfileModal 
+                    user={currentUser} 
+                    onClose={() => setShowProfileModal(false)}
                     onSavePassword={updatePassword}
                     onSaveProfilePicture={updateProfilePicture}
                 />
             )}
-            <Header activeView={adminView} onViewChange={setAdminView} />
-            <div className="flex-1 flex overflow-hidden">
-                <Sidebar
-                    features={features}
-                    activeFeatureId={activeFeatureId}
-                    onSelectFeature={setActiveFeatureId}
-                    onOpenProfile={() => setIsProfileModalOpen(true)}
-                />
-                <main className="flex-1 overflow-y-auto p-6">
-                    {adminView === 'app' ? (
-                        <Suspense fallback={<div className="text-center p-8">Chargement...</div>}>
-                            {ActiveComponent ? <ActiveComponent feature={activeFeature} /> : <FeatureDetail feature={activeFeature || null} />}
-                        </Suspense>
-                    ) : (
+            <Sidebar
+                features={features}
+                activeFeatureId={activeFeatureId}
+                onSelectFeature={handleSelectFeature}
+                onOpenProfile={() => setShowProfileModal(true)}
+            />
+            <div className="flex-1 flex flex-col overflow-hidden">
+                <Header activeView={appView} onViewChange={setAppView} />
+                <main className="flex-1 overflow-y-auto p-8">
+                    {appView === 'monitoring' ? (
                         <MonitoringDashboard />
+                    ) : (
+                        <Suspense fallback={<LoadingSpinner />}>
+                            {ActiveComponent ? <ActiveComponent feature={activeFeature} /> : <FeatureDetail feature={null} />}
+                        </Suspense>
                     )}
                 </main>
             </div>
         </div>
     );
-}
-
+};
 
 const App: React.FC = () => {
-    const { currentUser, token, fetchApplicationData, appSettings, init, theme } = useStore(state => ({
-        currentUser: state.currentUser,
-        token: state.token,
-        fetchApplicationData: state.fetchApplicationData,
-        appSettings: state.appSettings,
-        init: state.init,
-        theme: state.theme,
-    }));
+    // Initial theme setup from useStore
+    const theme = useStore(state => state.theme);
+    const appName = useStore(state => state.appSettings?.appName);
+    const appFaviconDataUrl = useStore(state => state.appSettings?.appFaviconDataUrl);
 
     useEffect(() => {
-        init();
-    }, [init]);
-    
-    useEffect(() => {
-        const root = window.document.documentElement;
         if (theme === 'dark' || (theme === 'system' && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
-            root.classList.add('dark');
+            document.documentElement.classList.add('dark');
         } else {
-            root.classList.remove('dark');
+            document.documentElement.classList.remove('dark');
         }
     }, [theme]);
     
+     useEffect(() => {
+        if (appName) document.title = appName;
+    }, [appName]);
+
     useEffect(() => {
-        if (token) {
-            fetchApplicationData();
+        const favicon = document.getElementById('favicon') as HTMLLinkElement;
+        if (favicon && appFaviconDataUrl) {
+            favicon.href = appFaviconDataUrl;
         }
-    }, [token, fetchApplicationData]);
+    }, [appFaviconDataUrl]);
+
+
+    // Fetch public config on initial load
+    useEffect(() => {
+        const setAppSettings = useStore.getState().setAppSettings;
+        publicApiClient.get('/public-config').then(res => {
+            setAppSettings(res.data.appSettings);
+        }).catch(err => console.error("Could not fetch public config:", err));
+    }, []);
 
     return (
-        <I18nProvider>
-            {currentUser ? (
-                <MainApp />
-            ) : (
-                <LoginScreen appName={appSettings?.appName} appLogoDataUrl={appSettings?.appLogoDataUrl} />
-            )}
-        </I18nProvider>
+      <I18nProvider>
+          <AppContent />
+      </I18nProvider>
     );
 };
 

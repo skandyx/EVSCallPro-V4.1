@@ -101,6 +101,7 @@ export const features: Feature[] = [
         titleKey: 'features.outbound.title',
         category: 'Outbound',
         descriptionKey: 'features.outbound.description',
+        // FIX: Added .tsx extension to component import path.
         component: lazy(() => import('../components/OutboundCampaignsManager.tsx')),
         userJourney: {
             titleKey: "features.outbound.userJourney.title",
@@ -132,6 +133,7 @@ export const features: Feature[] = [
         titleKey: 'features.scripts.title',
         category: 'Outbound',
         descriptionKey: 'features.scripts.description',
+        // FIX: Added .tsx extension to component import path.
         component: lazy(() => import('../components/ScriptFeature.tsx')),
         userJourney: {
             titleKey: "features.scripts.userJourney.title",
@@ -286,6 +288,7 @@ export const features: Feature[] = [
         titleKey: 'features.supervision.title',
         category: 'Supervision & Reporting',
         descriptionKey: 'features.supervision.description',
+        // FIX: Added .tsx extension to component import path.
         component: lazy(() => import('../components/SupervisionDashboard.tsx')),
         userJourney: {
             titleKey: "features.supervision.userJourney.title",
@@ -640,6 +643,7 @@ export const features: Feature[] = [
         titleKey: 'features.api-docs.title',
         category: 'Paramètres',
         descriptionKey: 'features.api-docs.description',
+        // FIX: Added .tsx extension to component import path.
         component: lazy(() => import('../components/ApiDocs.tsx')),
         userJourney: {
             titleKey: 'features.api-docs.userJourney.title',

@@ -1,28 +1,33 @@
-// FIX: Replaced placeholder with a complete Zustand store implementation to resolve module errors.
-// FIX: Changed `import create from 'zustand'` to `import { create } from 'zustand'` to use the correct named export for Zustand v4 with ESM. This resolves the TypeError where `create` was not considered a function and fixes subsequent type inference errors for the store's `get` function.
-import { create } from 'zustand';
-import { persist } from 'zustand/middleware';
+import create from 'zustand';
+import { persist, createJSONStorage } from 'zustand/middleware';
 import type {
-    User, Campaign, SavedScript, Qualification, QualificationGroup, IvrFlow, AudioFile,
-    Trunk, Did, Site, ActivityType, PlanningEvent, PersonalCallback, UserGroup,
+    User, Campaign, SavedScript, Qualification, QualificationGroup, IvrFlow, AudioFile, Trunk, Did, Site,
+    UserGroup, ActivityType, PersonalCallback, CallHistoryRecord, AgentSession, ContactNote,
     SystemConnectionSettings, SystemSmtpSettings, SystemAppSettings, ModuleVisibility,
-    BackupLog, BackupSchedule, SystemLog, VersionInfo, ConnectivityService, AgentState, ActiveCall, CampaignState, CallHistoryRecord, AgentSession, ContactNote, Contact
-} from '../../types.ts';
+    BackupLog, BackupSchedule, SystemLog, VersionInfo, ConnectivityService, AgentState, ActiveCall, CampaignState
+} from '../types';
 import apiClient, { publicApiClient } from '../lib/axios.ts';
 import wsClient from '../services/wsClient.ts';
 
 type Theme = 'light' | 'dark' | 'system';
+type EntityName = 'users' | 'campaigns' | 'scripts' | 'user-groups' | 'qualification-groups' | 'qualifications' | 'ivr-flows' | 'trunks' | 'dids' | 'sites';
 
 interface AppState {
     // Auth & User
     currentUser: User | null;
     token: string | null;
 
-    // Core Data
+    // App UI State
+    theme: Theme;
+    isLoading: boolean;
+    error: string | null;
+    notifications: any[]; // Define a proper type for notifications
+
+    // Static & Semi-Static Data
     users: User[];
     userGroups: UserGroup[];
-    campaigns: Campaign[];
     savedScripts: SavedScript[];
+    campaigns: Campaign[];
     qualifications: Qualification[];
     qualificationGroups: QualificationGroup[];
     ivrFlows: IvrFlow[];
@@ -36,12 +41,7 @@ interface AppState {
     agentSessions: AgentSession[];
     contactNotes: ContactNote[];
 
-    // Real-time Data
-    agentStates: AgentState[];
-    activeCalls: ActiveCall[];
-    campaignStates: CampaignState[];
-
-    // System & Config
+    // System Settings
     systemConnectionSettings: SystemConnectionSettings | null;
     smtpSettings: SystemSmtpSettings | null;
     appSettings: SystemAppSettings | null;
@@ -51,181 +51,208 @@ interface AppState {
     systemLogs: SystemLog[];
     versionInfo: VersionInfo | null;
     connectivityServices: ConnectivityService[];
-    theme: Theme;
-    
-    // UI State
-    notifications: any[]; // Define a proper type later
-    
+
+    // Real-time Data
+    agentStates: AgentState[];
+    activeCalls: ActiveCall[];
+    campaignStates: CampaignState[];
+
     // Actions
-    init: () => void;
     login: (authData: { user: User; token: string }) => Promise<void>;
     logout: () => void;
     fetchApplicationData: () => Promise<void>;
+    setTheme: (theme: Theme) => void;
+    setAppSettings: (settings: SystemAppSettings) => void;
     handleWsEvent: (event: any) => void;
-    saveOrUpdate: (entityType: string, data: any) => Promise<void>;
-    delete: (entityType: string, id: string) => Promise<void>;
-    duplicate: (entityType: string, id: string) => Promise<void>;
-    showAlert: (message: string, status: 'success' | 'error' | 'info') => void;
+    
+    // CRUD Actions
+    saveOrUpdate: (entityName: EntityName, data: any) => Promise<void>;
+    delete: (entityName: EntityName, id: string) => Promise<void>;
+    duplicate: (entityName: 'scripts' | 'ivr-flows', id: string) => Promise<void>;
+
+    // Specific Actions
+    createUsersBulk: (users: Partial<User>[]) => Promise<void>;
     updatePassword: (passwordData: any) => Promise<void>;
     updateProfilePicture: (base64DataUrl: string) => Promise<void>;
     handleImportContacts: (campaignId: string, contacts: any[], deduplicationConfig: any) => Promise<any>;
     handleRecycleContacts: (campaignId: string, qualificationId: string) => Promise<void>;
-    updateContact: (contact: Contact) => Promise<void>;
+    updateContact: (contact: any) => Promise<void>;
     changeAgentStatus: (status: any) => void;
-    setTheme: (theme: Theme) => void;
-    createUsersBulk: (users: Partial<User>[]) => Promise<void>;
+
+    // Utility
+    showAlert: (message: string, status: 'success' | 'error' | 'info' | 'warning') => void;
 }
 
-export const useStore = create<AppState>()(persist(
-    (set, get) => ({
-        // Initial State
-        currentUser: null,
-        token: null,
-        users: [], userGroups: [], campaigns: [], savedScripts: [], qualifications: [], qualificationGroups: [], ivrFlows: [], audioFiles: [], trunks: [], dids: [], sites: [], activityTypes: [], personalCallbacks: [], callHistory: [], agentSessions: [], contactNotes: [],
-        agentStates: [], activeCalls: [], campaignStates: [],
-        systemConnectionSettings: null, smtpSettings: null, appSettings: null,
-        moduleVisibility: { categories: {}, features: {} },
-        backupLogs: [], backupSchedule: null, systemLogs: [], versionInfo: null, connectivityServices: [],
-        theme: 'system',
-        notifications: [],
+export const useStore = create<AppState>()(
+    persist(
+        (set, get) => ({
+            // Default State
+            currentUser: null,
+            token: null,
+            theme: 'system',
+            isLoading: true,
+            error: null,
+            notifications: [],
+            // Data collections
+            users: [], userGroups: [], savedScripts: [], campaigns: [], qualifications: [], qualificationGroups: [],
+            ivrFlows: [], audioFiles: [], trunks: [], dids: [], sites: [], activityTypes: [], personalCallbacks: [],
+            callHistory: [], agentSessions: [], contactNotes: [],
+            // System
+            systemConnectionSettings: null, smtpSettings: null, appSettings: null, moduleVisibility: { categories: {}, features: {} },
+            backupLogs: [], backupSchedule: null, systemLogs: [], versionInfo: null, connectivityServices: [],
+            // Real-time
+            agentStates: [], activeCalls: [], campaignStates: [],
 
-        // Actions
-        init: () => {
-            const token = localStorage.getItem('authToken');
-            if (token) {
-                set({ token });
-                apiClient.get('/auth/me').then(res => {
-                    set({ currentUser: res.data.user });
-                    wsClient.connect(token);
-                }).catch(() => {
-                    get().logout();
-                });
-            }
-            publicApiClient.get('/public-config').then(res => {
-                set({ appSettings: res.data.appSettings });
-            });
+            // --- ACTIONS ---
+            
+            setAppSettings: (settings) => set({ appSettings: settings }),
 
-            wsClient.onMessage(get().handleWsEvent);
+            login: async ({ user, token }) => {
+                set({ currentUser: user, token, isLoading: true });
+                localStorage.setItem('authToken', token);
+                wsClient.connect(token);
+                await get().fetchApplicationData();
+            },
 
-            window.addEventListener('logoutEvent', () => {
-                get().logout();
-            });
-        },
-
-        login: async ({ user, token }) => {
-            localStorage.setItem('authToken', token);
-            set({ currentUser: user, token });
-            wsClient.connect(token);
-            await get().fetchApplicationData();
-        },
-
-        logout: () => {
-            apiClient.post('/auth/logout').catch(() => {});
-            localStorage.removeItem('authToken');
-            wsClient.disconnect();
-            set({ currentUser: null, token: null });
-        },
-
-        fetchApplicationData: async () => {
-            try {
-                const response = await apiClient.get('/application-data');
-                set(response.data);
-            } catch (error) {
-                console.error("Failed to fetch application data", error);
-                get().logout(); // Logout on data fetch failure
-            }
-        },
-
-        handleWsEvent: (event) => {
-            console.log("WS Event Received in Store:", event);
-            // This is where you'd handle real-time updates from the server
-        },
-        
-        saveOrUpdate: async (entityType, data) => {
-            try {
-                const endpoint = `/${entityType.replace(/s$/, '').replace(/ie$/, 'y')}s`;
-                let response;
-                if (data.id && (get() as any)[entityType].some((e: any) => e.id === data.id)) {
-                    response = await apiClient.put(`${endpoint}/${data.id}`, data);
-                } else {
-                    response = await apiClient.post(endpoint, data);
+            logout: async () => {
+                try {
+                    await apiClient.post('/auth/logout');
+                } catch (error) {
+                    console.error("Logout API call failed, proceeding with client-side logout.", error);
+                } finally {
+                    wsClient.disconnect();
+                    localStorage.removeItem('authToken');
+                    set({ currentUser: null, token: null, isLoading: false });
                 }
-                // The backend will broadcast the update via WebSocket, so no need for frontend state change here.
-                get().showAlert('Enregistrement réussi', 'success');
-            } catch (error) {
-                console.error(`Failed to save/update ${entityType}`, error);
-                get().showAlert("Erreur lors de l'enregistrement", 'error');
-                throw error;
+            },
+            
+            fetchApplicationData: async () => {
+                try {
+                    set({ isLoading: true });
+                    const response = await apiClient.get('/application-data');
+                    const data = response.data;
+                    set({ ...data, isLoading: false, error: null });
+                } catch (error: any) {
+                    console.error("Failed to fetch application data", error);
+                    set({ isLoading: false, error: "Failed to load data." });
+                    if (error.response?.status === 401) {
+                        get().logout();
+                    }
+                }
+            },
+
+            setTheme: (theme) => set({ theme }),
+
+            handleWsEvent: (event) => {
+                // This is a placeholder for a more robust event handler
+                console.log("Received WS Event:", event);
+                 if (event.type === 'agentStatusUpdate' || event.type === 'agentRaisedHand' || event.type === 'supervisorMessage') {
+                    // These are handled by specific logic in components
+                    // but we could update central state here if needed
+                }
+                 // Generic CRUD events
+                if (event.type.startsWith('new') || event.type.startsWith('update')) {
+                    get().fetchApplicationData(); // Refetch all for simplicity
+                }
+                 if (event.type.startsWith('delete')) {
+                    get().fetchApplicationData(); // Refetch all for simplicity
+                }
+            },
+
+            saveOrUpdate: async (entityName, data) => {
+                const isNew = !data.id || !get()[entityName].some((e: any) => e.id === data.id);
+                const url = isNew ? `/${entityName}` : `/${entityName}/${data.id}`;
+                const method = isNew ? 'post' : 'put';
+                
+                try {
+                    const response = await apiClient[method](url, data);
+                    // Optimistic update or refetch can be handled here via WS
+                    get().showAlert('Enregistrement réussi', 'success');
+                } catch (error: any) {
+                    get().showAlert(error.response?.data?.error || `Erreur lors de l'enregistrement.`, 'error');
+                    throw error;
+                }
+            },
+
+            delete: async (entityName, id) => {
+                try {
+                    await apiClient.delete(`/${entityName}/${id}`);
+                     get().showAlert('Suppression réussie', 'success');
+                } catch (error: any) {
+                    get().showAlert(error.response?.data?.error || `Erreur lors de la suppression.`, 'error');
+                    throw error;
+                }
+            },
+
+            duplicate: async (entityName, id) => {
+                try {
+                    await apiClient.post(`/${entityName}/${id}/duplicate`);
+                    get().showAlert('Duplication réussie', 'success');
+                } catch (error: any) {
+                    get().showAlert(error.response?.data?.error || `Erreur lors de la duplication.`, 'error');
+                }
+            },
+
+            createUsersBulk: async (users) => {
+                 try {
+                    await apiClient.post('/users/bulk', { users });
+                } catch (error: any) {
+                    get().showAlert(error.response?.data?.error || "Erreur lors de l'importation.", 'error');
+                    throw error;
+                }
+            },
+
+            updatePassword: async (passwordData) => {
+                await apiClient.put('/users/me/password', passwordData);
+                get().showAlert('Mot de passe mis à jour.', 'success');
+            },
+
+            updateProfilePicture: async (base64DataUrl) => {
+                await apiClient.put('/users/me/picture', { pictureUrl: base64DataUrl });
+                get().showAlert('Photo de profil mise à jour.', 'success');
+            },
+
+            handleImportContacts: async (campaignId, contacts, deduplicationConfig) => {
+                 return apiClient.post(`/campaigns/${campaignId}/contacts`, { contacts, deduplicationConfig });
+            },
+
+            handleRecycleContacts: async (campaignId, qualificationId) => {
+                await apiClient.post(`/campaigns/${campaignId}/recycle`, { qualificationId });
+                get().showAlert('Contacts recyclés.', 'success');
+            },
+
+            updateContact: async (contact) => {
+                 await apiClient.put(`/contacts/${contact.id}`, contact);
+            },
+            
+            changeAgentStatus: (status) => {
+                const currentUser = get().currentUser;
+                if (currentUser) {
+                    wsClient.send({
+                        type: 'agentStatusChange',
+                        payload: { agentId: currentUser.id, status }
+                    });
+                }
+            },
+
+            showAlert: (message, status) => {
+                // In a real app, this would integrate with a toast library
+                console.log(`[ALERT] ${status.toUpperCase()}: ${message}`);
+                alert(`${status.toUpperCase()}: ${message}`);
             }
-        },
 
-        delete: async (entityType, id) => {
-            try {
-                const endpoint = `/${entityType.replace(/s$/, '').replace(/ie$/, 'y')}s`;
-                await apiClient.delete(`${endpoint}/${id}`);
-                get().showAlert('Suppression réussie', 'success');
-            } catch (error) {
-                console.error(`Failed to delete ${entityType}`, error);
-                get().showAlert('Erreur lors de la suppression', 'error');
-                throw error;
-            }
-        },
-        
-        duplicate: async (entityType, id) => {
-             try {
-                const endpoint = `/${entityType.replace(/s$/, '').replace(/ie$/, 'y')}s`;
-                await apiClient.post(`${endpoint}/${id}/duplicate`);
-                get().showAlert('Duplication réussie', 'success');
-            } catch (error) {
-                console.error(`Failed to duplicate ${entityType}`, error);
-                get().showAlert('Erreur lors de la duplication', 'error');
-                throw error;
-            }
-        },
-
-        showAlert: (message, status) => {
-            // In a real app, this would integrate with a toast library
-            alert(`[${status.toUpperCase()}] ${message}`);
-        },
-
-        updatePassword: async (passwordData) => {
-             await apiClient.put('/users/me/password', passwordData);
-             get().showAlert('Mot de passe mis à jour avec succès.', 'success');
-        },
-
-        updateProfilePicture: async (base64DataUrl) => {
-            await apiClient.put('/users/me/picture', { pictureUrl: base64DataUrl });
-            get().showAlert('Photo de profil mise à jour.', 'success');
-        },
-        
-        handleImportContacts: async (campaignId, contacts, deduplicationConfig) => {
-            return await apiClient.post(`/campaigns/${campaignId}/contacts`, { contacts, deduplicationConfig });
-        },
-        
-        handleRecycleContacts: async (campaignId, qualificationId) => {
-            await apiClient.post(`/campaigns/${campaignId}/recycle`, { qualificationId });
-        },
-
-        updateContact: async (contact) => {
-            await apiClient.put(`/contacts/${contact.id}`, contact);
-        },
-
-        changeAgentStatus: (status) => {
-            wsClient.send({ type: 'agentStatusChange', payload: { status } });
-        },
-        
-        setTheme: (theme) => set({ theme }),
-
-        createUsersBulk: async (users: Partial<User>[]) => {
-            await apiClient.post('/users/bulk', { users });
-        },
-
-    }),
-    {
-        name: 'app-storage',
-        partialize: (state) => ({ 
-            token: state.token,
-            theme: state.theme
         }),
-    }
-));
+        {
+            name: 'evscallpro-storage',
+            storage: createJSONStorage(() => localStorage),
+            partialize: (state) => ({
+                currentUser: state.currentUser,
+                token: state.token,
+                theme: state.theme,
+            }),
+        }
+    )
+);
+
+// Initialize WebSocket event handling
+wsClient.onMessage(useStore.getState().handleWsEvent);
