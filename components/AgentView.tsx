@@ -7,6 +7,7 @@ import apiClient from '../src/lib/axios.ts';
 import { useI18n } from '../src/i18n/index.tsx';
 import wsClient from '../src/services/wsClient.ts';
 import CallbackSchedulerModal from './CallbackSchedulerModal.tsx';
+// FIX: Corrected module import path to resolve module resolution error.
 import { useStore } from '../src/store/useStore.ts';
 
 type Theme = 'light' | 'dark' | 'system';

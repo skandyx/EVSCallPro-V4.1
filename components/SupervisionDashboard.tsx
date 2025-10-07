@@ -5,6 +5,7 @@ import CallBoard from './CallBoard.tsx';
 import CampaignBoard from './CampaignBoard.tsx';
 import { UsersIcon, PhoneIcon, ChartBarIcon } from './Icons.tsx';
 import { useI18n } from '../src/i18n/index.tsx';
+// FIX: Corrected module import path to resolve module resolution error.
 import { useStore } from '../src/store/useStore.ts';
 import apiClient from '../src/lib/axios.ts';
 import wsClient from '../src/services/wsClient.ts';

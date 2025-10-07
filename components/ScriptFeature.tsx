@@ -1,7 +1,8 @@
 // FIX: Create content for ScriptFeature.tsx to resolve module error.
 import React, { useState } from 'react';
-import type { Feature, SavedScript } from '../types';
-import { useStore } from '../src/store/useStore';
+import type { Feature, SavedScript } from '../types.ts';
+// FIX: Corrected module import path by adding the '.ts' extension.
+import { useStore } from '../src/store/useStore.ts';
 import { useI18n } from '../src/i18n/index.tsx';
 import ScriptBuilder from './ScriptBuilder.tsx';
 import { PlusIcon, EditIcon, TrashIcon, DuplicateIcon } from './Icons.tsx';

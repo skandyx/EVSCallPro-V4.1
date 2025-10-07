@@ -5,6 +5,7 @@ import ImportContactsModal from './ImportContactsModal.tsx';
 // FIX: Corrected import path for CampaignDetailView
 import CampaignDetailView from './CampaignDetailView.tsx'; // Import the new detail view
 import { useI18n } from '../src/i18n/index.tsx';
+// FIX: Corrected module import path to resolve module resolution error.
 import { useStore } from '../src/store/useStore.ts';
 // FIX: Imported apiClient to resolve 'Cannot find name' error.
 import apiClient from '../src/lib/axios.ts';

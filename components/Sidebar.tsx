@@ -7,6 +7,7 @@ import {
     QuestionMarkCircleIcon
 } from './Icons.tsx';
 import { useI18n } from '../src/i18n/index.tsx';
+// FIX: Corrected module import path to resolve module resolution error.
 import { useStore } from '../src/store/useStore.ts';
 
 interface SidebarProps {

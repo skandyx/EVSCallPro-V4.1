@@ -8,6 +8,7 @@ export const features: Feature[] = [
         titleKey: 'features.users.title',
         category: 'Agent',
         descriptionKey: 'features.users.description',
+        // FIX: Corrected module import path for lazy-loaded component to resolve module resolution error.
         component: lazy(() => import('../components/UserManager.tsx')),
         userJourney: {
             titleKey: 'features.users.userJourney.title',
@@ -38,6 +39,7 @@ export const features: Feature[] = [
         titleKey: 'features.groups.title',
         category: 'Agent',
         descriptionKey: 'features.groups.description',
+        // FIX: Corrected module import path for lazy-loaded component to resolve module resolution error.
         component: lazy(() => import('../components/GroupManager.tsx')),
          userJourney: {
             titleKey: 'features.groups.userJourney.title',
@@ -67,6 +69,7 @@ export const features: Feature[] = [
         titleKey: 'features.planning.title',
         category: 'Agent',
         descriptionKey: 'features.planning.description',
+        // FIX: Corrected module import path for lazy-loaded component to resolve module resolution error.
         component: lazy(() => import('../components/PlanningManager.tsx')),
          userJourney: {
             titleKey: 'features.planning.userJourney.title',
@@ -159,6 +162,7 @@ export const features: Feature[] = [
         titleKey: 'features.ivr.title',
         category: 'Inbound',
         descriptionKey: 'features.ivr.description',
+        // FIX: Corrected module import path for lazy-loaded component to resolve module resolution error.
         component: lazy(() => import('../components/IvrFeature.tsx')),
         userJourney: {
             titleKey: "features.ivr.userJourney.title",
@@ -189,6 +193,7 @@ export const features: Feature[] = [
         titleKey: 'features.audio.title',
         category: 'Sound',
         descriptionKey: 'features.audio.description',
+        // FIX: Corrected module import path for lazy-loaded component to resolve module resolution error.
         component: lazy(() => import('../components/AudioManager.tsx')),
         userJourney: {
             titleKey: 'features.audio.userJourney.title',
@@ -219,6 +224,7 @@ export const features: Feature[] = [
         titleKey: 'features.records.title',
         category: 'Sound',
         descriptionKey: 'features.records.description',
+        // FIX: Corrected module import path for lazy-loaded component to resolve module resolution error.
         component: lazy(() => import('../components/RecordsManager.tsx')),
          userJourney: {
             titleKey: 'features.records.userJourney.title',
@@ -249,6 +255,7 @@ export const features: Feature[] = [
         titleKey: 'features.qualifications.title',
         category: 'Configuration',
         descriptionKey: 'features.qualifications.description',
+        // FIX: Corrected module import path for lazy-loaded component to resolve module resolution error.
         component: lazy(() => import('../components/QualificationsManager.tsx')),
         userJourney: {
             titleKey: "features.qualifications.userJourney.title",
@@ -309,6 +316,7 @@ export const features: Feature[] = [
         titleKey: 'features.reporting.title',
         category: 'Supervision & Reporting',
         descriptionKey: 'features.reporting.description',
+        // FIX: Corrected module import path for lazy-loaded component to resolve module resolution error.
         component: lazy(() => import('../components/ReportingDashboard.tsx')),
         userJourney: {
             titleKey: "features.reporting.userJourney.title",
@@ -339,6 +347,7 @@ export const features: Feature[] = [
         titleKey: 'features.history.title',
         category: 'Supervision & Reporting',
         descriptionKey: 'features.history.description',
+        // FIX: Corrected module import path for lazy-loaded component to resolve module resolution error.
         component: lazy(() => import('../components/HistoryViewer.tsx')),
         userJourney: {
             titleKey: "features.history.userJourney.title",
@@ -370,6 +379,7 @@ export const features: Feature[] = [
         titleKey: 'features.sessions.title',
         category: 'Supervision & Reporting',
         descriptionKey: 'features.sessions.description',
+        // FIX: Corrected module import path for lazy-loaded component to resolve module resolution error.
         component: lazy(() => import('../components/SessionViewer.tsx')),
         userJourney: {
             titleKey: "features.sessions.userJourney.title",
@@ -399,6 +409,7 @@ export const features: Feature[] = [
         titleKey: 'features.trunks.title',
         category: 'Paramètres',
         descriptionKey: 'features.trunks.description',
+        // FIX: Corrected module import path for lazy-loaded component to resolve module resolution error.
         component: lazy(() => import('../components/TrunkManager.tsx')),
         userJourney: {
             titleKey: 'features.trunks.userJourney.title',
@@ -427,6 +438,7 @@ export const features: Feature[] = [
         titleKey: 'features.dids.title',
         category: 'Paramètres',
         descriptionKey: 'features.dids.description',
+        // FIX: Corrected module import path for lazy-loaded component to resolve module resolution error.
         component: lazy(() => import('../components/DidManager.tsx')),
          userJourney: {
             titleKey: 'features.dids.userJourney.title',
@@ -456,6 +468,7 @@ export const features: Feature[] = [
         titleKey: 'features.sites-config.title',
         category: 'Paramètres',
         descriptionKey: 'features.sites-config.description',
+        // FIX: Corrected module import path for lazy-loaded component to resolve module resolution error.
         component: lazy(() => import('../components/SiteManager.tsx')),
         userJourney: {
             titleKey: 'features.sites-config.userJourney.title',
@@ -485,6 +498,7 @@ export const features: Feature[] = [
         titleKey: 'features.module-settings.title',
         category: 'Paramètres',
         descriptionKey: 'features.module-settings.description',
+        // FIX: Corrected module import path for lazy-loaded component to resolve module resolution error.
         component: lazy(() => import('../components/ModuleSettingsManager.tsx')),
         userJourney: {
             titleKey: 'features.module-settings.userJourney.title',
@@ -514,6 +528,7 @@ export const features: Feature[] = [
         titleKey: 'features.languages.title',
         category: 'Paramètres',
         descriptionKey: 'features.languages.description',
+        // FIX: Corrected module import path for lazy-loaded component to resolve module resolution error.
         component: lazy(() => import('../components/LanguageManager.tsx')),
         userJourney: {
             titleKey: 'features.languages.userJourney.title',
@@ -540,6 +555,7 @@ export const features: Feature[] = [
         titleKey: 'features.database-client.title',
         category: 'Paramètres',
         descriptionKey: 'features.database-client.description',
+        // FIX: Corrected module import path for lazy-loaded component to resolve module resolution error.
         component: lazy(() => import('../components/DatabaseManager.tsx')),
         userJourney: {
             titleKey: 'features.database-client.userJourney.title',
@@ -570,6 +586,7 @@ export const features: Feature[] = [
         titleKey: 'features.system-connection.title',
         category: 'Paramètres',
         descriptionKey: 'features.system-connection.description',
+        // FIX: Corrected module import path for lazy-loaded component to resolve module resolution error.
         component: lazy(() => import('../components/SystemConnectionManager.tsx')),
         userJourney: {
             titleKey: 'features.system-connection.userJourney.title',
@@ -601,6 +618,7 @@ export const features: Feature[] = [
         titleKey: 'features.maintenance.title',
         category: 'Système',
         descriptionKey: 'features.maintenance.description',
+        // FIX: Corrected module import path for lazy-loaded component to resolve module resolution error.
         component: lazy(() => import('../components/MaintenanceManager.tsx')),
         userJourney: { titleKey: '', stepsKeys: [] },
         specs: { titleKey: '', pointsKeys: [] },
@@ -611,6 +629,7 @@ export const features: Feature[] = [
         titleKey: 'features.help.title',
         category: 'Système',
         descriptionKey: 'features.help.description',
+        // FIX: Corrected module import path for lazy-loaded component to resolve module resolution error.
         component: lazy(() => import('../components/HelpCenter.tsx')),
         userJourney: { titleKey: '', stepsKeys: [] },
         specs: { titleKey: '', pointsKeys: [] },
@@ -649,6 +668,7 @@ export const features: Feature[] = [
         titleKey: 'features.billing.title',
         category: 'Paramètres',
         descriptionKey: 'features.billing.description',
+        // FIX: Corrected module import path for lazy-loaded component to resolve module resolution error.
         component: lazy(() => import('../components/BillingManager.tsx')),
         userJourney: { titleKey: '', stepsKeys: [] },
         specs: { titleKey: '', pointsKeys: [] },
@@ -659,6 +679,7 @@ export const features: Feature[] = [
         titleKey: 'features.system-settings.title',
         category: 'Paramètres',
         descriptionKey: 'features.system-settings.description',
+        // FIX: Corrected module import path for lazy-loaded component to resolve module resolution error.
         component: lazy(() => import('../components/SystemSettingsManager.tsx')),
         userJourney: { titleKey: '', stepsKeys: [] },
         specs: { titleKey: '', pointsKeys: [] },

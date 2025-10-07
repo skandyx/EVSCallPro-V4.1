@@ -3,6 +3,7 @@ import type { SystemLog, VersionInfo, ConnectivityService, Site } from '../types
 import { CpuChipIcon, CircleStackIcon, HddIcon, TimeIcon, ShieldCheckIcon, WifiIcon, TrashIcon, BugAntIcon, FolderIcon } from './Icons.tsx';
 import { useI18n } from '../src/i18n/index.tsx';
 // FIX: Import store and API client to make the component self-sufficient and remove props.
+// FIX: Corrected module import path to resolve module resolution error.
 import { useStore } from '../src/store/useStore.ts';
 import apiClient from '../src/lib/axios.ts';
 

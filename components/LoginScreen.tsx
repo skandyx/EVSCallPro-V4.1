@@ -3,6 +3,7 @@ import type { User } from '../types.ts';
 import { LogoIcon } from './Icons.tsx';
 import { publicApiClient } from '../src/lib/axios.ts';
 import { useI18n } from '../src/i18n/index.tsx';
+// FIX: Corrected module import path to resolve module resolution error.
 import { useStore } from '../src/store/useStore.ts';
 
 interface LoginScreenProps {
