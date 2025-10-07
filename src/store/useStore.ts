@@ -6,7 +6,7 @@ import type {
     AgentStatus, AgentState, ActiveCall, CampaignState, SystemAppSettings, ModuleVisibility,
     IvrFlow, AudioFile, Trunk, Did, Site, ActivityType, PersonalCallback, AgentSession, SystemConnectionSettings,
     SystemSmtpSettings, BackupLog, BackupSchedule, SystemLog, VersionInfo, ConnectivityService
-} from '../../types.ts';
+} from '../types';
 import apiClient, { publicApiClient } from '../lib/axios.ts';
 
 // Define Notification type based on usage in Header.tsx
