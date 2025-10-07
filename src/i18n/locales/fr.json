@@ -527,7 +527,7 @@
     }
   },
   "agentStatuses": {
-    "EnAttente": "Connecté",
+    "EnAttente": "Disponible",
     "EnAppel": "En appel",
     "EnPostAppel": "Post-appel",
     "EnPause": "En Pause",

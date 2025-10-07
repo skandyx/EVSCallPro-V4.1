@@ -1,7 +1,6 @@
 import React, { useState, useEffect, useMemo, useRef } from 'react';
 import type { User, Campaign, Contact, Qualification, SavedScript, ContactNote, PersonalCallback, AgentStatus } from '../types.ts';
-// FIX: Corrected typo in icon import from 'Cog6toothIcon' to 'Cog6ToothIcon'.
-import { PowerIcon, PhoneIcon, UserCircleIcon, PauseIcon, CalendarDaysIcon, ComputerDesktopIcon, SunIcon, MoonIcon, ChevronDownIcon, ChevronLeftIcon, ChevronRightIcon, HandRaisedIcon, XMarkIcon, BellAlertIcon, Cog6ToothIcon, InformationCircleIcon } from './Icons.tsx';
+import { PowerIcon, PhoneIcon, UserCircleIcon, PauseIcon, CalendarDaysIcon, ComputerDesktopIcon, SunIcon, MoonIcon, ChevronDownIcon, ChevronLeftIcon, ChevronRightIcon, HandRaisedIcon, XMarkIcon, BellAlertIcon, Cog6ToothIcon, InformationCircleIcon, CheckIcon } from './Icons.tsx';
 import AgentPreview from './AgentPreview.tsx';
 import UserProfileModal from './UserProfileModal.tsx';
 import apiClient from '../src/lib/axios.ts';
@@ -81,6 +80,8 @@ const formatDuration = (seconds: number) => {
 const getStatusColor = (status: AgentStatus): string => {
     switch (status) {
         case 'En Attente': return 'bg-green-500';
+        case 'En Pause': return 'bg-orange-500';
+        case 'Formation': return 'bg-purple-500';
         default: return 'bg-gray-400';
     }
 };
@@ -111,8 +112,21 @@ const AgentView: React.FC<AgentViewProps> = ({ onUpdatePassword, onUpdateProfile
     const [isCallbackModalOpen, setIsCallbackModalOpen] = useState(false);
     const [activeDialingCampaigns, setActiveDialingCampaigns] = useState<Record<string, boolean>>({});
     const [currentCallbackDate, setCurrentCallbackDate] = useState(new Date());
-    // FIX: Added state for the note input to resolve prop type mismatch.
     const [newNote, setNewNote] = useState('');
+    const [isStatusMenuOpen, setIsStatusMenuOpen] = useState(false);
+    const statusMenuRef = useRef<HTMLDivElement>(null);
+
+    const agentStatuses: AgentStatus[] = ['En Attente', 'En Pause', 'Formation'];
+
+    useEffect(() => {
+        const handleClickOutside = (event: MouseEvent) => {
+            if (statusMenuRef.current && !statusMenuRef.current.contains(event.target as Node)) {
+                setIsStatusMenuOpen(false);
+            }
+        };
+        document.addEventListener('mousedown', handleClickOutside);
+        return () => document.removeEventListener('mousedown', handleClickOutside);
+    }, []);
 
     const assignedCampaigns = useMemo(() => currentUser.campaignIds.map(id => campaigns.find(c => c.id === id && c.isActive)).filter((c): c is Campaign => !!c), [currentUser.campaignIds, campaigns]);
 
@@ -133,12 +147,11 @@ const AgentView: React.FC<AgentViewProps> = ({ onUpdatePassword, onUpdateProfile
         setSelectedQual(null);
     };
     
-    // FIX: Modified onSaveNote to use local state, aligning with AgentPreview's prop type.
     const onSaveNote = async () => {
         if (!newNote.trim() || !currentContact || !currentCampaign) return;
         try {
             await apiClient.post(`/contacts/${currentContact.id}/notes`, { agentId: currentUser.id, campaignId: currentCampaign.id, note: newNote });
-            setNewNote(''); // Clear the note after saving
+            setNewNote('');
         } catch (error) { console.error("Failed to save note", error); }
     };
 
@@ -171,7 +184,6 @@ const AgentView: React.FC<AgentViewProps> = ({ onUpdatePassword, onUpdateProfile
         });
     }, [personalCallbacks, currentUser.id, currentCallbackDate]);
     
-    // FIX: Defined the missing statusToI18nKey function.
     const statusToI18nKey = (status: AgentStatus): string => {
         const mapping: Partial<Record<AgentStatus, string>> = {
             'En Attente': 'agentStatuses.EnAttente',
@@ -192,15 +204,48 @@ const AgentView: React.FC<AgentViewProps> = ({ onUpdatePassword, onUpdateProfile
             {isCallbackModalOpen && currentContact && currentCampaign && <CallbackSchedulerModal isOpen={true} onClose={() => setIsCallbackModalOpen(false)} onSchedule={async (time, notes) => { /* Logic here */ }} />}
             
             <header className="flex-shrink-0 bg-white dark:bg-slate-900 shadow-sm flex justify-between items-center px-4 h-16 z-20 border-b dark:border-slate-700">
-                 <div className="flex items-center gap-3">
-                    <div className="relative">
-                        {currentUser.profilePictureUrl ? <img src={currentUser.profilePictureUrl} alt="Avatar" className="w-10 h-10 rounded-full object-cover" /> : <UserCircleIcon className="w-10 h-10 text-slate-400" />}
-                        <span className={`absolute top-0 right-0 block h-3 w-3 rounded-full border-2 border-white dark:border-slate-900 ${getStatusColor(agentState.status)}`}></span>
-                    </div>
-                    <div>
-                        <p className="font-semibold text-slate-800 dark:text-slate-100">{currentUser.firstName} {currentUser.lastName} - Ext: {currentUser.loginId}</p>
-                        <p className="text-sm text-slate-500 dark:text-slate-400">{t(statusToI18nKey(agentState.status))} {formatDuration(agentState.statusDuration).substring(3)}</p>
-                    </div>
+                <div className="relative">
+                    <button onClick={() => setIsStatusMenuOpen(p => !p)} className="flex items-center gap-3 p-2 rounded-lg hover:bg-slate-100 dark:hover:bg-slate-800">
+                        <div className="relative">
+                            {currentUser.profilePictureUrl ? <img src={currentUser.profilePictureUrl} alt="Avatar" className="w-10 h-10 rounded-full object-cover" /> : <UserCircleIcon className="w-10 h-10 text-slate-400" />}
+                            <span className={`absolute top-0 right-0 block h-3 w-3 rounded-full border-2 border-white dark:border-slate-900 ${getStatusColor(agentState.status)}`}></span>
+                        </div>
+                        <div>
+                            <p className="font-semibold text-slate-800 dark:text-slate-100 text-left">{currentUser.firstName} {currentUser.lastName} - Ext: {currentUser.loginId}</p>
+                            <p className="text-sm text-slate-500 dark:text-slate-400 text-left">{t(statusToI18nKey(agentState.status))} {formatDuration(agentState.statusDuration).substring(3)}</p>
+                        </div>
+                    </button>
+                    {isStatusMenuOpen && (
+                        <div ref={statusMenuRef} className="absolute top-full mt-2 w-64 bg-white dark:bg-slate-800 rounded-lg shadow-xl ring-1 ring-black ring-opacity-5 py-2 z-30">
+                            <div className="px-4 py-2 border-b dark:border-slate-700">
+                                <p className="text-sm font-semibold">{t('agentView.statusManager.title')}</p>
+                            </div>
+                            <div className="py-2">
+                                {agentStatuses.map(status => (
+                                    <button
+                                        key={status}
+                                        onClick={() => { changeAgentStatus(status); setIsStatusMenuOpen(false); }}
+                                        className="w-full text-left flex items-center justify-between px-4 py-2 text-sm text-slate-700 dark:text-slate-200 hover:bg-slate-100 dark:hover:bg-slate-700"
+                                    >
+                                        <span className="flex items-center">
+                                            <span className={`w-2.5 h-2.5 rounded-full mr-3 ${getStatusColor(status)}`}></span>
+                                            {t(statusToI18nKey(status))}
+                                        </span>
+                                        {agentState.status === status && <CheckIcon className="w-5 h-5 text-indigo-600" />}
+                                    </button>
+                                ))}
+                            </div>
+                            <div className="border-t pt-2 mt-1 dark:border-slate-700">
+                                <button
+                                    onClick={() => { setIsProfileModalOpen(true); setIsStatusMenuOpen(false); }}
+                                    className="w-full text-left flex items-center px-4 py-2 text-sm text-slate-700 dark:text-slate-200 hover:bg-slate-100 dark:hover:bg-slate-700"
+                                >
+                                    <Cog6ToothIcon className="w-5 h-5 mr-3 text-slate-500" />
+                                    {t('agentView.statusManager.settings')}
+                                </button>
+                            </div>
+                        </div>
+                    )}
                 </div>
                  <div className="flex items-center gap-3">
                     <Clock />
