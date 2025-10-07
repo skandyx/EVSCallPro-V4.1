@@ -1,5 +1,5 @@
 import React, { useState, useMemo, useEffect } from 'react';
-import type { Feature, Campaign, User, SavedScript, QualificationGroup, Contact, CallHistoryRecord, Qualification, UserGroup, ContactNote } from '../types.ts';
+import type { Feature, Campaign, User, SavedScript, QualificationGroup, Contact, CallHistoryRecord, Qualification, UserGroup, ContactNote, DaySchedule } from '../types.ts';
 import { PlusIcon, EditIcon, TrashIcon, ArrowUpTrayIcon } from './Icons.tsx';
 import ImportContactsModal from './ImportContactsModal.tsx';
 // FIX: Corrected import path for CampaignDetailView
@@ -39,22 +39,44 @@ interface CampaignModalProps {
 }
 // FIX: The CampaignModal component definition has been moved outside of the OutboundCampaignsManager component. This ensures that the modal maintains a stable identity across re-renders of its parent, preventing state loss and fixing the "white screen" bug on edit.
 const CampaignModal: React.FC<CampaignModalProps> = ({ campaign, users, scripts, qualificationGroups, userGroups, onSave, onClose }) => {
+    const { t } = useI18n();
     const [activeTab, setActiveTab] = useState('general');
-    const [formData, setFormData] = useState<Campaign>(campaign || {
-        id: `campaign-${Date.now()}`, name: '', description: '', scriptId: null, callerId: '', isActive: true,
-        assignedUserIds: [], qualificationGroupId: qualificationGroups.length > 0 ? qualificationGroups[0].id : null,
-        contacts: [], dialingMode: 'MANUAL', priority: 5, timezone: 'Europe/Paris', callingDays: [1, 2, 3, 4, 5],
-        callingStartTime: '09:00', callingEndTime: '20:00', maxAbandonRate: 3, paceFactor: 1.2, minAgentsBeforeStart: 1,
-        retryAttempts: 3, retryIntervals: [30, 60, 120], retryOnStatus: [], amdEnabled: true, amdConfidence: 80,
-        voicemailAction: 'HANGUP', recordingEnabled: true, recordingBeep: true, maxRingDuration: 25, wrapUpTime: 10,
-        maxCallDuration: 3600, quotaRules: [], filterRules: [],
+
+    const defaultSchedule = useMemo(() => [
+        { dayOfWeek: 1, active: true, startTime: '08:00', endTime: '20:00' },
+        { dayOfWeek: 2, active: true, startTime: '08:00', endTime: '20:00' },
+        { dayOfWeek: 3, active: true, startTime: '08:00', endTime: '20:00' },
+        { dayOfWeek: 4, active: true, startTime: '08:00', endTime: '20:00' },
+        { dayOfWeek: 5, active: true, startTime: '08:00', endTime: '20:00' },
+        { dayOfWeek: 6, active: true, startTime: '08:00', endTime: '20:00' },
+        { dayOfWeek: 7, active: true, startTime: '08:00', endTime: '20:00' },
+    ], []);
+
+    const [formData, setFormData] = useState<Campaign>(() => {
+        const newCampaignData = {
+            id: `campaign-${Date.now()}`, name: '', description: '', scriptId: null, callerId: '', isActive: true,
+            assignedUserIds: [], qualificationGroupId: qualificationGroups.length > 0 ? qualificationGroups[0].id : null,
+            // FIX: Use 'as const' to ensure TypeScript infers a literal type for 'dialingMode', resolving a type error.
+            contacts: [], dialingMode: 'MANUAL' as const, priority: 5, timezone: 'Europe/Paris',
+            schedule: defaultSchedule,
+            maxAbandonRate: 3, paceFactor: 1.2, minAgentsBeforeStart: 1,
+            retryAttempts: 3, retryIntervals: [30, 60, 120], retryOnStatus: [], amdEnabled: true, amdConfidence: 80,
+            // FIX: Use 'as const' to ensure TypeScript infers a literal type for 'voicemailAction', preventing potential type errors.
+            voicemailAction: 'HANGUP' as const, recordingEnabled: true, recordingBeep: true, maxRingDuration: 25, wrapUpTime: 10,
+            maxCallDuration: 3600, quotaRules: [], filterRules: [],
+        };
+        return campaign ? { ...campaign, schedule: campaign.schedule || defaultSchedule } : newCampaignData;
     });
 
-    const WEEK_DAYS = [
-        { label: 'Lundi', value: 1 }, { label: 'Mardi', value: 2 }, { label: 'Mercredi', value: 3 },
-        { label: 'Jeudi', value: 4 }, { label: 'Vendredi', value: 5 }, { label: 'Samedi', value: 6 },
-        { label: 'Dimanche', value: 7 },
-    ];
+    const WEEK_DAYS = useMemo(() => [
+        { label: t('outboundCampaignsManager.modal.weekdays.monday'), value: 1 },
+        { label: t('outboundCampaignsManager.modal.weekdays.tuesday'), value: 2 },
+        { label: t('outboundCampaignsManager.modal.weekdays.wednesday'), value: 3 },
+        { label: t('outboundCampaignsManager.modal.weekdays.thursday'), value: 4 },
+        { label: t('outboundCampaignsManager.modal.weekdays.friday'), value: 5 },
+        { label: t('outboundCampaignsManager.modal.weekdays.saturday'), value: 6 },
+        { label: t('outboundCampaignsManager.modal.weekdays.sunday'), value: 7 },
+    ], [t]);
 
     // --- Validation Logic for LEDs ---
     const isNameValid = !!formData.name.trim();
@@ -64,16 +86,20 @@ const CampaignModal: React.FC<CampaignModalProps> = ({ campaign, users, scripts,
     const isFormValid = isNameValid && isQualifGroupValid && isCallerIdValid && isWrapUpTimeValid;
     
     useEffect(() => {
-        setFormData(campaign || {
+        const newCampaignData = {
             id: `campaign-${Date.now()}`, name: '', description: '', scriptId: null, callerId: '', isActive: true,
             assignedUserIds: [], qualificationGroupId: qualificationGroups.length > 0 ? qualificationGroups[0].id : null,
-            contacts: [], dialingMode: 'MANUAL', priority: 5, timezone: 'Europe/Paris', callingDays: [1, 2, 3, 4, 5],
-            callingStartTime: '09:00', callingEndTime: '20:00', maxAbandonRate: 3, paceFactor: 1.2, minAgentsBeforeStart: 1,
+            // FIX: Use 'as const' to ensure TypeScript infers a literal type for 'dialingMode', resolving a type error.
+            contacts: [], dialingMode: 'MANUAL' as const, priority: 5, timezone: 'Europe/Paris',
+            schedule: defaultSchedule,
+            maxAbandonRate: 3, paceFactor: 1.2, minAgentsBeforeStart: 1,
             retryAttempts: 3, retryIntervals: [30, 60, 120], retryOnStatus: [], amdEnabled: true, amdConfidence: 80,
-            voicemailAction: 'HANGUP', recordingEnabled: true, recordingBeep: true, maxRingDuration: 25, wrapUpTime: 10,
+            // FIX: Use 'as const' to ensure TypeScript infers a literal type for 'voicemailAction', preventing potential type errors.
+            voicemailAction: 'HANGUP' as const, recordingEnabled: true, recordingBeep: true, maxRingDuration: 25, wrapUpTime: 10,
             maxCallDuration: 3600, quotaRules: [], filterRules: [],
-        });
-    }, [campaign, qualificationGroups]);
+        };
+        setFormData(campaign ? { ...campaign, schedule: campaign.schedule || defaultSchedule } : newCampaignData);
+    }, [campaign, qualificationGroups, defaultSchedule]);
 
 
     const selectedScript = useMemo(() => {
@@ -100,19 +126,18 @@ const CampaignModal: React.FC<CampaignModalProps> = ({ campaign, users, scripts,
         const { name, value } = e.target;
         if (name === 'scriptId') setFormData(prev => ({ ...prev, scriptId: value === '' ? null : value }));
         else if (e.target.getAttribute('type') === 'number') setFormData(prev => ({ ...prev, [name]: isNaN(parseInt(value, 10)) ? 0 : parseInt(value, 10) }));
-        else setFormData(prev => ({ ...prev, [name]: value }));
+        else setFormData(prev => ({ ...prev, [name]: value as any }));
     };
     
-    const handleCallingDayChange = (dayValue: number, isEnabled: boolean) => {
-        setFormData(prev => {
-            const currentDays = new Set(prev.callingDays || []);
-            if (isEnabled) {
-                currentDays.add(dayValue);
-            } else {
-                currentDays.delete(dayValue);
-            }
-            return { ...prev, callingDays: Array.from(currentDays).sort() };
-        });
+    const handleScheduleChange = (dayOfWeek: number, field: keyof DaySchedule, value: any) => {
+        setFormData(prev => ({
+            ...prev,
+            schedule: prev.schedule.map(daySchedule => 
+                daySchedule.dayOfWeek === dayOfWeek 
+                    ? { ...daySchedule, [field]: value }
+                    : daySchedule
+            )
+        }));
     };
     
     const handleAgentAssignment = (agentId: string, isChecked: boolean) => {
@@ -242,30 +267,30 @@ const CampaignModal: React.FC<CampaignModalProps> = ({ campaign, users, scripts,
                         {activeTab === 'planning' && (
                             <div className="space-y-4">
                                 <div>
-                                    <label className="block text-sm font-medium text-slate-700 dark:text-slate-300">Jours d'activité</label>
-                                    <div className="mt-2 space-y-2 rounded-md border border-slate-300 p-3 bg-slate-50 dark:bg-slate-900 dark:border-slate-700">
-                                        {WEEK_DAYS.map(day => (
-                                            <div key={day.value} className="flex items-center justify-between">
-                                                <label htmlFor={`day-${day.value}`} className="font-medium text-slate-800 dark:text-slate-200">{day.label}</label>
-                                                <ToggleSwitch
-                                                    enabled={formData.callingDays.includes(day.value)}
-                                                    onChange={(isEnabled) => handleCallingDayChange(day.value, isEnabled)}
-                                                />
-                                            </div>
-                                        ))}
-                                    </div>
-                                </div>
-                                <div>
-                                    <label className="block text-sm font-medium text-slate-700 dark:text-slate-300">Plage horaire</label>
-                                    <div className="mt-2 grid grid-cols-2 gap-4">
-                                         <div>
-                                            <label className="block text-xs font-medium text-slate-500 dark:text-slate-400">Heure de début</label>
-                                            <input type="time" name="callingStartTime" value={formData.callingStartTime} onChange={handleChange} className="mt-1 block w-full p-2 border rounded-md dark:bg-slate-900 dark:border-slate-600 dark:text-slate-200" />
-                                         </div>
-                                         <div>
-                                            <label className="block text-xs font-medium text-slate-500 dark:text-slate-400">Heure de fin</label>
-                                            <input type="time" name="callingEndTime" value={formData.callingEndTime} onChange={handleChange} className="mt-1 block w-full p-2 border rounded-md dark:bg-slate-900 dark:border-slate-600 dark:text-slate-200" />
-                                         </div>
+                                    <label className="block text-sm font-medium text-slate-700 dark:text-slate-300">Jours et heures d'activité</label>
+                                    <div className="mt-2 space-y-2 rounded-md border border-slate-300 p-3 bg-slate-50 dark:bg-slate-900/50 dark:border-slate-700">
+                                        {WEEK_DAYS.map(day => {
+                                            const daySchedule = formData.schedule?.find(s => s.dayOfWeek === day.value);
+                                            if (!daySchedule) return null;
+                                            const isEnabled = daySchedule.active;
+                                            return (
+                                                <div key={day.value} className="grid grid-cols-12 gap-3 items-center">
+                                                    <div className="col-span-3">
+                                                        <label className="font-medium text-slate-800 dark:text-slate-200">{day.label}</label>
+                                                    </div>
+                                                    <div className={`col-span-7 grid grid-cols-2 gap-3 ${!isEnabled ? 'opacity-50' : ''}`}>
+                                                        <input type="time" value={daySchedule.startTime} onChange={e => handleScheduleChange(day.value, 'startTime', e.target.value)} disabled={!isEnabled} className="block w-full p-2 border rounded-md dark:bg-slate-900 dark:border-slate-600 dark:text-slate-200" />
+                                                        <input type="time" value={daySchedule.endTime} onChange={e => handleScheduleChange(day.value, 'endTime', e.target.value)} disabled={!isEnabled} className="block w-full p-2 border rounded-md dark:bg-slate-900 dark:border-slate-600 dark:text-slate-200" />
+                                                    </div>
+                                                    <div className="col-span-2 flex justify-end">
+                                                        <ToggleSwitch
+                                                            enabled={isEnabled}
+                                                            onChange={(enabled) => handleScheduleChange(day.value, 'active', enabled)}
+                                                        />
+                                                    </div>
+                                                </div>
+                                            );
+                                        })}
                                     </div>
                                 </div>
                             </div>

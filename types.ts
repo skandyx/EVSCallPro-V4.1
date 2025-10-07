@@ -153,6 +153,13 @@ export interface FilterRule {
     value: string;
 }
 
+export interface DaySchedule {
+    dayOfWeek: number;
+    active: boolean;
+    startTime: string;
+    endTime: string;
+}
+
 export interface Campaign {
     id: string;
     name: string;
@@ -166,9 +173,7 @@ export interface Campaign {
     dialingMode: 'PREDICTIVE' | 'PROGRESSIVE' | 'MANUAL';
     priority: number;
     timezone: string;
-    callingDays: number[];
-    callingStartTime: string;
-    callingEndTime: string;
+    schedule: DaySchedule[];
     maxAbandonRate: number;
     paceFactor: number;
     minAgentsBeforeStart: number;

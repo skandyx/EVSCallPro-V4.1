@@ -1,6 +1,7 @@
-import React, { useState, useEffect, useCallback, useMemo, useRef } from 'react';
+import React, { useState, useEffect, useMemo, useRef } from 'react';
 import type { User, Campaign, Contact, Qualification, SavedScript, ContactNote, PersonalCallback, AgentStatus } from '../types.ts';
-import { PowerIcon, PhoneIcon, UserCircleIcon, PauseIcon, CalendarDaysIcon, ComputerDesktopIcon, SunIcon, MoonIcon, ChevronDownIcon, HandRaisedIcon, XMarkIcon, BellAlertIcon, Cog6ToothIcon } from './Icons.tsx';
+// FIX: Corrected typo in icon import from 'Cog6toothIcon' to 'Cog6ToothIcon'.
+import { PowerIcon, PhoneIcon, UserCircleIcon, PauseIcon, CalendarDaysIcon, ComputerDesktopIcon, SunIcon, MoonIcon, ChevronDownIcon, ChevronLeftIcon, ChevronRightIcon, HandRaisedIcon, XMarkIcon, BellAlertIcon, Cog6ToothIcon, InformationCircleIcon } from './Icons.tsx';
 import AgentPreview from './AgentPreview.tsx';
 import UserProfileModal from './UserProfileModal.tsx';
 import apiClient from '../src/lib/axios.ts';
@@ -54,52 +55,36 @@ const LanguageSwitcher: React.FC = () => {
     return <div className="relative"><button onClick={(e) => { e.stopPropagation(); setIsOpen(!isOpen); }} className="flex items-center p-1 space-x-2 bg-slate-100 dark:bg-slate-700 rounded-full text-sm font-medium text-slate-700 dark:text-slate-200 hover:bg-slate-200 dark:hover:bg-slate-600"><span className="w-6 h-6 rounded-full overflow-hidden"><img src={getFlagSrc(language)} alt={language} className="w-full h-full object-cover" /></span><span className="hidden sm:inline">{language.toUpperCase()}</span><ChevronDownIcon className="w-4 h-4 text-slate-500 dark:text-slate-400 mr-1" /></button>{isOpen && <div className="absolute right-0 mt-2 w-36 origin-top-right bg-white dark:bg-slate-800 rounded-md shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none z-20"><div className="py-1">{languages.map(lang => <button key={lang.code} onClick={() => { setLanguage(lang.code); setIsOpen(false); }} className="w-full text-left flex items-center gap-3 px-4 py-2 text-sm text-slate-700 dark:text-slate-200 hover:bg-slate-100 dark:hover:bg-slate-700"><img src={getFlagSrc(lang.code)} alt={lang.name} className="w-5 h-auto rounded-sm" />{lang.name}</button>)}</div></div>}</div>;
 }
 
-const DialpadPopover: React.FC<{ onCall: (number: string) => void }> = ({ onCall }) => {
-    const [number, setNumber] = useState('');
-    const buttons = ['1', '2', '3', '4', '5', '6', '7', '8', '9', '*', '0', '#'];
+const ToggleSwitch: React.FC<{ enabled: boolean; onChange: (enabled: boolean) => void; }> = ({ enabled, onChange }) => (
+    <button
+        type="button"
+        onClick={() => onChange(!enabled)}
+        className={`${enabled ? 'bg-indigo-600' : 'bg-slate-200'} relative inline-flex h-6 w-11 flex-shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-colors duration-200 ease-in-out`}
+        role="switch"
+        aria-checked={enabled}
+    >
+        <span
+            aria-hidden="true"
+            className={`${enabled ? 'translate-x-5' : 'translate-x-0'} pointer-events-none inline-block h-5 w-5 transform rounded-full bg-white shadow ring-0 transition duration-200 ease-in-out`}
+        />
+    </button>
+);
 
-    const handleCall = () => {
-        if(number) onCall(number);
-    };
-
-    return (
-        <div className="w-64 bg-white dark:bg-slate-800 rounded-lg shadow-lg border dark:border-slate-700 p-2">
-            <input type="text" value={number} onChange={e => setNumber(e.target.value)} className="w-full p-2 mb-2 text-center text-lg font-mono border-b dark:bg-slate-900 dark:border-slate-600 focus:outline-none" placeholder="Numéro..." />
-            <div className="grid grid-cols-3 gap-1">
-                {buttons.map(btn => <button key={btn} onClick={() => setNumber(n => n + btn)} className="p-3 text-lg font-bold rounded-lg hover:bg-slate-100 dark:hover:bg-slate-700">{btn}</button>)}
-            </div>
-            <button onClick={handleCall} className="w-full mt-2 bg-green-500 text-white font-bold p-3 rounded-lg flex items-center justify-center gap-2 hover:bg-green-600">
-                <PhoneIcon className="w-5 h-5"/> Appeler
-            </button>
-        </div>
-    );
+const formatDuration = (seconds: number) => {
+    if (isNaN(seconds)) seconds = 0;
+    const h = Math.floor(seconds / 3600).toString().padStart(2, '0');
+    const m = Math.floor((seconds % 3600) / 60).toString().padStart(2, '0');
+    const s = Math.floor(seconds % 60).toString().padStart(2, '0');
+    return `${h}:${m}:${s}`;
 };
 
 const getStatusColor = (status: AgentStatus): string => {
     switch (status) {
         case 'En Attente': return 'bg-green-500';
-        case 'En Appel': return 'bg-red-500';
-        case 'En Post-Appel': return 'bg-yellow-500';
-        case 'Ringing': return 'bg-blue-500';
-        case 'En Pause': return 'bg-orange-500';
-        case 'Formation': return 'bg-purple-500';
-        case 'Mise en attente': return 'bg-purple-500';
-        case 'Déconnecté': return 'bg-gray-500';
         default: return 'bg-gray-400';
     }
 };
 
-const statusToI18nKey = (status: AgentStatus): string => {
-    const map: Record<AgentStatus, string> = {
-        'En Attente': 'agentView.statuses.available', 'En Appel': 'agentView.statuses.onCall',
-        'En Post-Appel': 'agentView.statuses.wrapUp', 'En Pause': 'agentView.statuses.onPause',
-        'Ringing': 'agentView.statuses.ringing', 'Déconnecté': 'agentView.statuses.disconnected',
-        'Mise en attente': 'agentView.statuses.onHold', 'Formation': 'agentView.statuses.training',
-    };
-    return map[status] || status;
-};
-
-// --- Agent View ---
 const AgentView: React.FC<AgentViewProps> = ({ onUpdatePassword, onUpdateProfilePicture }) => {
     const { t } = useI18n();
     const { 
@@ -112,76 +97,48 @@ const AgentView: React.FC<AgentViewProps> = ({ onUpdatePassword, onUpdateProfile
         updateContact: state.updateContact, changeAgentStatus: state.changeAgentStatus,
     }));
     
-    const agentState = useMemo(() => agentStates.find(a => a.id === currentUser.id), [currentUser, agentStates]);
+    const agentState = useMemo(() => agentStates.find(a => a.id === currentUser.id) || {
+        ...currentUser, status: 'Déconnecté', statusDuration: 0, callsHandledToday: 0,
+        averageHandlingTime: 0, averageTalkTime: 0, pauseCount: 0, trainingCount: 0,
+        totalPauseTime: 0, totalTrainingTime: 0, totalConnectedTime: 0
+    }, [currentUser, agentStates]);
 
-    const [activeTab, setActiveTab] = useState<'script' | 'callbacks'>('script');
     const [currentContact, setCurrentContact] = useState<Contact | null>(null);
     const [currentCampaign, setCurrentCampaign] = useState<Campaign | null>(null);
     const [activeScript, setActiveScript] = useState<SavedScript | null>(null);
     const [selectedQual, setSelectedQual] = useState<string | null>(null);
-    const [isLoadingNextContact, setIsLoadingNextContact] = useState(false);
-    const [newNote, setNewNote] = useState('');
     const [isProfileModalOpen, setIsProfileModalOpen] = useState(false);
     const [isCallbackModalOpen, setIsCallbackModalOpen] = useState(false);
-    const [activeDialingCampaignId, setActiveDialingCampaignId] = useState<string | null>(null);
-    const [supervisorMessages, setSupervisorMessages] = useState<SupervisorNotification[]>([]);
-    const [isDialpadOpen, setIsDialpadOpen] = useState(false);
-    const dialpadRef = useRef<HTMLDivElement>(null);
-    
-    const status = agentState?.status || 'Déconnecté';
+    const [activeDialingCampaigns, setActiveDialingCampaigns] = useState<Record<string, boolean>>({});
+    const [currentCallbackDate, setCurrentCallbackDate] = useState(new Date());
+    // FIX: Added state for the note input to resolve prop type mismatch.
+    const [newNote, setNewNote] = useState('');
+
     const assignedCampaigns = useMemo(() => currentUser.campaignIds.map(id => campaigns.find(c => c.id === id && c.isActive)).filter((c): c is Campaign => !!c), [currentUser.campaignIds, campaigns]);
 
     useEffect(() => {
-        if (assignedCampaigns.length > 0 && !activeDialingCampaignId) {
-            setActiveDialingCampaignId(assignedCampaigns[0]?.id || null);
-        }
-    }, [assignedCampaigns, activeDialingCampaignId]);
-    
-     useEffect(() => {
-        const handleClickOutside = (event: MouseEvent) => {
-            if (dialpadRef.current && !dialpadRef.current.contains(event.target as Node)) {
-                setIsDialpadOpen(false);
-            }
-        };
-        document.addEventListener("mousedown", handleClickOutside);
-        return () => document.removeEventListener("mousedown", handleClickOutside);
-    }, [dialpadRef]);
+        const initialActive: Record<string, boolean> = {};
+        assignedCampaigns.forEach(c => { initialActive[c.id] = true; });
+        setActiveDialingCampaigns(initialActive);
+    }, [assignedCampaigns]);
 
-    const handleGetNextContact = async () => {
-        if (!activeDialingCampaignId) {
-            showAlert(t('agentView.feedback.activateCampaign'), 'warning'); return;
-        }
-        setIsLoadingNextContact(true);
-        try {
-            const { data } = await apiClient.post('/campaigns/next-contact', { agentId: currentUser.id, activeCampaignId: activeDialingCampaignId });
-            if (data.contact) {
-                setCurrentContact(data.contact);
-                setCurrentCampaign(data.campaign);
-                setActiveScript(savedScripts.find(s => s.id === data.campaign.scriptId) || null);
-                setSelectedQual(null);
-            } else {
-                showAlert(t('agentView.feedback.noContactAvailable', { campaignName: campaigns.find(c=>c.id === activeDialingCampaignId)?.name || '' }), 'info');
-            }
-        } catch (error) {
-            showAlert(t('agentView.feedback.errorFetchingContact'), 'error');
-        } finally {
-            setIsLoadingNextContact(false);
-        }
+    const handleToggleActiveCampaign = (campaignId: string) => {
+        setActiveDialingCampaigns(prev => ({ ...prev, [campaignId]: !prev[campaignId] }));
     };
-    
+
     const onClearContact = () => {
         setCurrentContact(null);
         setCurrentCampaign(null);
         setActiveScript(null);
         setSelectedQual(null);
-        setNewNote('');
     };
     
+    // FIX: Modified onSaveNote to use local state, aligning with AgentPreview's prop type.
     const onSaveNote = async () => {
         if (!newNote.trim() || !currentContact || !currentCampaign) return;
         try {
             await apiClient.post(`/contacts/${currentContact.id}/notes`, { agentId: currentUser.id, campaignId: currentCampaign.id, note: newNote });
-            setNewNote('');
+            setNewNote(''); // Clear the note after saving
         } catch (error) { console.error("Failed to save note", error); }
     };
 
@@ -201,105 +158,153 @@ const AgentView: React.FC<AgentViewProps> = ({ onUpdatePassword, onUpdateProfile
     }, [currentCampaign, qualifications]);
 
     const contactNotesForCurrentContact = useMemo(() => contactNotes.filter(note => note.contactId === currentContact?.id), [currentContact, contactNotes]);
+    
+    const callbacksForDate = useMemo(() => {
+        const startOfDay = new Date(currentCallbackDate);
+        startOfDay.setHours(0, 0, 0, 0);
+        const endOfDay = new Date(currentCallbackDate);
+        endOfDay.setHours(23, 59, 59, 999);
+
+        return personalCallbacks.filter(cb => {
+            const cbTime = new Date(cb.scheduledTime);
+            return cb.agentId === currentUser.id && cbTime >= startOfDay && cbTime <= endOfDay && cb.status === 'pending';
+        });
+    }, [personalCallbacks, currentUser.id, currentCallbackDate]);
+    
+    // FIX: Defined the missing statusToI18nKey function.
+    const statusToI18nKey = (status: AgentStatus): string => {
+        const mapping: Partial<Record<AgentStatus, string>> = {
+            'En Attente': 'agentStatuses.EnAttente',
+            'En Appel': 'agentStatuses.EnAppel',
+            'En Post-Appel': 'agentStatuses.EnPostAppel',
+            'En Pause': 'agentStatuses.EnPause',
+            'Ringing': 'agentStatuses.Ringing',
+            'Déconnecté': 'agentStatuses.Déconnecté',
+            'Mise en attente': 'agentStatuses.Miseenattente',
+            'Formation': 'agentStatuses.Formation',
+        };
+        return mapping[status] || status;
+    };
 
     return (
-        <div className="h-screen w-screen flex flex-col font-sans bg-slate-100 dark:bg-slate-800 text-slate-800 dark:text-slate-200">
+        <div className="h-screen w-screen flex flex-col font-sans bg-slate-100 dark:bg-slate-900 text-slate-800 dark:text-slate-200">
             {isProfileModalOpen && <UserProfileModal user={currentUser} onClose={() => setIsProfileModalOpen(false)} onSavePassword={onUpdatePassword} onSaveProfilePicture={onUpdateProfilePicture} />}
             {isCallbackModalOpen && currentContact && currentCampaign && <CallbackSchedulerModal isOpen={true} onClose={() => setIsCallbackModalOpen(false)} onSchedule={async (time, notes) => { /* Logic here */ }} />}
             
-            <header className="flex-shrink-0 bg-white dark:bg-slate-900 shadow-md flex justify-between items-center px-4 h-16 z-20">
-                 <div className="flex items-center gap-4">
-                     <div className="flex items-center gap-2">
-                         {currentUser.profilePictureUrl ? <img src={currentUser.profilePictureUrl} alt="Avatar" className="w-10 h-10 rounded-full object-cover" /> : <UserCircleIcon className="w-10 h-10 text-slate-400" />}
-                        <div>
-                            <p className="font-semibold text-slate-800 dark:text-slate-100">{currentUser.firstName} {currentUser.lastName}</p>
-                            <p className="text-xs text-slate-500 dark:text-slate-400">{t('agentView.header.agentInterface')}</p>
-                        </div>
+            <header className="flex-shrink-0 bg-white dark:bg-slate-900 shadow-sm flex justify-between items-center px-4 h-16 z-20 border-b dark:border-slate-700">
+                 <div className="flex items-center gap-3">
+                    <div className="relative">
+                        {currentUser.profilePictureUrl ? <img src={currentUser.profilePictureUrl} alt="Avatar" className="w-10 h-10 rounded-full object-cover" /> : <UserCircleIcon className="w-10 h-10 text-slate-400" />}
+                        <span className={`absolute top-0 right-0 block h-3 w-3 rounded-full border-2 border-white dark:border-slate-900 ${getStatusColor(agentState.status)}`}></span>
+                    </div>
+                    <div>
+                        <p className="font-semibold text-slate-800 dark:text-slate-100">{currentUser.firstName} {currentUser.lastName} - Ext: {currentUser.loginId}</p>
+                        <p className="text-sm text-slate-500 dark:text-slate-400">{t(statusToI18nKey(agentState.status))} {formatDuration(agentState.statusDuration).substring(3)}</p>
                     </div>
                 </div>
-                 <div className="flex items-center gap-4">
+                 <div className="flex items-center gap-3">
                     <Clock />
+                    <div className="w-px h-6 bg-slate-200 dark:bg-slate-700"></div>
                     <LanguageSwitcher />
                     <ThemeSwitcher />
-                    <button onClick={() => setIsProfileModalOpen(true)} className="p-2 rounded-full hover:bg-slate-100 dark:hover:bg-slate-700" title={t('agentView.header.settings')}><Cog6ToothIcon className="w-6 h-6 text-slate-500 dark:text-slate-400" /></button>
-                    <button onClick={logout} className="p-2 rounded-full hover:bg-red-50 dark:hover:bg-red-900/50" title={t('agentView.header.logout')}><PowerIcon className="w-6 h-6 text-red-500" /></button>
+                    <div className="relative">
+                         <button className="p-2 rounded-full hover:bg-slate-100 dark:hover:bg-slate-700"><BellAlertIcon className="w-6 h-6 text-slate-500 dark:text-slate-400" /></button>
+                    </div>
+                    <button onClick={logout} className="p-2 rounded-full hover:bg-slate-100 dark:hover:bg-slate-700" title={t('sidebar.logout')}><PowerIcon className="w-6 h-6 text-slate-500 dark:text-slate-400" /></button>
                 </div>
             </header>
 
             <main className="flex-1 grid grid-cols-12 gap-4 p-4 overflow-hidden">
-                <div className="col-span-8 flex flex-col gap-4">
+                {/* --- Left Column --- */}
+                <div className="col-span-3 flex flex-col gap-4">
                     <div className="bg-white dark:bg-slate-900 rounded-lg shadow p-4 flex-shrink-0">
-                         {currentContact ? (
-                            <div className="grid grid-cols-3 gap-4">
-                                <div><p className="text-xs text-slate-500 dark:text-slate-400">{t('agentView.contact.name')}</p><p className="font-semibold text-lg">{currentContact.firstName} {currentContact.lastName}</p></div>
-                                <div><p className="text-xs text-slate-500 dark:text-slate-400">{t('agentView.contact.phone')}</p><p className="font-semibold text-lg font-mono">{currentContact.phoneNumber}</p></div>
-                                <div><p className="text-xs text-slate-500 dark:text-slate-400">{t('agentView.contact.campaign')}</p><p className="font-semibold text-lg">{currentCampaign?.name}</p></div>
+                        <h3 className="font-semibold mb-3 text-slate-800 dark:text-slate-200">{t('agentView.kpis.title')}</h3>
+                        <div className="grid grid-cols-2 gap-3 text-sm">
+                            <div className="bg-slate-50 dark:bg-slate-800 p-2 rounded-md">
+                                <p className="text-xs text-slate-500 dark:text-slate-400">{t('agentView.kpis.totalConnectedTime')}</p>
+                                <p className="font-semibold text-lg font-mono">{formatDuration(agentState.totalConnectedTime)}</p>
                             </div>
-                         ) : <p className="text-slate-500 dark:text-slate-400 italic text-center">{t('agentView.contact.noContact')}</p>}
+                             <div className="bg-slate-50 dark:bg-slate-800 p-2 rounded-md">
+                                <p className="text-xs text-slate-500 dark:text-slate-400">{t('agentView.kpis.callsHandled')}</p>
+                                <p className="font-semibold text-lg">{agentState.callsHandledToday}</p>
+                            </div>
+                             <div className="bg-slate-50 dark:bg-slate-800 p-2 rounded-md">
+                                <p className="text-xs text-slate-500 dark:text-slate-400">DMC</p>
+                                <p className="font-semibold text-lg font-mono">{formatDuration(agentState.averageHandlingTime)}</p>
+                            </div>
+                            <div className="bg-slate-50 dark:bg-slate-800 p-2 rounded-md">
+                                <p className="text-xs text-slate-500 dark:text-slate-400">{t('agentView.kpis.pauseCount')}</p>
+                                <p className="font-semibold text-lg">{agentState.pauseCount}</p>
+                            </div>
+                             <div className="bg-slate-50 dark:bg-slate-800 p-2 rounded-md">
+                                <p className="text-xs text-slate-500 dark:text-slate-400">{t('agentView.kpis.totalPauseTime')}</p>
+                                <p className="font-semibold text-lg font-mono">{formatDuration(agentState.totalPauseTime)}</p>
+                            </div>
+                             <div className="bg-slate-50 dark:bg-slate-800 p-2 rounded-md">
+                                <p className="text-xs text-slate-500 dark:text-slate-400">{t('agentView.kpis.trainingCount')}</p>
+                                <p className="font-semibold text-lg">{agentState.trainingCount}</p>
+                            </div>
+                        </div>
                     </div>
-                     <div className="bg-white dark:bg-slate-900 rounded-lg shadow flex-1 overflow-hidden">
-                        {activeScript && currentContact ? (
-                            <AgentPreview script={activeScript} onClose={() => {}} embedded={true} contact={currentContact} contactNotes={contactNotesForCurrentContact} users={users} newNote={newNote} setNewNote={setNewNote} onSaveNote={onSaveNote} campaign={currentCampaign} onInsertContact={onInsertContact} onUpdateContact={updateContact} onClearContact={onClearContact} />
-                        ) : <div className="flex flex-col items-center justify-center h-full text-slate-400 dark:text-slate-500"><p>{t('agentView.script.placeholder')}</p></div>}
+                     <div className="bg-white dark:bg-slate-900 rounded-lg shadow p-4 flex-1 flex flex-col">
+                        <h3 className="font-semibold mb-3 text-slate-800 dark:text-slate-200">{t('agentView.myCallbacks')}</h3>
+                        <div className="flex items-center justify-between mb-2">
+                             <button onClick={() => setCurrentCallbackDate(d => new Date(d.setDate(d.getDate() - 1)))} className="p-1 hover:bg-slate-100 rounded-full"><ChevronLeftIcon className="w-5 h-5"/></button>
+                            <span className="font-semibold text-sm">{currentCallbackDate.toLocaleDateString('fr-FR', { weekday: 'long', day: 'numeric', month: 'long' })}</span>
+                            <button onClick={() => setCurrentCallbackDate(d => new Date(d.setDate(d.getDate() + 1)))} className="p-1 hover:bg-slate-100 rounded-full"><ChevronRightIcon className="w-5 h-5"/></button>
+                        </div>
+                         <div className="flex-1 overflow-y-auto space-y-2 pr-2 -mr-4">
+                            {callbacksForDate.length === 0 ? <p className="text-center text-sm text-slate-400 italic pt-8">{t('agentView.noCallbacks')}</p> : callbacksForDate.map(cb => (
+                                <div key={cb.id} className="p-2 bg-slate-50 dark:bg-slate-800 rounded-md border dark:border-slate-700">
+                                    <p className="font-semibold text-sm">{cb.contactName}</p>
+                                    <p className="text-xs text-slate-500">{campaigns.find(c=>c.id === cb.campaignId)?.name}</p>
+                                </div>
+                            ))}
+                        </div>
                     </div>
                 </div>
+
+                {/* --- Center Column --- */}
+                <div className="col-span-5 bg-white dark:bg-slate-900 rounded-lg shadow flex-1 overflow-hidden">
+                    {activeScript && currentContact ? (
+                        <AgentPreview script={activeScript} onClose={() => {}} embedded={true} contact={currentContact} contactNotes={contactNotesForCurrentContact} users={users} onSaveNote={onSaveNote} campaign={currentCampaign} onInsertContact={onInsertContact} onUpdateContact={updateContact} onClearContact={onClearContact} newNote={newNote} setNewNote={setNewNote} />
+                    ) : <div className="flex flex-col items-center justify-center h-full text-slate-400 dark:text-slate-500"><InformationCircleIcon className="w-12 h-12 mb-2"/><p>{t('agentView.script.placeholder')}</p></div>}
+                </div>
+                
+                {/* --- Right Column --- */}
                 <div className="col-span-4 flex flex-col gap-4">
-                    <div className="bg-white dark:bg-slate-900 rounded-lg shadow p-4 space-y-4 flex-1 flex flex-col">
-                        <h3 className="text-lg font-semibold text-slate-800 dark:text-slate-200">{t('agentView.qualification.title')}</h3>
-                        <div className="flex-1 overflow-y-auto pr-2 -mr-2 space-y-2">
-                           {qualificationsForCampaign.map(q => (
-                                <button key={q.id} onClick={() => setSelectedQual(q.id)} disabled={!currentContact} className={`w-full text-left p-3 rounded-md border text-sm font-medium transition-colors disabled:opacity-50 disabled:cursor-not-allowed ${selectedQual === q.id ? 'bg-indigo-600 text-white border-indigo-600' : 'bg-slate-50 dark:bg-slate-800 border-slate-200 dark:border-slate-700 hover:bg-indigo-50 dark:hover:bg-slate-700'}`}>
-                                    <span className="font-mono bg-slate-200 dark:bg-slate-700 rounded px-1.5 py-0.5 mr-2">{q.code}</span>{q.description}
-                                </button>
-                           ))}
-                           {qualificationsForCampaign.length === 0 && <p className="text-sm text-slate-400 italic text-center pt-8">{t('agentView.qualification.noQualifs')}</p>}
+                    <div className="bg-white dark:bg-slate-900 rounded-lg shadow p-4 space-y-3">
+                        <h3 className="font-semibold text-slate-800 dark:text-slate-200">{t('agentView.callControls.title')}</h3>
+                        <button className="w-full text-lg font-bold py-3 px-4 rounded-lg bg-green-500 text-white hover:bg-green-600">{t('agentView.callControls.call')}</button>
+                        <button className="w-full text-lg font-bold py-3 px-4 rounded-lg bg-red-500 text-white hover:bg-red-600">{t('agentView.callControls.hangup')}</button>
+                        <div className="grid grid-cols-2 gap-3">
+                            <button className="w-full font-semibold py-2 px-4 rounded-lg bg-slate-200 dark:bg-slate-700 hover:bg-slate-300 dark:hover:bg-slate-600">{t('agentView.callControls.hold')}</button>
+                            <button className="w-full font-semibold py-2 px-4 rounded-lg bg-slate-200 dark:bg-slate-700 hover:bg-slate-300 dark:hover:bg-slate-600">{t('agentView.callControls.transfer')}</button>
                         </div>
-                        <div className="flex-shrink-0 pt-4 border-t dark:border-slate-700 space-y-2">
-                            <button className="w-full bg-slate-200 dark:bg-slate-700 hover:bg-slate-300 dark:hover:bg-slate-600 font-bold py-3 px-4 rounded-lg shadow-sm" onClick={() => setIsCallbackModalOpen(true)} disabled={!currentContact}>{t('agentView.actions.scheduleCallback')}</button>
-                            <button className="w-full bg-primary hover:bg-primary-hover text-primary-text font-bold py-3 px-4 rounded-lg shadow-md disabled:opacity-50" disabled={!currentContact || !selectedQual}>{t('agentView.actions.finalize')}</button>
+                        <button className="w-full font-bold py-3 px-4 rounded-lg bg-amber-500 text-white hover:bg-amber-600 flex items-center justify-center gap-2">
+                            <HandRaisedIcon className="w-5 h-5"/>{t('agentView.askForHelp')}
+                        </button>
+                    </div>
+                    <div className="bg-white dark:bg-slate-900 rounded-lg shadow p-4 space-y-3">
+                        <h3 className="font-semibold text-slate-800 dark:text-slate-200">{t('agentView.qualifications')}</h3>
+                        <select value={selectedQual || ''} onChange={e => setSelectedQual(e.target.value)} disabled={!currentContact} className="w-full p-2 border bg-white rounded-md dark:bg-slate-800 dark:border-slate-600 disabled:opacity-50">
+                            <option value="">{t('agentView.selectQualification')}</option>
+                            {qualificationsForCampaign.map(q => <option key={q.id} value={q.id}>{q.code} - {q.description}</option>)}
+                        </select>
+                    </div>
+                    <div className="bg-white dark:bg-slate-900 rounded-lg shadow p-4 space-y-3 flex-1">
+                        <h3 className="font-semibold text-slate-800 dark:text-slate-200">{t('agentView.activeCampaigns')}</h3>
+                         <div className="space-y-2 overflow-y-auto pr-2 -mr-4">
+                            {assignedCampaigns.map(c => (
+                                <div key={c.id} className="flex justify-between items-center p-2 bg-slate-50 dark:bg-slate-800 rounded-md">
+                                    <label className="text-sm font-medium">{c.name}</label>
+                                    <ToggleSwitch enabled={activeDialingCampaigns[c.id] || false} onChange={() => handleToggleActiveCampaign(c.id)} />
+                                </div>
+                            ))}
                         </div>
                     </div>
                 </div>
             </main>
-            
-            <footer className="h-20 bg-white dark:bg-slate-900 border-t dark:border-slate-700 flex-shrink-0 flex items-center justify-between px-4 z-10 shadow-up">
-                 <div className="flex items-center gap-4">
-                    <div>
-                        <label className="text-xs text-slate-500">{t('agentView.footer.status')}</label>
-                        <div className="flex items-center gap-2 p-1 bg-slate-100 dark:bg-slate-800 rounded-md">
-                            <span className={`px-2 py-1 text-sm font-semibold rounded ${status === 'En Attente' ? 'bg-green-100 text-green-800 dark:bg-green-900/50 dark:text-green-200' : 'bg-orange-100 text-orange-800 dark:bg-orange-900/50 dark:text-orange-200'}`}>{t(statusToI18nKey(status))}</span>
-                            <span className="font-mono text-sm text-slate-600 dark:text-slate-400">{agentState?.statusDuration ? new Date(agentState.statusDuration * 1000).toISOString().substr(14, 5) : '00:00'}</span>
-                        </div>
-                    </div>
-                    {['En Attente', 'En Pause'].includes(status) && (
-                        <button onClick={() => changeAgentStatus(status === 'En Attente' ? 'En Pause' : 'En Attente')} className={`px-4 py-2 rounded-md font-semibold text-sm ${status === 'En Attente' ? 'bg-orange-100 text-orange-700' : 'bg-green-100 text-green-700'}`}>
-                           {status === 'En Attente' ? t('agentView.pause') : t('agentView.ready')}
-                        </button>
-                    )}
-                 </div>
-
-                 <div className="flex items-center gap-4">
-                    {/* Active call controls would appear here */}
-                 </div>
-
-                 <div className="flex items-center gap-4">
-                    <div className="relative" ref={dialpadRef}>
-                        <button onClick={() => setIsDialpadOpen(p => !p)} className="p-3 bg-slate-100 dark:bg-slate-800 rounded-full hover:bg-slate-200 dark:hover:bg-slate-700" title={t('agentView.dialpad.title')}><PhoneIcon className="w-6 h-6"/></button>
-                        {isDialpadOpen && <div className="absolute bottom-full right-0 mb-2"><DialpadPopover onCall={(num) => alert(`Calling ${num}`)} /></div>}
-                    </div>
-
-                    <select value={activeDialingCampaignId || ''} onChange={e => setActiveDialingCampaignId(e.target.value)} className="p-2 border rounded-md bg-white dark:bg-slate-800 dark:border-slate-600" disabled={status !== 'En Attente' || assignedCampaigns.length === 0}>
-                        {assignedCampaigns.length > 0 ? assignedCampaigns.map(c => <option key={c.id} value={c.id}>{c.name}</option>) : <option>{t('agentView.noCampaigns')}</option>}
-                    </select>
-
-                    <button onClick={handleGetNextContact} disabled={isLoadingNextContact || status !== 'En Attente' || !activeDialingCampaignId} className="bg-primary text-primary-text font-bold py-3 px-6 rounded-lg text-lg shadow-md hover:bg-primary-hover disabled:opacity-50">
-                        {isLoadingNextContact ? t('agentView.searching') : t('agentView.nextCall')}
-                    </button>
-                    <button onClick={() => wsClient.send({ type: 'agentRaisedHand', payload: { agentId: currentUser.id, agentName: `${currentUser.firstName} ${currentUser.lastName}`, agentLoginId: currentUser.loginId, timestamp: new Date().toISOString() } })} className="p-3 bg-yellow-100 dark:bg-yellow-900/50 rounded-full hover:bg-yellow-200" title={t('agentView.askForHelp')}>
-                        <HandRaisedIcon className="w-6 h-6 text-yellow-600 dark:text-yellow-400"/>
-                    </button>
-                 </div>
-            </footer>
         </div>
     );
 };

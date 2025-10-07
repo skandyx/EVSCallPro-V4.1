@@ -1,4 +1,3 @@
-
 {
   "common": {
     "loading": "جار التحميل",
@@ -124,12 +123,6 @@
     "waitingForCall": "في انتظار مكالمة...",
     "nextCall": "المكالمة التالية",
     "searching": "يبحث...",
-    "callControls": "ضوابط المكالمة",
-    "call": "اتصال",
-    "endCall": "إنهاء المكالمة",
-    "qualifyContact": "تأهيل الاتصال",
-    "hold": "تعليق",
-    "transfer": "تحويل",
     "qualifications": "المؤهلات",
     "noScript": "هذه الحملة ليس لديها نص مرتبط.",
     "scriptWillBeHere": "سيتم عرض النص هنا.",
@@ -144,17 +137,19 @@
     "supervisorResponse": "رد المشرف",
     "messages": "الرسائل",
     "clearAll": "مسح الكل",
-    "kpis": "مؤشرات الأداء الرئيسية اليومية",
-    "callsHandled": "المكالمات التي تم التعامل معها",
-    "pauseCount": "عدد التوقفات",
-    "totalPauseTime": "إجمالي وقت التوقف",
-    "totalTrainingTime": "إجمالي وقت التدريب",
-    "trainingCount": "عدد التدريبات",
-    "totalConnectedTime": "إجمالي وقت الاتصال",
+    "kpis": {
+      "title": "المعلومات",
+      "callsHandled": "المكالمات التي تم التعامل معها",
+      "pauseCount": "عدد التوقفات",
+      "totalPauseTime": "إجمالي وقت التوقف",
+      "totalTrainingTime": "إجمالي وقت التدريب",
+      "trainingCount": "عدد التدريبات",
+      "totalConnectedTime": "إجمالي وقت الاتصال"
+    },
     "pause": "إيقاف مؤقت",
     "ready": "جاهز",
     "statuses": {
-      "waiting": "في الانتظار",
+      "EnAttente": "متاح",
       "onCall": "في مكالمة",
       "wrapUp": "بعد المكالمة",
       "onPause": "في استراحة",
@@ -192,7 +187,11 @@
         "dial": "اتصال يدوي"
     },
     "callControls": {
-        "hangup": "إنهاء المكالمة"
+      "title": "ضوابط المكالمة",
+      "call": "اتصال",
+      "hangup": "تأهيل السجل",
+      "hold": "تعليق",
+      "transfer": "تحويل"
     }
   },
   "features": {
