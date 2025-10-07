@@ -95,9 +95,8 @@ const saveCampaign = async (campaign, id) => {
         
         await client.query('COMMIT');
 
-        const finalCampaign = keysToCamel(savedCampaign);
-        finalCampaign.assignedUserIds = assignedUserIds || [];
-        finalCampaign.contacts = []; // On creation/update, we don't return all contacts
+        const finalCampaign = await getCampaignById(campaignId);
+        broadcast({ type: 'campaignUpdate', payload: finalCampaign }); // RT: emit so all clients refresh instantly
         return finalCampaign;
 
     } catch (e) {
@@ -112,6 +111,7 @@ const saveCampaign = async (campaign, id) => {
 const deleteCampaign = async (id) => {
     // Note: ON DELETE CASCADE will handle contacts, campaign_agents, etc.
     await pool.query('DELETE FROM campaigns WHERE id = $1', [id]);
+    broadcast({ type: 'deleteCampaign', payload: { id } }); // RT: emit so all clients refresh instantly
 };
 
 const deleteContacts = async (contactIds) => {
@@ -177,6 +177,10 @@ const importContacts = async (campaignId, contacts, deduplicationConfig) => {
         client.release();
     }
     
+    // After commit, fetch and broadcast the updated campaign state
+    const updatedCampaign = await getCampaignById(campaignId);
+    broadcast({ type: 'campaignUpdate', payload: updatedCampaign }); // RT: emit so all clients refresh instantly
+
     return { valids, invalids };
 };
 
@@ -389,7 +393,13 @@ const updateContact = async (contactId, contactData) => {
         const { rows } = await client.query(query, values);
 
         await client.query('COMMIT');
-        return keysToCamel(rows[0]);
+        
+        const updatedContact = keysToCamel(rows[0]);
+        // After commit, fetch the full campaign and broadcast it
+        const updatedCampaign = await getCampaignById(updatedContact.campaignId);
+        broadcast({ type: 'campaignUpdate', payload: updatedCampaign }); // RT: emit so all clients refresh instantly
+        
+        return updatedContact;
 
     } catch (e) {
         await client.query('ROLLBACK');

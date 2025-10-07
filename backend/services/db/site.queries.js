@@ -1,25 +1,34 @@
 const pool = require('./connection');
 const { keysToCamel } = require('./utils');
+const { broadcast } = require('../webSocketServer');
 
 const getSites = async () => (await pool.query('SELECT * FROM sites ORDER BY name')).rows.map(keysToCamel);
 
 const saveSite = async (site, id) => {
     const { name, ipAddress } = site;
+    let savedSite;
     if (id) {
         const res = await pool.query(
             'UPDATE sites SET name=$1, ip_address=$2, updated_at=NOW() WHERE id=$3 RETURNING *',
             [name, ipAddress || null, id]
         );
-        return keysToCamel(res.rows[0]);
+        savedSite = keysToCamel(res.rows[0]);
+        broadcast({ type: 'updateSite', payload: savedSite }); // RT: emit so all clients refresh instantly
+    } else {
+        const res = await pool.query(
+            'INSERT INTO sites (id, name, ip_address) VALUES ($1, $2, $3) RETURNING *',
+            [site.id, name, ipAddress || null]
+        );
+        savedSite = keysToCamel(res.rows[0]);
+        broadcast({ type: 'newSite', payload: savedSite }); // RT: emit so all clients refresh instantly
     }
-    const res = await pool.query(
-        'INSERT INTO sites (id, name, ip_address) VALUES ($1, $2, $3) RETURNING *',
-        [site.id, name, ipAddress || null]
-    );
-    return keysToCamel(res.rows[0]);
+    return savedSite;
 };
 
-const deleteSite = async (id) => await pool.query('DELETE FROM sites WHERE id=$1', [id]);
+const deleteSite = async (id) => {
+    await pool.query('DELETE FROM sites WHERE id=$1', [id]);
+    broadcast({ type: 'deleteSite', payload: { id } }); // RT: emit so all clients refresh instantly
+};
 
 module.exports = {
     getSites,

@@ -1,5 +1,6 @@
 const pool = require('./connection');
 const { keysToCamel } = require('./utils');
+const { broadcast } = require('../webSocketServer');
 
 const getUserGroups = async () => {
     // This query now correctly joins with the members table to get the full group object
@@ -59,6 +60,7 @@ const saveUserGroup = async (group, id) => {
         const finalGroup = keysToCamel(savedGroup);
         finalGroup.memberIds = group.memberIds || [];
         
+        broadcast({ type: id ? 'updateGroup' : 'newGroup', payload: finalGroup }); // RT: emit so all clients refresh instantly
         return finalGroup;
     } catch (e) {
         await client.query('ROLLBACK');
@@ -71,6 +73,7 @@ const saveUserGroup = async (group, id) => {
 
 const deleteUserGroup = async (id) => {
     await pool.query('DELETE FROM user_groups WHERE id = $1', [id]);
+    broadcast({ type: 'deleteGroup', payload: { id } }); // RT: emit so all clients refresh instantly
 };
 
 module.exports = {

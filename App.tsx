@@ -341,15 +341,53 @@ const AppContent: React.FC = () => {
                     });
                 }
                 
-                if (event.type === 'userProfileUpdate') {
-                     setAllData(prev => ({
-                        ...prev,
-                        users: prev.users.map((u: User) => u.id === event.payload.id ? event.payload : u)
-                    }));
-                    if (currentUser && currentUser.id === event.payload.id) {
-                        setCurrentUser(event.payload);
-                    }
+                // --- RT: User CRUD ---
+                if (event.type === 'newUser') setAllData(prev => ({ ...prev, users: [...prev.users, event.payload]}));
+                if (event.type === 'updateUser') {
+                    setAllData(prev => ({ ...prev, users: prev.users.map((u: User) => u.id === event.payload.id ? event.payload : u)}));
+                    if (currentUser && currentUser.id === event.payload.id) setCurrentUser(event.payload);
                 }
+                if (event.type === 'deleteUser') setAllData(prev => ({ ...prev, users: prev.users.filter((u: User) => u.id !== event.payload.id)}));
+                
+                // --- RT: Group CRUD ---
+                if (event.type === 'newGroup') setAllData(prev => ({ ...prev, userGroups: [...prev.userGroups, event.payload]}));
+                if (event.type === 'updateGroup') setAllData(prev => ({ ...prev, userGroups: prev.userGroups.map((g: UserGroup) => g.id === event.payload.id ? event.payload : g)}));
+                if (event.type === 'deleteGroup') setAllData(prev => ({ ...prev, userGroups: prev.userGroups.filter((g: UserGroup) => g.id !== event.payload.id)}));
+
+                // --- RT: Campaign Delete ---
+                if (event.type === 'deleteCampaign') setAllData(prev => ({ ...prev, campaigns: prev.campaigns.filter((c: Campaign) => c.id !== event.payload.id)}));
+
+                // --- RT: Script CRUD ---
+                if (event.type === 'newScript') setAllData(prev => ({ ...prev, savedScripts: [...prev.savedScripts, event.payload]}));
+                if (event.type === 'updateScript') setAllData(prev => ({ ...prev, savedScripts: prev.savedScripts.map((s: SavedScript) => s.id === event.payload.id ? event.payload : s)}));
+                if (event.type === 'deleteScript') setAllData(prev => ({ ...prev, savedScripts: prev.savedScripts.filter((s: SavedScript) => s.id !== event.payload.id)}));
+
+                // --- RT: IVR CRUD ---
+                if (event.type === 'newIvrFlow') setAllData(prev => ({ ...prev, ivrFlows: [...prev.ivrFlows, event.payload]}));
+                if (event.type === 'updateIvrFlow') setAllData(prev => ({ ...prev, ivrFlows: prev.ivrFlows.map((f: IvrFlow) => f.id === event.payload.id ? event.payload : f)}));
+                if (event.type === 'deleteIvrFlow') setAllData(prev => ({ ...prev, ivrFlows: prev.ivrFlows.filter((f: IvrFlow) => f.id !== event.payload.id)}));
+
+                // --- RT: Qualification & Group CRUD ---
+                if (event.type === 'newQualification') setAllData(prev => ({ ...prev, qualifications: [...prev.qualifications, event.payload]}));
+                if (event.type === 'updateQualification') setAllData(prev => ({ ...prev, qualifications: prev.qualifications.map((q: Qualification) => q.id === event.payload.id ? event.payload : q)}));
+                if (event.type === 'deleteQualification') setAllData(prev => ({ ...prev, qualifications: prev.qualifications.filter((q: Qualification) => q.id !== event.payload.id)}));
+                if (event.type === 'newQualificationGroup') setAllData(prev => ({ ...prev, qualificationGroups: [...prev.qualificationGroups, event.payload]}));
+                if (event.type === 'updateQualificationGroup') setAllData(prev => ({ ...prev, qualificationGroups: prev.qualificationGroups.map((g: QualificationGroup) => g.id === event.payload.id ? event.payload : g)}));
+                if (event.type === 'deleteQualificationGroup') setAllData(prev => ({ ...prev, qualificationGroups: prev.qualificationGroups.filter((g: QualificationGroup) => g.id !== event.payload.id)}));
+                if (event.type === 'qualificationsUpdated') setAllData(prev => ({ ...prev, qualifications: event.payload }));
+                
+                // --- RT: Telephony CRUD (Trunks & DIDs) ---
+                if (event.type === 'newTrunk') setAllData(prev => ({ ...prev, trunks: [...prev.trunks, event.payload]}));
+                if (event.type === 'updateTrunk') setAllData(prev => ({ ...prev, trunks: prev.trunks.map((t: Trunk) => t.id === event.payload.id ? event.payload : t)}));
+                if (event.type === 'deleteTrunk') setAllData(prev => ({ ...prev, trunks: prev.trunks.filter((t: Trunk) => t.id !== event.payload.id)}));
+                if (event.type === 'newDid') setAllData(prev => ({ ...prev, dids: [...prev.dids, event.payload]}));
+                if (event.type === 'updateDid') setAllData(prev => ({ ...prev, dids: prev.dids.map((d: Did) => d.id === event.payload.id ? event.payload : d)}));
+                if (event.type === 'deleteDid') setAllData(prev => ({ ...prev, dids: prev.dids.filter((d: Did) => d.id !== event.payload.id)}));
+                
+                // --- RT: Site CRUD ---
+                if (event.type === 'newSite') setAllData(prev => ({ ...prev, sites: [...prev.sites, event.payload]}));
+                if (event.type === 'updateSite') setAllData(prev => ({ ...prev, sites: prev.sites.map((s: Site) => s.id === event.payload.id ? event.payload : s)}));
+                if (event.type === 'deleteSite') setAllData(prev => ({ ...prev, sites: prev.sites.filter((s: Site) => s.id !== event.payload.id)}));
 
                 if (event.type === 'agentRaisedHand') {
                      const newNotification: Notification = {
@@ -416,7 +454,7 @@ const AppContent: React.FC = () => {
                 ? await apiClient.post(url, data)
                 : await apiClient.put(`${url}/${data.id}`, data);
             
-            await fetchApplicationData();
+            // The WebSocket event will trigger the data refresh automatically.
             showAlert(t('alerts.saveSuccess'), 'success');
             return response.data;
         } catch (error: any) {
@@ -432,7 +470,7 @@ const AppContent: React.FC = () => {
             try {
                 const url = endpoint || `/${dataType.toLowerCase()}`;
                 await apiClient.delete(`${url}/${id}`);
-                await fetchApplicationData(); 
+                 // The WebSocket event will trigger the data refresh automatically.
                 showAlert(t('alerts.deleteSuccess'), 'success');
             } catch (error: any) {
                 const errorMessage = error.response?.data?.error || t('alerts.deleteError');
@@ -449,7 +487,7 @@ const AppContent: React.FC = () => {
         if (window.confirm(t('planning.clearAllConfirm'))) {
             try {
                 await apiClient.delete('/planning-events/all');
-                await fetchApplicationData();
+                 // The WebSocket event will trigger the data refresh automatically.
                 showAlert(t('planning.clearAllSuccess'), 'success');
             } catch (error: any) {
                 const errorMessage = error.response?.data?.error || t('planning.clearAllError');
@@ -462,7 +500,7 @@ const AppContent: React.FC = () => {
     const handleDeleteContacts = async (contactIds: string[]) => {
         try {
             await apiClient.post('/contacts/bulk-delete', { contactIds });
-            await fetchApplicationData(); 
+             // The WebSocket event will trigger the data refresh automatically.
             showAlert(t('alerts.contactsDeletedSuccess'), 'success');
         } catch (error: any) {
             const errorMessage = error.response?.data?.error || t('alerts.contactsDeletedError');
@@ -531,7 +569,7 @@ const AppContent: React.FC = () => {
     const handleBulkUsers = async (users: User[], successMessage: string) => {
         try {
             await apiClient.post('/users/bulk', { users });
-            await fetchApplicationData();
+            // The WebSocket event will trigger the data refresh automatically.
             showAlert(successMessage, 'success');
         } catch (error: any) {
             const errorMessage = error.response?.data?.error || t('alerts.bulkCreateError');
@@ -552,7 +590,7 @@ const AppContent: React.FC = () => {
     const handleImportContacts = async (campaignId: string, contacts: Contact[], deduplicationConfig: { enabled: boolean; fieldIds: string[] }) => {
         try {
             const response = await apiClient.post(`/campaigns/${campaignId}/contacts`, { contacts, deduplicationConfig });
-            await fetchApplicationData();
+            // The WebSocket event will trigger the data refresh automatically.
             return response.data;
         } catch (error: any) {
             const errorMessage = error.response?.data?.error || t('alerts.contactImportError');
@@ -582,7 +620,7 @@ const AppContent: React.FC = () => {
         try {
             await apiClient.put('/users/me/picture', { pictureUrl: base64DataUrl });
             showAlert(t('alerts.profilePictureUpdateSuccess'), 'success');
-            await fetchApplicationData(); 
+            // The WebSocket event will trigger the data refresh automatically.
         } catch (error: any) {
             const errorMessage = error.response?.data?.error || t('alerts.updateError');
             showAlert(errorMessage, 'error');
@@ -726,7 +764,7 @@ const AppContent: React.FC = () => {
             onDeleteUserGroup: (id: string) => handleDelete('user-groups', id),
             onSaveOrUpdateScript: (script: SavedScript) => handleSaveOrUpdate('scripts', script),
             onDeleteScript: (id: string) => handleDelete('scripts', id),
-            onDuplicateScript: async (id: string) => { await apiClient.post(`/scripts/${id}/duplicate`); await fetchApplicationData(); },
+            onDuplicateScript: async (id: string) => { await apiClient.post(`/scripts/${id}/duplicate`); }, // WebSocket will handle update
             onSaveCampaign: (campaign: Campaign) => handleSaveOrUpdate('campaigns', campaign),
             onDeleteCampaign: (id: string) => handleDelete('campaigns', id),
             onImportContacts: handleImportContacts,
@@ -739,7 +777,7 @@ const AppContent: React.FC = () => {
             onDeleteQualificationGroup: (id: string) => handleDelete('qualification-groups', id, '/qualification-groups/groups'),
             onSaveOrUpdateIvrFlow: (flow: IvrFlow) => handleSaveOrUpdate('ivr-flows', flow),
             onDeleteIvrFlow: (id: string) => handleDelete('ivr-flows', id),
-            onDuplicateIvrFlow: async (id: string) => { await apiClient.post(`/ivr-flows/${id}/duplicate`); await fetchApplicationData(); },
+            onDuplicateIvrFlow: async (id: string) => { await apiClient.post(`/ivr-flows/${id}/duplicate`); }, // WebSocket will handle update
             onSaveAudioFile: (file: AudioFile) => handleSaveOrUpdate('audio-files', file),
             onDeleteAudioFile: (id: string) => handleDelete('audio-files', id),
             onSaveTrunk: (trunk: Trunk) => handleSaveOrUpdate('trunks', trunk, '/telephony/trunks'),

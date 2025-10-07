@@ -1,5 +1,6 @@
 const pool = require('./connection');
 const { keysToCamel, parseScriptOrFlow } = require('./utils');
+const { broadcast } = require('../webSocketServer');
 
 const getIvrFlows = async () => {
     const res = await pool.query('SELECT * FROM ivr_flows ORDER BY name');
@@ -7,18 +8,26 @@ const getIvrFlows = async () => {
 };
 
 const saveIvrFlow = async (flow, id) => {
-     const { name, nodes, connections } = flow;
+    const { name, nodes, connections } = flow;
     const nodesJson = JSON.stringify(nodes);
     const connectionsJson = JSON.stringify(connections);
+    let savedFlow;
     if (id) {
         const res = await pool.query('UPDATE ivr_flows SET name=$1, nodes=$2, connections=$3, updated_at=NOW() WHERE id=$4 RETURNING *', [name, nodesJson, connectionsJson, id]);
-        return parseScriptOrFlow(res.rows[0]);
+        savedFlow = parseScriptOrFlow(res.rows[0]);
+        broadcast({ type: 'updateIvrFlow', payload: savedFlow }); // RT: emit so all clients refresh instantly
+    } else {
+        const res = await pool.query('INSERT INTO ivr_flows (id, name, nodes, connections) VALUES ($1, $2, $3, $4) RETURNING *', [flow.id, name, nodesJson, connectionsJson]);
+        savedFlow = parseScriptOrFlow(res.rows[0]);
+        broadcast({ type: 'newIvrFlow', payload: savedFlow }); // RT: emit so all clients refresh instantly
     }
-    const res = await pool.query('INSERT INTO ivr_flows (id, name, nodes, connections) VALUES ($1, $2, $3, $4) RETURNING *', [flow.id, name, nodesJson, connectionsJson]);
-    return parseScriptOrFlow(res.rows[0]);
+    return savedFlow;
 };
 
-const deleteIvrFlow = async (id) => await pool.query('DELETE FROM ivr_flows WHERE id=$1', [id]);
+const deleteIvrFlow = async (id) => {
+    await pool.query('DELETE FROM ivr_flows WHERE id=$1', [id]);
+    broadcast({ type: 'deleteIvrFlow', payload: { id } }); // RT: emit so all clients refresh instantly
+};
 
 const duplicateIvrFlow = async (id) => {
     const res = await pool.query('SELECT * FROM ivr_flows WHERE id = $1', [id]);
@@ -31,6 +40,7 @@ const duplicateIvrFlow = async (id) => {
         id: `ivr-flow-${Date.now()}`,
         name: `${originalFlow.name} (Copie)`,
     };
+    // saveIvrFlow will handle the broadcast
     return saveIvrFlow(newFlow);
 };
 

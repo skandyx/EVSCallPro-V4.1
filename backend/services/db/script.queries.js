@@ -1,5 +1,6 @@
 const pool = require('./connection');
 const { parseScriptOrFlow } = require('./utils');
+const { broadcast } = require('../webSocketServer');
 
 const getScripts = async () => {
     const res = await pool.query('SELECT * FROM scripts ORDER BY name');
@@ -9,12 +10,17 @@ const getScripts = async () => {
 const saveScript = async (script, id) => {
     const { name, pages, startPageId, backgroundColor } = script;
     const pagesJson = JSON.stringify(pages);
+    let savedScript;
     if (id) {
         const res = await pool.query('UPDATE scripts SET name=$1, pages=$2, start_page_id=$3, background_color=$4, updated_at=NOW() WHERE id=$5 RETURNING *', [name, pagesJson, startPageId, backgroundColor, id]);
-        return parseScriptOrFlow(res.rows[0]);
+        savedScript = parseScriptOrFlow(res.rows[0]);
+        broadcast({ type: 'updateScript', payload: savedScript }); // RT: emit so all clients refresh instantly
+    } else {
+        const res = await pool.query('INSERT INTO scripts (id, name, pages, start_page_id, background_color) VALUES ($1, $2, $3, $4, $5) RETURNING *', [script.id, name, pagesJson, startPageId, backgroundColor]);
+        savedScript = parseScriptOrFlow(res.rows[0]);
+        broadcast({ type: 'newScript', payload: savedScript }); // RT: emit so all clients refresh instantly
     }
-    const res = await pool.query('INSERT INTO scripts (id, name, pages, start_page_id, background_color) VALUES ($1, $2, $3, $4, $5) RETURNING *', [script.id, name, pagesJson, startPageId, backgroundColor]);
-    return parseScriptOrFlow(res.rows[0]);
+    return savedScript;
 };
 
 const deleteScript = async (id) => {
@@ -24,6 +30,7 @@ const deleteScript = async (id) => {
         throw new Error('Impossible de supprimer un script qui est assigné à une ou plusieurs campagnes.');
     }
     await pool.query('DELETE FROM scripts WHERE id = $1', [id]);
+    broadcast({ type: 'deleteScript', payload: { id } }); // RT: emit so all clients refresh instantly
 };
 
 
@@ -38,6 +45,7 @@ const duplicateScript = async (id) => {
         id: `script-${Date.now()}`,
         name: `${originalScript.name} (Copie)`,
     };
+    // saveScript will handle the broadcast
     return saveScript(newScript); 
 };
 

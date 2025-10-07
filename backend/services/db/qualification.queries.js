@@ -1,5 +1,6 @@
 const pool = require('./connection');
 const { keysToCamel } = require('./utils');
+const { broadcast } = require('../webSocketServer');
 
 const getQualifications = async () => (await pool.query('SELECT * FROM qualifications ORDER BY code')).rows.map(keysToCamel);
 const getQualificationGroups = async () => (await pool.query('SELECT * FROM qualification_groups ORDER BY name')).rows.map(keysToCamel);
@@ -7,22 +8,30 @@ const getQualificationGroups = async () => (await pool.query('SELECT * FROM qual
 const saveQualification = async (q, id) => {
     // isRecyclable defaults to true if not provided
     const isRecyclable = q.isRecyclable === false ? false : true;
+    let savedQual;
 
     if (id) {
         const res = await pool.query(
             'UPDATE qualifications SET code=$1, description=$2, type=$3, parent_id=$4, is_recyclable=$5, updated_at=NOW() WHERE id=$6 AND is_standard = FALSE RETURNING *', 
             [q.code, q.description, q.type, q.parentId, isRecyclable, id]
         );
-        return keysToCamel(res.rows[0]);
+        savedQual = keysToCamel(res.rows[0]);
+        broadcast({ type: 'updateQualification', payload: savedQual }); // RT: emit so all clients refresh instantly
+    } else {
+        const res = await pool.query(
+            'INSERT INTO qualifications (id, code, description, type, parent_id, is_standard, is_recyclable) VALUES ($1, $2, $3, $4, $5, FALSE, $6) RETURNING *', 
+            [q.id, q.code, q.description, q.type, q.parentId, isRecyclable]
+        );
+        savedQual = keysToCamel(res.rows[0]);
+        broadcast({ type: 'newQualification', payload: savedQual }); // RT: emit so all clients refresh instantly
     }
-    const res = await pool.query(
-        'INSERT INTO qualifications (id, code, description, type, parent_id, is_standard, is_recyclable) VALUES ($1, $2, $3, $4, $5, FALSE, $6) RETURNING *', 
-        [q.id, q.code, q.description, q.type, q.parentId, isRecyclable]
-    );
-    return keysToCamel(res.rows[0]);
+    return savedQual;
 };
 
-const deleteQualification = async (id) => await pool.query('DELETE FROM qualifications WHERE id=$1 AND is_standard = FALSE', [id]);
+const deleteQualification = async (id) => {
+    await pool.query('DELETE FROM qualifications WHERE id=$1 AND is_standard = FALSE', [id]);
+    broadcast({ type: 'deleteQualification', payload: { id } }); // RT: emit so all clients refresh instantly
+};
 
 const saveQualificationGroup = async (group, assignedQualIds, id) => {
     const client = await pool.connect();
@@ -56,7 +65,15 @@ const saveQualificationGroup = async (group, assignedQualIds, id) => {
         }
         
         await client.query('COMMIT');
-        return keysToCamel(savedGroup);
+        
+        const finalGroup = keysToCamel(savedGroup);
+        broadcast({ type: id ? 'updateQualificationGroup' : 'newQualificationGroup', payload: finalGroup }); // RT: emit so all clients refresh instantly
+        
+        // Also broadcast a general qualifications update as their groupIds have changed
+        const allQuals = await getQualifications();
+        broadcast({ type: 'qualificationsUpdated', payload: allQuals }); // RT: emit so all clients refresh instantly
+
+        return finalGroup;
     } catch(e) {
         await client.query('ROLLBACK');
         throw e;
@@ -65,7 +82,10 @@ const saveQualificationGroup = async (group, assignedQualIds, id) => {
     }
 };
 
-const deleteQualificationGroup = async (id) => await pool.query('DELETE FROM qualification_groups WHERE id=$1', [id]);
+const deleteQualificationGroup = async (id) => {
+    await pool.query('DELETE FROM qualification_groups WHERE id=$1', [id]);
+    broadcast({ type: 'deleteQualificationGroup', payload: { id } }); // RT: emit so all clients refresh instantly
+};
 
 module.exports = {
     getQualifications,

@@ -1,7 +1,8 @@
 
+
 const pool = require('./connection');
 const { keysToCamel } = require('./utils');
-const { sendToUser } = require('../webSocketServer');
+const { sendToUser, broadcast } = require('../webSocketServer');
 
 // Define safe columns to be returned, excluding sensitive ones like password_hash
 const SAFE_USER_COLUMNS = 'u.id, u.login_id, u.extension, u.first_name, u.last_name, u.email, u."role", u.is_active, u.site_id, u.created_at, u.updated_at, u.mobile_number, u.use_mobile_as_station, u.profile_picture_url, u.planning_enabled';
@@ -65,27 +66,29 @@ const createUser = async (userData) => {
             user.mobileNumber || null, user.useMobileAsStation || false, user.planningEnabled || false
         ]);
 
-        const newUser = userRes.rows[0];
-        newUser.campaign_ids = []; // Initialize with empty array
+        const newUserRaw = userRes.rows[0];
 
         if (groupIds && groupIds.length > 0) {
             for (const groupId of groupIds) {
                 await client.query(
                     'INSERT INTO user_group_members (user_id, group_id) VALUES ($1, $2)',
-                    [newUser.id, groupId]
+                    [newUserRaw.id, groupId]
                 );
             }
         }
         
         if (user.campaignIds && user.campaignIds.length > 0) {
             for (const campaignId of user.campaignIds) {
-                await client.query('INSERT INTO campaign_agents (user_id, campaign_id) VALUES ($1, $2)', [newUser.id, campaignId]);
+                await client.query('INSERT INTO campaign_agents (user_id, campaign_id) VALUES ($1, $2)', [newUserRaw.id, campaignId]);
             }
-            newUser.campaign_ids = user.campaignIds;
         }
 
         await client.query('COMMIT');
-        return keysToCamel(newUser);
+        
+        const finalUser = await getUserById(newUserRaw.id); // Refetch to get all joined data
+        broadcast({ type: 'newUser', payload: finalUser }); // RT: emit so all clients refresh instantly
+        return finalUser;
+
     } catch (e) {
         await client.query('ROLLBACK');
         handleDbError(e);
@@ -161,13 +164,11 @@ const updateUser = async (userId, userData) => {
         
         await client.query('COMMIT');
         
-        const finalUserRaw = updatedUserRows[0];
-        // Ensure the campaign_ids property is correctly set for the returned object
-        finalUserRaw.campaign_ids = user.campaignIds || [];
-        const finalUser = keysToCamel(finalUserRaw);
+        const finalUser = await getUserById(userId); // Refetch to get all joined data
         
-        // Broadcast the update to the specific user
+        // Broadcast the update to the specific user and all other clients
         sendToUser(userId, { type: 'userProfileUpdate', payload: finalUser });
+        broadcast({ type: 'updateUser', payload: finalUser }); // RT: emit so all clients refresh instantly
         
         return finalUser;
     } catch (e) {
@@ -181,6 +182,7 @@ const updateUser = async (userId, userData) => {
 
 const deleteUser = async (id) => {
     await pool.query('DELETE FROM users WHERE id = $1', [id]);
+    broadcast({ type: 'deleteUser', payload: { id } }); // RT: emit so all clients refresh instantly
 };
 
 const generatePassword = () => Math.random().toString(36).slice(-8);
@@ -189,15 +191,13 @@ const createUsersBulk = async (users) => {
     const client = await pool.connect();
     try {
         await client.query('BEGIN');
-        const createdUsers = [];
         for (const user of users) {
              // FIX: Use a distinct placeholder for each column to avoid type deduction errors.
             const userQuery = `
                 INSERT INTO users (id, login_id, extension, first_name, last_name, email, "role", is_active, password_hash, site_id, mobile_number, use_mobile_as_station, planning_enabled)
                 VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13)
-                RETURNING id, login_id, first_name, last_name, email, "role", is_active, site_id;
             `;
-            const res = await client.query(userQuery, [
+            await client.query(userQuery, [
                 user.id,
                 user.loginId,
                 user.loginId, // Pass loginId twice for both login_id and extension
@@ -212,10 +212,11 @@ const createUsersBulk = async (users) => {
                 'useMobileAsStation' in user ? user.useMobileAsStation : false,
                 'planningEnabled' in user ? user.planningEnabled : false
             ]);
-            createdUsers.push(res.rows[0]);
         }
         await client.query('COMMIT');
-        return createdUsers.map(keysToCamel);
+        // For bulk operations, we can send a generic event to trigger a refetch
+        broadcast({ type: 'usersBulkUpdate' }); // RT: emit so all clients refresh instantly
+        return { success: true };
     } catch (e) {
         await client.query('ROLLBACK');
         handleDbError(e);
@@ -245,13 +246,15 @@ const updateUserProfilePicture = async (userId, pictureUrl) => {
     const query = `
         UPDATE users SET profile_picture_url = $1, updated_at = NOW() 
         WHERE id = $2 
-        RETURNING profile_picture_url;
+        RETURNING *;
     `;
     const res = await pool.query(query, [pictureUrl, userId]);
     if (res.rows.length === 0) {
         throw new Error('Utilisateur non trouvé.');
     }
-    return keysToCamel(res.rows[0]);
+    const updatedUser = await getUserById(userId);
+    broadcast({ type: 'updateUser', payload: updatedUser }); // RT: emit so all clients refresh instantly
+    return updatedUser;
 };
 
 module.exports = {
