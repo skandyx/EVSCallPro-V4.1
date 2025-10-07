@@ -6,6 +6,8 @@ import ImportContactsModal from './ImportContactsModal.tsx';
 import CampaignDetailView from './CampaignDetailView.tsx'; // Import the new detail view
 import { useI18n } from '../src/i18n/index.tsx';
 import { useStore } from '../src/store/useStore.ts';
+// FIX: Imported apiClient to resolve 'Cannot find name' error.
+import apiClient from '../src/lib/axios.ts';
 
 // --- Reusable ToggleSwitch Component ---
 const ToggleSwitch: React.FC<{ enabled: boolean; onChange: (enabled: boolean) => void; }> = ({ enabled, onChange }) => (

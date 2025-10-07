@@ -2,13 +2,9 @@ import React, { useState, useEffect, useCallback } from 'react';
 import type { SystemLog, VersionInfo, ConnectivityService, Site } from '../types.ts';
 import { CpuChipIcon, CircleStackIcon, HddIcon, TimeIcon, ShieldCheckIcon, WifiIcon, TrashIcon, BugAntIcon, FolderIcon } from './Icons.tsx';
 import { useI18n } from '../src/i18n/index.tsx';
-
-interface MonitoringDashboardProps {
-    versionInfo: VersionInfo;
-    connectivityServices: ConnectivityService[];
-    sites: Site[];
-    apiCall: any; // AxiosInstance
-}
+// FIX: Import store and API client to make the component self-sufficient and remove props.
+import { useStore } from '../src/store/useStore.ts';
+import apiClient from '../src/lib/axios.ts';
 
 type HealthStatus = 'UP' | 'DEGRADED' | 'DOWN';
 type ConnectivityStatus = 'idle' | 'testing' | 'success' | 'failure';
@@ -54,14 +50,15 @@ const StatCard: React.FC<{ title: string; value: string; icon: React.FC<any>; ch
     </div>
 );
 
-const ConnectivityTester: React.FC<{ services: ConnectivityService[], sites: Site[], apiCall: any }> = ({ services, sites, apiCall }) => {
+const ConnectivityTester: React.FC<{ services: ConnectivityService[], sites: Site[] }> = ({ services, sites }) => {
     const { t } = useI18n();
     const [statuses, setStatuses] = useState<Record<string, { status: ConnectivityStatus; latency?: number }>>({});
 
     const runTest = async (target: { id: string; ip: string; port: number }) => {
         setStatuses(prev => ({ ...prev, [target.id]: { status: 'testing' } }));
         try {
-            const response = await apiCall.post('/system/ping', { ip: target.ip, port: target.port });
+            // FIX: Use imported apiClient directly instead of a prop.
+            const response = await apiClient.post('/system/ping', { ip: target.ip, port: target.port });
             setStatuses(prev => ({ ...prev, [target.id]: { status: response.data.status, latency: response.data.latency } }));
         } catch (e) {
             setStatuses(prev => ({ ...prev, [target.id]: { status: 'failure' } }));
@@ -118,8 +115,14 @@ const ConnectivityTester: React.FC<{ services: ConnectivityService[], sites: Sit
     );
 };
 
-const MonitoringDashboard: React.FC<MonitoringDashboardProps> = ({ versionInfo, connectivityServices, sites, apiCall }) => {
+const MonitoringDashboard: React.FC = () => {
     const { t } = useI18n();
+    // FIX: Get data from the global store instead of props.
+    const { versionInfo, connectivityServices, sites } = useStore(state => ({
+        versionInfo: state.versionInfo,
+        connectivityServices: state.connectivityServices,
+        sites: state.sites,
+    }));
     const [stats, setStats] = useState({
         cpu: { brand: '', load: 0 },
         ram: { total: 0, used: 0 },
@@ -135,7 +138,8 @@ const MonitoringDashboard: React.FC<MonitoringDashboardProps> = ({ versionInfo, 
     const fetchStats = useCallback(async () => {
         try {
             const startTime = performance.now();
-            const response = await apiCall.get('/system/stats');
+            // FIX: Use imported apiClient directly instead of a prop.
+            const response = await apiClient.get('/system/stats');
             const data = response.data;
             const endTime = performance.now();
             const apiLatency = Math.round(endTime - startTime);
@@ -144,19 +148,20 @@ const MonitoringDashboard: React.FC<MonitoringDashboardProps> = ({ versionInfo, 
             if (parseFloat(data.cpu.load) > 90 || (data.ram.total > 0 && (data.ram.used / data.ram.total) > 0.95)) setHealth('DEGRADED');
             else setHealth('UP');
         } catch (error) { console.error("Failed to fetch system stats:", error); setHealth('DOWN'); }
-    }, [apiCall]);
+    }, []);
 
     useEffect(() => {
         const fetchLogs = async () => {
             try {
-                const response = await apiCall.get('/system/logs');
+                // FIX: Use imported apiClient directly instead of a prop.
+                const response = await apiClient.get('/system/logs');
                 setLogs(response.data);
             } catch (error) { console.error("Failed to fetch logs:", error); }
         };
         fetchLogs();
         const interval = setInterval(fetchLogs, 5000);
         return () => clearInterval(interval);
-    }, [apiCall]);
+    }, []);
 
     useEffect(() => {
         fetchStats();
@@ -221,7 +226,8 @@ const MonitoringDashboard: React.FC<MonitoringDashboardProps> = ({ versionInfo, 
                     <div className="bg-white dark:bg-slate-800 p-4 rounded-lg shadow-sm border border-slate-200 dark:border-slate-700">
                         <h3 className="text-lg font-semibold text-slate-800 dark:text-slate-200 mb-3">{t('monitoring.versions.title')}</h3>
                         <ul className="text-sm space-y-2">
-                            {Object.entries(versionInfo).map(([key, value]) => (
+                            {/* FIX: Add null check for versionInfo as it can be null from the store. */}
+                            {versionInfo && Object.entries(versionInfo).map(([key, value]) => (
                                 <li key={key} className="flex justify-between">
                                     <span className="capitalize text-slate-600 dark:text-slate-400">{key}</span>
                                     <span className="font-mono font-semibold text-slate-700 dark:text-slate-300">{value}</span>
@@ -233,7 +239,7 @@ const MonitoringDashboard: React.FC<MonitoringDashboardProps> = ({ versionInfo, 
                  </div>
             </div>
 
-            <ConnectivityTester services={connectivityServices} sites={sites} apiCall={apiCall} />
+            <ConnectivityTester services={connectivityServices} sites={sites} />
         </div>
     );
 };
