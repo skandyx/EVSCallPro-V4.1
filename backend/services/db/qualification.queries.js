@@ -83,8 +83,50 @@ const saveQualificationGroup = async (group, assignedQualIds, id) => {
 };
 
 const deleteQualificationGroup = async (id) => {
-    await pool.query('DELETE FROM qualification_groups WHERE id=$1', [id]);
-    publish('events:crud', { type: 'deleteQualificationGroup', payload: { id } }); // RT: emit so all clients refresh instantly
+    const client = await pool.connect();
+    try {
+        await client.query('BEGIN');
+
+        // Find affected campaigns and qualifications before deleting
+        const campaignsRes = await client.query('SELECT id FROM campaigns WHERE qualification_group_id = $1', [id]);
+        const qualRes = await client.query('SELECT id FROM qualifications WHERE group_id = $1', [id]);
+        const affectedCampaignIds = campaignsRes.rows.map(r => r.id);
+        const affectedQualIds = qualRes.rows.map(r => r.id);
+
+        // Delete the group (ON DELETE SET NULL will handle relationships)
+        await client.query('DELETE FROM qualification_groups WHERE id = $1', [id]);
+
+        // Publish primary event
+        publish('events:crud', { type: 'deleteQualificationGroup', payload: { id } });
+
+        // Publish update events for affected campaigns
+        if (affectedCampaignIds.length > 0) {
+            const { getCampaignById } = require('./campaign.queries'); // Local require to prevent circular deps
+            for (const campaignId of affectedCampaignIds) {
+                const updatedCampaign = await getCampaignById(campaignId, client);
+                if (updatedCampaign) {
+                    publish('events:crud', { type: 'campaignUpdate', payload: updatedCampaign });
+                }
+            }
+        }
+        
+        // Publish update events for affected qualifications
+        if (affectedQualIds.length > 0) {
+            const qualQuery = `SELECT * FROM qualifications WHERE id = ANY($1::text[])`;
+            const updatedQualsRes = await client.query(qualQuery, [affectedQualIds]);
+            for(const row of updatedQualsRes.rows) {
+                publish('events:crud', { type: 'updateQualification', payload: keysToCamel(row) });
+            }
+        }
+
+        await client.query('COMMIT');
+    } catch(e) {
+        await client.query('ROLLBACK');
+        console.error("Error in deleteQualificationGroup transaction:", e);
+        throw e;
+    } finally {
+        client.release();
+    }
 };
 
 module.exports = {

@@ -108,9 +108,46 @@ const saveCampaign = async (campaign, id) => {
 };
 
 const deleteCampaign = async (id) => {
-    // Note: ON DELETE CASCADE will handle contacts, campaign_agents, etc.
-    await pool.query('DELETE FROM campaigns WHERE id = $1', [id]);
-    publish('events:crud', { type: 'deleteCampaign', payload: { id } }); // RT: emit so all clients refresh instantly
+    const client = await pool.connect();
+    try {
+        await client.query('BEGIN');
+
+        // Step 1: Find all users assigned to this campaign BEFORE deleting
+        const assignedUsersRes = await client.query('SELECT user_id FROM campaign_agents WHERE campaign_id = $1', [id]);
+        const affectedUserIds = assignedUsersRes.rows.map(r => r.user_id);
+
+        // Step 2: Delete the campaign. ON DELETE CASCADE will handle related tables.
+        await client.query('DELETE FROM campaigns WHERE id = $1', [id]);
+
+        // Step 3: Publish the primary deletion event for the campaign itself
+        publish('events:crud', { type: 'deleteCampaign', payload: { id } }); // RT: emit so all clients refresh instantly
+
+        // Step 4: For each affected user, fetch their updated data and publish an updateUser event
+        if (affectedUserIds.length > 0) {
+            const SAFE_USER_COLUMNS = 'u.id, u.login_id, u.extension, u.first_name, u.last_name, u.email, u."role", u.is_active, u.site_id, u.created_at, u.updated_at, u.mobile_number, u.use_mobile_as_station, u.profile_picture_url, u.planning_enabled';
+            const userQuery = `
+                SELECT ${SAFE_USER_COLUMNS}, COALESCE(ARRAY_AGG(ca.campaign_id) FILTER (WHERE ca.campaign_id IS NOT NULL), '{}') as campaign_ids
+                FROM users u
+                LEFT JOIN campaign_agents ca ON u.id = ca.user_id
+                WHERE u.id = ANY($1::text[])
+                GROUP BY u.id;
+            `;
+            const updatedUsersRes = await client.query(userQuery, [affectedUserIds]);
+            
+            for (const userRow of updatedUsersRes.rows) {
+                const updatedUser = keysToCamel(userRow);
+                publish('events:crud', { type: 'updateUser', payload: updatedUser }); // RT: emit so all clients refresh instantly
+            }
+        }
+
+        await client.query('COMMIT');
+    } catch (e) {
+        await client.query('ROLLBACK');
+        console.error("Error in deleteCampaign transaction:", e);
+        throw e;
+    } finally {
+        client.release();
+    }
 };
 
 const deleteContacts = async (contactIds) => {
