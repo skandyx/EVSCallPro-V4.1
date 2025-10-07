@@ -1,6 +1,6 @@
 const pool = require('./connection');
 const { keysToCamel, parseScriptOrFlow } = require('./utils');
-const { broadcast } = require('../webSocketServer');
+const { publish } = require('../redisClient');
 
 const getIvrFlows = async () => {
     const res = await pool.query('SELECT * FROM ivr_flows ORDER BY name');
@@ -15,18 +15,18 @@ const saveIvrFlow = async (flow, id) => {
     if (id) {
         const res = await pool.query('UPDATE ivr_flows SET name=$1, nodes=$2, connections=$3, updated_at=NOW() WHERE id=$4 RETURNING *', [name, nodesJson, connectionsJson, id]);
         savedFlow = parseScriptOrFlow(res.rows[0]);
-        broadcast({ type: 'updateIvrFlow', payload: savedFlow }); // RT: emit so all clients refresh instantly
+        publish('events:crud', { type: 'updateIvrFlow', payload: savedFlow }); // RT: emit so all clients refresh instantly
     } else {
         const res = await pool.query('INSERT INTO ivr_flows (id, name, nodes, connections) VALUES ($1, $2, $3, $4) RETURNING *', [flow.id, name, nodesJson, connectionsJson]);
         savedFlow = parseScriptOrFlow(res.rows[0]);
-        broadcast({ type: 'newIvrFlow', payload: savedFlow }); // RT: emit so all clients refresh instantly
+        publish('events:crud', { type: 'newIvrFlow', payload: savedFlow }); // RT: emit so all clients refresh instantly
     }
     return savedFlow;
 };
 
 const deleteIvrFlow = async (id) => {
     await pool.query('DELETE FROM ivr_flows WHERE id=$1', [id]);
-    broadcast({ type: 'deleteIvrFlow', payload: { id } }); // RT: emit so all clients refresh instantly
+    publish('events:crud', { type: 'deleteIvrFlow', payload: { id } }); // RT: emit so all clients refresh instantly
 };
 
 const duplicateIvrFlow = async (id) => {

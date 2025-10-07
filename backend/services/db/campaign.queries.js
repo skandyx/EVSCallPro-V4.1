@@ -2,7 +2,7 @@
 
 const pool = require('./connection');
 const { keysToCamel } = require('./utils');
-const { broadcast } = require('../webSocketServer');
+const { publish } = require('../redisClient');
 
 const getCampaigns = async () => {
     const query = `
@@ -40,7 +40,6 @@ const getCampaignById = async (id, client = pool) => {
         FROM campaigns c
         LEFT JOIN (
             SELECT campaign_id, json_agg(contacts.* ORDER BY contacts.last_name, contacts.first_name) as contacts
-            FROM contacts
             WHERE campaign_id = $1
             GROUP BY campaign_id
         ) ct_agg ON c.id = ct_agg.campaign_id
@@ -96,7 +95,7 @@ const saveCampaign = async (campaign, id) => {
         await client.query('COMMIT');
 
         const finalCampaign = await getCampaignById(campaignId);
-        broadcast({ type: 'campaignUpdate', payload: finalCampaign }); // RT: emit so all clients refresh instantly
+        publish('events:crud', { type: 'campaignUpdate', payload: finalCampaign }); // RT: emit so all clients refresh instantly
         return finalCampaign;
 
     } catch (e) {
@@ -111,7 +110,7 @@ const saveCampaign = async (campaign, id) => {
 const deleteCampaign = async (id) => {
     // Note: ON DELETE CASCADE will handle contacts, campaign_agents, etc.
     await pool.query('DELETE FROM campaigns WHERE id = $1', [id]);
-    broadcast({ type: 'deleteCampaign', payload: { id } }); // RT: emit so all clients refresh instantly
+    publish('events:crud', { type: 'deleteCampaign', payload: { id } }); // RT: emit so all clients refresh instantly
 };
 
 const deleteContacts = async (contactIds) => {
@@ -179,7 +178,7 @@ const importContacts = async (campaignId, contacts, deduplicationConfig) => {
     
     // After commit, fetch and broadcast the updated campaign state
     const updatedCampaign = await getCampaignById(campaignId);
-    broadcast({ type: 'campaignUpdate', payload: updatedCampaign }); // RT: emit so all clients refresh instantly
+    publish('events:crud', { type: 'campaignUpdate', payload: updatedCampaign }); // RT: emit so all clients refresh instantly
 
     return { valids, invalids };
 };
@@ -283,7 +282,7 @@ const qualifyContact = async (contactId, qualificationId, campaignId, agentId) =
         
         // --- Step 4: After commit, fetch and broadcast the updated campaign state ---
         const updatedCampaign = await getCampaignById(campaignId);
-        broadcast({
+        publish('events:crud', {
             type: 'campaignUpdate',
             payload: updatedCampaign
         });
@@ -325,7 +324,7 @@ const recycleContactsByQualification = async (campaignId, qualificationId) => {
 
         // After commit, fetch and broadcast the updated campaign state
         const updatedCampaign = await getCampaignById(campaignId);
-        broadcast({
+        publish('events:crud', {
             type: 'campaignUpdate',
             payload: updatedCampaign
         });
@@ -397,7 +396,7 @@ const updateContact = async (contactId, contactData) => {
         const updatedContact = keysToCamel(rows[0]);
         // After commit, fetch the full campaign and broadcast it
         const updatedCampaign = await getCampaignById(updatedContact.campaignId);
-        broadcast({ type: 'campaignUpdate', payload: updatedCampaign }); // RT: emit so all clients refresh instantly
+        publish('events:crud', { type: 'campaignUpdate', payload: updatedCampaign }); // RT: emit so all clients refresh instantly
         
         return updatedContact;
 
