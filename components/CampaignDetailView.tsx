@@ -31,6 +31,20 @@ interface CampaignDetailViewProps {
 
 type DetailTab = 'contacts' | 'dashboard' | 'dashboard2' | 'settings';
 
+const formatDuration = (seconds: number) => {
+    if (isNaN(seconds) || seconds < 0) return '00:00';
+    const m = Math.floor(seconds / 60);
+    const s = Math.round(seconds % 60);
+    return `${m.toString().padStart(2, '0')}:${s.toString().padStart(2, '0')}`;
+};
+
+const KpiCard: React.FC<{ title: string; value: string | number; }> = ({ title, value }) => (
+    <div className="bg-white dark:bg-slate-800 p-4 rounded-lg shadow-sm border border-slate-200 dark:border-slate-700">
+        <p className="text-sm text-slate-500 dark:text-slate-400">{title}</p>
+        <p className="text-3xl font-bold text-slate-900 dark:text-slate-100">{value}</p>
+    </div>
+);
+
 
 const CampaignDetailView: React.FC<CampaignDetailViewProps> = (props) => {
     const { campaign, onBack, qualifications, users, script, onDeleteContacts, onRecycleContacts, contactNotes, currentUser } = props;
@@ -130,7 +144,6 @@ const CampaignDetailView: React.FC<CampaignDetailViewProps> = (props) => {
                             campaignCallHistory={campaignCallHistory}
                             qualifications={qualifications}
                             onRecycleContacts={onRecycleContacts}
-                            campaignStats={campaignStats}
                         />;
             default:
                 return null;
@@ -144,6 +157,26 @@ const CampaignDetailView: React.FC<CampaignDetailViewProps> = (props) => {
                 <h1 className="text-4xl font-bold text-slate-900 dark:text-slate-100 tracking-tight">{campaign.name}</h1>
                 <p className="mt-1 text-lg text-slate-600 dark:text-slate-400">{campaign.description || t('campaignDetail.associatedScript', { scriptName: script?.name || t('common.none')})}</p>
             </header>
+
+            <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+                <KpiCard title={t('campaignDetail.dashboard.kpis.completionRate')} value={`${campaignStats.completionRate.toFixed(1)}%`} />
+                <KpiCard title={t('campaignDetail.dashboard.kpis.contactRate')} value={`${campaignStats.contactRate.toFixed(1)}%`} />
+                <KpiCard title={t('campaignDetail.dashboard.kpis.conversionRate')} value={`${campaignStats.conversionRate.toFixed(1)}%`} />
+                <KpiCard title={t('campaignDetail.dashboard.kpis.aht')} value={formatDuration(campaignStats.avgDuration)} />
+            </div>
+
+            <div>
+                <h3 className="text-lg font-semibold text-slate-800 dark:text-slate-200 mb-2">{t('campaignDetail.dashboard.fileProgress.title')}</h3>
+                <div className="w-full bg-slate-200 dark:bg-slate-700 rounded-full h-4">
+                    <div className="bg-indigo-600 h-4 rounded-full text-center text-white text-xs font-bold flex items-center justify-center" style={{ width: `${campaignStats.completionRate}%` }}>
+                       {campaignStats.completionRate > 10 && `${campaignStats.completionRate.toFixed(0)}%`}
+                    </div>
+                </div>
+                <div className="flex justify-between text-sm mt-1 text-slate-600 dark:text-slate-400">
+                    <span>{t('campaignDetail.dashboard.fileProgress.processed')} {campaignStats.processed}</span>
+                    <span>{t('campaignDetail.dashboard.fileProgress.remaining')} {campaignStats.pending}</span>
+                </div>
+            </div>
 
             <div className="bg-white dark:bg-slate-900 rounded-lg shadow-sm border border-slate-200 dark:border-slate-700">
                 <div className="border-b border-slate-200 dark:border-slate-700"><nav className="-mb-px flex space-x-4 px-6">

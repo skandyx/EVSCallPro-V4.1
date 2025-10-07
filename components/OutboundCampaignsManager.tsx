@@ -341,9 +341,12 @@ const OutboundCampaignsManager: React.FC<OutboundCampaignsManagerProps> = (props
     const [importTargetCampaign, setImportTargetCampaign] = useState<Campaign | null>(null);
     const { t } = useI18n();
 
+    // FIX: This effect ensures that if the selectedCampaign is updated via WebSocket,
+    // the detail view re-renders with the fresh data, adhering to the "ZERO refresh" principle.
     useEffect(() => {
         if (selectedCampaign) {
             const updatedCampaign = campaigns.find(c => c.id === selectedCampaign.id);
+            // Check if the data has actually changed to avoid unnecessary re-renders.
             if (updatedCampaign && JSON.stringify(updatedCampaign) !== JSON.stringify(selectedCampaign)) {
                 setSelectedCampaign(updatedCampaign);
             }

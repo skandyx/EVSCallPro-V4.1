@@ -25,13 +25,6 @@ interface DashboardTabProps {
     }
 }
 
-const KpiCard: React.FC<{ title: string; value: string | number; }> = ({ title, value }) => (
-    <div className="bg-slate-50 dark:bg-slate-900/50 p-4 rounded-lg border border-slate-200 dark:border-slate-700">
-        <p className="text-sm text-slate-500 dark:text-slate-400">{title}</p>
-        <p className="text-3xl font-bold text-slate-900 dark:text-slate-100">{value}</p>
-    </div>
-);
-
 const ChartComponent: React.FC<{ type: string; data: any; options: any; }> = ({ type, data, options }) => {
     const canvasRef = useRef<HTMLCanvasElement>(null);
     const chartRef = useRef<any>(null);
@@ -58,13 +51,6 @@ const ChartComponent: React.FC<{ type: string; data: any; options: any; }> = ({ 
     }, [type, data, options]);
 
     return <canvas ref={canvasRef}></canvas>;
-};
-
-const formatDuration = (seconds: number) => {
-    if (isNaN(seconds) || seconds < 0) return '00:00';
-    const m = Math.floor(seconds / 60);
-    const s = Math.round(seconds % 60);
-    return `${m.toString().padStart(2, '0')}:${s.toString().padStart(2, '0')}`;
 };
 
 const DashboardTab: React.FC<DashboardTabProps> = ({ campaign, campaignCallHistory, qualifications, users, campaignStats }) => {
@@ -160,24 +146,6 @@ const DashboardTab: React.FC<DashboardTabProps> = ({ campaign, campaignCallHisto
 
     return (
         <div className="space-y-6">
-            <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-                <KpiCard title={t('campaignDetail.dashboard.kpis.completionRate')} value={`${campaignStats.completionRate.toFixed(1)}%`} />
-                <KpiCard title={t('campaignDetail.dashboard.kpis.contactRate')} value={`${campaignStats.contactRate.toFixed(1)}%`} />
-                <KpiCard title={t('campaignDetail.dashboard.kpis.conversionRate')} value={`${campaignStats.conversionRate.toFixed(1)}%`} />
-                <KpiCard title={t('campaignDetail.dashboard.kpis.aht')} value={formatDuration(campaignStats.avgDuration)} />
-            </div>
-            <div>
-                <h3 className="text-lg font-semibold text-slate-800 dark:text-slate-200 mb-2">{t('campaignDetail.dashboard.fileProgress.title')}</h3>
-                <div className="w-full bg-slate-200 dark:bg-slate-700 rounded-full h-4">
-                    <div className="bg-indigo-600 h-4 rounded-full text-center text-white text-xs font-bold" style={{ width: `${campaignStats.completionRate}%` }}>
-                        {campaignStats.completionRate.toFixed(0)}%
-                    </div>
-                </div>
-                <div className="flex justify-between text-sm mt-1 text-slate-600 dark:text-slate-400">
-                    <span>{t('campaignDetail.dashboard.fileProgress.processed')} {campaignStats.processed}</span>
-                    <span>{t('campaignDetail.dashboard.fileProgress.remaining')} {campaignStats.pending}</span>
-                </div>
-            </div>
             {campaign.quotaRules.length > 0 && (
                 <div>
                     <h3 className="text-lg font-semibold text-slate-800 dark:text-slate-200 mb-2">{t('campaignDetail.dashboard.quota.title')}</h3>

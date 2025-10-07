@@ -7,15 +7,9 @@ interface SettingsTabProps {
     campaignCallHistory: CallHistoryRecord[];
     qualifications: Qualification[];
     onRecycleContacts: (campaignId: string, qualificationId: string) => void;
-    campaignStats: {
-        total: number;
-        processed: number;
-        pending: number;
-        completionRate: number;
-    }
 }
 
-const SettingsTab: React.FC<SettingsTabProps> = ({ campaign, campaignCallHistory, qualifications, onRecycleContacts, campaignStats }) => {
+const SettingsTab: React.FC<SettingsTabProps> = ({ campaign, campaignCallHistory, qualifications, onRecycleContacts }) => {
     const { t } = useI18n();
 
     const recyclableQualificationStats = useMemo(() => {
@@ -55,20 +49,6 @@ const SettingsTab: React.FC<SettingsTabProps> = ({ campaign, campaignCallHistory
 
     return (
         <div className="space-y-6">
-            <div className="space-y-6 border-b dark:border-slate-700 pb-6 mb-6">
-                <div>
-                    <h3 className="text-lg font-semibold text-slate-800 dark:text-slate-200 mb-2">{t('campaignDetail.dashboard.fileProgress.title')}</h3>
-                    <div className="w-full bg-slate-200 dark:bg-slate-700 rounded-full h-4">
-                        <div className="bg-indigo-600 h-4 rounded-full text-center text-white text-xs font-bold" style={{ width: `${campaignStats.completionRate}%` }}>
-                            {campaignStats.completionRate.toFixed(0)}%
-                        </div>
-                    </div>
-                    <div className="flex justify-between text-sm mt-1 text-slate-600 dark:text-slate-400">
-                        <span>{t('campaignDetail.dashboard.fileProgress.processed')} {campaignStats.processed}</span>
-                        <span>{t('campaignDetail.dashboard.fileProgress.remaining')} {campaignStats.pending}</span>
-                    </div>
-                </div>
-            </div>
              <div>
                 <h3 className="text-lg font-semibold text-slate-800 dark:text-slate-200 mb-2">{t('campaignDetail.settings.recycling.title')}</h3>
                 <p className="text-sm text-slate-500 dark:text-slate-400 mb-4">{t('campaignDetail.settings.recycling.description')}</p>
