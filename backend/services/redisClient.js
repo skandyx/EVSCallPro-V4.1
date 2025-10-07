@@ -2,8 +2,9 @@ const redis = require('redis');
 const logger = require('./logger');
 
 const client = redis.createClient({
-    // Par défaut, se connecte à redis://127.0.0.1:6379
-    // Pour la production, utilisez une URL: 'redis://user:password@redis-server:6379'
+    // Lit l'URL de connexion depuis les variables d'environnement,
+    // ce qui inclut le mot de passe pour l'authentification.
+    url: process.env.REDIS_URL
 });
 
 client.on('error', err => {
