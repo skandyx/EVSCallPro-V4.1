@@ -1,5 +1,6 @@
 // FIX: Replaced placeholder with a complete Zustand store implementation to resolve module errors.
-import create from 'zustand';
+// FIX: Changed `import create from 'zustand'` to `import { create } from 'zustand'` to use the correct named export for Zustand v4 with ESM. This resolves the TypeError where `create` was not considered a function and fixes subsequent type inference errors for the store's `get` function.
+import { create } from 'zustand';
 import { persist } from 'zustand/middleware';
 import type {
     User, Campaign, SavedScript, Qualification, QualificationGroup, IvrFlow, AudioFile,
@@ -72,6 +73,7 @@ interface AppState {
     updateContact: (contact: Contact) => Promise<void>;
     changeAgentStatus: (status: any) => void;
     setTheme: (theme: Theme) => void;
+    createUsersBulk: (users: Partial<User>[]) => Promise<void>;
 }
 
 export const useStore = create<AppState>()(persist(
@@ -143,7 +145,7 @@ export const useStore = create<AppState>()(persist(
             try {
                 const endpoint = `/${entityType.replace(/s$/, '').replace(/ie$/, 'y')}s`;
                 let response;
-                if (data.id && get()[entityType as keyof AppState].some((e: any) => e.id === data.id)) {
+                if (data.id && (get() as any)[entityType].some((e: any) => e.id === data.id)) {
                     response = await apiClient.put(`${endpoint}/${data.id}`, data);
                 } else {
                     response = await apiClient.post(endpoint, data);
@@ -213,6 +215,10 @@ export const useStore = create<AppState>()(persist(
         },
         
         setTheme: (theme) => set({ theme }),
+
+        createUsersBulk: async (users: Partial<User>[]) => {
+            await apiClient.post('/users/bulk', { users });
+        },
 
     }),
     {
