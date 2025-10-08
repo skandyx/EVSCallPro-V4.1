@@ -1,5 +1,3 @@
-// backend/services/db/campaign.queries.js
-
 const pool = require('./connection');
 const { keysToCamel } = require('./utils');
 const { publish } = require('../redisClient');
@@ -325,35 +323,31 @@ const recycleContactsByQualification = async (campaignId, qualificationId) => {
         // FIX: The recycling query now joins with the 'qualifications' table to enforce
         // the `is_recyclable = TRUE` business rule directly in the database, making it foolproof.
         const updateQuery = `
-            UPDATE contacts
+            UPDATE contacts c
             SET 
                 status = 'pending', 
-                custom_fields = COALESCE(custom_fields, '{}'::jsonb) || jsonb_build_object('recycled_at', NOW()),
+                custom_fields = COALESCE(c.custom_fields, '{}'::jsonb) || jsonb_build_object('recycled_at', NOW()),
                 updated_at = NOW()
-            WHERE
-                id IN (
-                    SELECT c.id
-                    FROM contacts c
-                    INNER JOIN (
-                        SELECT DISTINCT ON (contact_id) contact_id, qualification_id
-                        FROM call_history
-                        ORDER BY contact_id, start_time DESC
-                    ) AS last_qual ON c.id = last_qual.contact_id
-                    INNER JOIN qualifications q ON last_qual.qualification_id = q.id
-                    WHERE
-                        c.campaign_id = $1
-                        AND c.status = 'qualified'
-                        AND last_qual.qualification_id = $2
-                        AND q.is_recyclable = TRUE
-                )
-            RETURNING id;
+            FROM (
+                SELECT DISTINCT ON (ch.contact_id) ch.contact_id, ch.qualification_id
+                FROM call_history ch
+                WHERE ch.campaign_id = $1
+                ORDER BY ch.contact_id, ch.start_time DESC
+            ) AS last_qual
+            JOIN qualifications q ON last_qual.qualification_id = q.id
+            WHERE 
+                c.id = last_qual.contact_id
+                AND c.campaign_id = $1
+                AND c.status = 'qualified'
+                AND last_qual.qualification_id = $2
+                AND q.is_recyclable = TRUE
+            RETURNING c.id;
         `;
 
         const updateRes = await client.query(updateQuery, [campaignId, qualificationId]);
         
         await client.query('COMMIT');
         
-        // After commit, fetch and broadcast the updated campaign state
         const updatedCampaign = await getCampaignById(campaignId);
         if (updatedCampaign) {
              publish('events:crud', {
