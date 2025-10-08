@@ -22,11 +22,9 @@ const getCampaigns = async () => {
         ORDER BY c.name;
     `;
     const res = await pool.query(query);
-    return res.rows.map(row => {
-        const campaign = keysToCamel(row);
-        campaign.contacts = campaign.contacts.map(keysToCamel);
-        return campaign;
-    });
+    // The recursive keysToCamel function handles the entire object, including nested arrays.
+    // The previous extra .map() call was redundant and caused the bug.
+    return res.rows.map(keysToCamel);
 };
 
 const getCampaignById = async (id, client = pool) => {
@@ -50,9 +48,9 @@ const getCampaignById = async (id, client = pool) => {
     `;
     const res = await client.query(query, [id]);
     if (res.rows.length === 0) return null;
-    const campaign = keysToCamel(res.rows[0]);
-    campaign.contacts = campaign.contacts.map(keysToCamel);
-    return campaign;
+    // The recursive keysToCamel function handles the entire object.
+    // The previous extra .map() call was redundant and caused the bug.
+    return keysToCamel(res.rows[0]);
 }
 
 const saveCampaign = async (campaign, id) => {
@@ -320,8 +318,6 @@ const recycleContactsByQualification = async (campaignId, qualificationId) => {
     try {
         await client.query('BEGIN');
         
-        // FIX: The recycling query now joins with the 'qualifications' table to enforce
-        // the `is_recyclable = TRUE` business rule directly in the database, making it foolproof.
         const updateQuery = `
             UPDATE contacts c
             SET 
