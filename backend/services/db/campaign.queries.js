@@ -322,9 +322,8 @@ const recycleContactsByQualification = async (campaignId, qualificationId) => {
     try {
         await client.query('BEGIN');
         
-        // This query is now more robust. It finds the last qualification for any contact in the campaign,
-        // regardless of whether the call_history record has a campaign_id itself. This makes it
-        // backward-compatible with older data.
+        // FIX: The recycling query now joins with the 'qualifications' table to enforce
+        // the `is_recyclable = TRUE` business rule directly in the database, making it foolproof.
         const updateQuery = `
             UPDATE contacts
             SET 
@@ -340,10 +339,12 @@ const recycleContactsByQualification = async (campaignId, qualificationId) => {
                         FROM call_history
                         ORDER BY contact_id, start_time DESC
                     ) AS last_qual ON c.id = last_qual.contact_id
+                    INNER JOIN qualifications q ON last_qual.qualification_id = q.id
                     WHERE
                         c.campaign_id = $1
                         AND c.status = 'qualified'
                         AND last_qual.qualification_id = $2
+                        AND q.is_recyclable = TRUE
                 )
             RETURNING id;
         `;
