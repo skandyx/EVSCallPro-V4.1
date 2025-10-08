@@ -7,13 +7,22 @@ interface CallbackSchedulerModalProps {
 }
 
 const CallbackSchedulerModal: React.FC<CallbackSchedulerModalProps> = ({ isOpen, onClose, onSchedule }) => {
-    // Set default time to 1 minute in the future to avoid scheduling in the past.
-    const now = new Date();
-    now.setMinutes(now.getMinutes() + 1); 
-    // Adjust for timezone offset for the input[type=datetime-local]
-    now.setMinutes(now.getMinutes() - now.getTimezoneOffset());
-    const minDateTime = now.toISOString().slice(0, 16);
+    // FIX: Create a stable minimum datetime to prevent validation errors on re-render.
+    // This function is called only once to initialize the state.
+    const getMinDateTime = () => {
+        const now = new Date();
+        now.setMinutes(now.getMinutes() + 1); // Set default to 1 minute in the future
     
+        const year = now.getFullYear();
+        const month = (now.getMonth() + 1).toString().padStart(2, '0');
+        const day = now.getDate().toString().padStart(2, '0');
+        const hours = now.getHours().toString().padStart(2, '0');
+        const minutes = now.getMinutes().toString().padStart(2, '0');
+    
+        return `${year}-${month}-${day}T${hours}:${minutes}`;
+    };
+
+    const [minDateTime] = useState(getMinDateTime);
     const [scheduledTime, setScheduledTime] = useState(minDateTime);
     const [notes, setNotes] = useState('');
 
@@ -24,6 +33,7 @@ const CallbackSchedulerModal: React.FC<CallbackSchedulerModalProps> = ({ isOpen,
             alert("Veuillez sélectionner une date et une heure.");
             return;
         }
+        // Use the stable minDateTime for validation
         if (new Date(scheduledTime) < new Date(minDateTime)) {
             alert("Vous ne pouvez pas planifier un rappel dans le passé.");
             return;
