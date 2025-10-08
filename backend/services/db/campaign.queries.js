@@ -322,11 +322,14 @@ const recycleContactsByQualification = async (campaignId, qualificationId) => {
     try {
         await client.query('BEGIN');
         
+        // This query is now more robust. It finds the last qualification for any contact in the campaign,
+        // regardless of whether the call_history record has a campaign_id itself. This makes it
+        // backward-compatible with older data.
         const updateQuery = `
             UPDATE contacts
             SET 
                 status = 'pending', 
-                custom_fields = custom_fields || jsonb_build_object('recycled_at', NOW()),
+                custom_fields = COALESCE(custom_fields, '{}'::jsonb) || jsonb_build_object('recycled_at', NOW()),
                 updated_at = NOW()
             WHERE
                 id IN (
@@ -335,7 +338,6 @@ const recycleContactsByQualification = async (campaignId, qualificationId) => {
                     INNER JOIN (
                         SELECT DISTINCT ON (contact_id) contact_id, qualification_id
                         FROM call_history
-                        WHERE campaign_id = $1
                         ORDER BY contact_id, start_time DESC
                     ) AS last_qual ON c.id = last_qual.contact_id
                     WHERE
@@ -352,10 +354,12 @@ const recycleContactsByQualification = async (campaignId, qualificationId) => {
         
         // After commit, fetch and broadcast the updated campaign state
         const updatedCampaign = await getCampaignById(campaignId);
-        publish('events:crud', {
-            type: 'campaignUpdate',
-            payload: updatedCampaign
-        });
+        if (updatedCampaign) {
+             publish('events:crud', {
+                type: 'campaignUpdate',
+                payload: updatedCampaign
+            });
+        }
         
         return updateRes.rowCount;
     } catch (error) {
