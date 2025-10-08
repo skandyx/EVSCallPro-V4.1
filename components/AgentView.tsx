@@ -336,7 +336,12 @@ const AgentView: React.FC<AgentViewProps> = ({ onUpdatePassword, onUpdateProfile
     const handleDial = async (destination: string) => {
         if (!currentContact || !currentCampaign || !destination) return;
         try {
-            await apiClient.post('/call/originate', { agentId: currentUser.id, destination, campaignId: currentCampaign.id, });
+            await apiClient.post('/call/originate', {
+                agentId: currentUser.id,
+                destination,
+                campaignId: currentCampaign.id,
+                contactId: currentContact.id
+            });
             changeAgentStatus('En Appel');
         } catch (error) {
             console.error("Originate call failed:", error);

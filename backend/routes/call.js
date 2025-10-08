@@ -18,6 +18,8 @@ const asteriskRouter = require('../services/asteriskRouter');
  *             properties:
  *               agentId: { type: string }
  *               destination: { type: string }
+ *               contactId: { type: string }
+ *               campaignId: { type: string }
  *     responses:
  *       '200':
  *         description: "Appel initié avec succès."
@@ -34,44 +36,42 @@ const asteriskRouter = require('../services/asteriskRouter');
  *         description: "Erreur lors de l'initiation de l'appel."
  */
 router.post('/originate', async (req, res) => {
-    const { agentId, destination } = req.body;
+    const { agentId, destination, contactId, campaignId } = req.body;
+
+    if (!agentId || !destination || !contactId || !campaignId) {
+        return res.status(400).json({ error: "agentId, destination, contactId, and campaignId are required." });
+    }
 
     try {
-        // La méthode getUserById inclut maintenant les nouveaux champs mobile
+        // MARK THE CONTACT AS CALLED FIRST. This is the core of the fix.
+        await db.markContactAsCalled(contactId, campaignId);
+        
         const agent = await db.getUserById(agentId);
         if (!agent) {
             return res.status(404).json({ error: "Agent non trouvé." });
         }
 
-        // --- NOUVELLE LOGIQUE CONDITIONNELLE ---
         const useMobile = agent.useMobileAsStation && agent.mobileNumber;
+        const callContextVars = { campaignId, contactId, agentId };
 
         if (useMobile) {
-             // LOGIQUE "CONNECT TO PHONE" VIA MOBILE
-            console.log(`[Originate] Using mobile station for agent ${agent.id} -> ${agent.mobileNumber}`);
             if (!agent.siteId) {
                 return res.status(404).json({ error: "L'agent n'a pas de site configuré pour déterminer le trunk de sortie." });
             }
-             // L'AMI Originate est complexe. Voici la structure de l'appel :
-             // 1. On appelle le mobile de l'agent via un canal "Local".
-             // 2. Quand l'agent décroche, le canal "Local" exécute une application "Dial"
-             //    pour appeler le client final via le bon trunk de site.
             const callResult = await asteriskRouter.originateConnectToPhone(
                 agent.mobileNumber, 
                 destination, 
                 agent.siteId, 
-                agent.loginId, // Utilisé comme CallerID pour l'appel vers le client
-                { campaignId: req.body.campaignId } // Passer des variables additionnelles
+                agent.loginId,
+                callContextVars
             );
             return res.json({ callId: callResult.uniqueid });
 
         } else {
-            // --- LOGIQUE CLASSIQUE (SOFTPHONE) ---
-            console.log(`[Originate] Using softphone station for agent ${agent.id} -> ${agent.extension}`);
             if (!agent.extension || !agent.siteId) {
                 return res.status(404).json({ error: "L'agent n'a pas d'extension ou de site configuré." });
             }
-            const callResult = await asteriskRouter.originateCall(agent.extension, destination, agent.siteId);
+            const callResult = await asteriskRouter.originateCall(agent.extension, destination, agent.siteId, callContextVars);
             return res.json({ callId: callResult.uniqueid });
         }
     } catch (error) {

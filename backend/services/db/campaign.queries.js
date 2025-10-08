@@ -207,35 +207,31 @@ const importContacts = async (campaignId, contacts, deduplicationConfig) => {
 };
 
 const getNextContactForCampaign = async (agentId, campaignId) => {
-    const client = await pool.connect();
-    try {
-        await client.query('BEGIN');
-        const res = await client.query(
-            `SELECT * FROM contacts WHERE campaign_id = $1 AND status = 'pending' LIMIT 1 FOR UPDATE SKIP LOCKED`,
-            [campaignId]
-        );
+    // The transaction and the UPDATE are removed.
+    // The SELECT...FOR UPDATE SKIP LOCKED provides a degree of protection against immediate, concurrent requests.
+    const res = await pool.query(
+        `SELECT * FROM contacts WHERE campaign_id = $1 AND status = 'pending' ORDER BY created_at LIMIT 1 FOR UPDATE SKIP LOCKED`,
+        [campaignId]
+    );
 
-        if (res.rows.length === 0) {
-            await client.query('COMMIT');
-            return { contact: null, campaign: null };
-        }
-
-        const contact = res.rows[0];
-        
-        await client.query(`UPDATE contacts SET status = 'called' WHERE id = $1`, [contact.id]);
-        
-        const campaignRes = await client.query('SELECT * FROM campaigns WHERE id = $1', [campaignId]);
-        
-        await client.query('COMMIT');
-
-        return { contact: keysToCamel(contact), campaign: keysToCamel(campaignRes.rows[0]) };
-    } catch (error) {
-        await client.query('ROLLBACK');
-        console.error("Error in getNextContactForCampaign:", error);
-        throw error;
-    } finally {
-        client.release();
+    if (res.rows.length === 0) {
+        return { contact: null, campaign: null };
     }
+
+    const contact = res.rows[0];
+    // We fetch the campaign separately, as we are no longer in a transaction that guarantees its state.
+    const campaignRes = await pool.query('SELECT * FROM campaigns WHERE id = $1', [campaignId]);
+
+    // Return the PENDING contact. Its status will be updated upon actual dialing.
+    return { contact: keysToCamel(contact), campaign: keysToCamel(campaignRes.rows[0]) };
+};
+
+const markContactAsCalled = async (contactId, campaignId) => {
+    // Simple, atomic update.
+    await pool.query(
+        `UPDATE contacts SET status = 'called', updated_at = NOW() WHERE id = $1 AND campaign_id = $2`,
+        [contactId, campaignId]
+    );
 };
 
 const qualifyContact = async (contactId, qualificationId, campaignId, agentId) => {
@@ -443,6 +439,7 @@ module.exports = {
     deleteContacts,
     importContacts,
     getNextContactForCampaign,
+    markContactAsCalled,
     qualifyContact,
     recycleContactsByQualification,
     getCallHistoryForContact,
