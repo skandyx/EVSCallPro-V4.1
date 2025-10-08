@@ -56,7 +56,7 @@ function initializeWebSocketServer(server) {
         clients.set(ws, { id: ws.user.id, role: ws.user.role });
 
         // FIX: When an agent connects, immediately broadcast their 'En Attente' status
-        // to supervisors so they appear on the real-time dashboard right away.
+        // to all clients, including themselves, to trigger the 'requestNextContact' logic.
         if (ws.user.role === 'Agent') {
             const connectEvent = {
                 type: 'agentStatusUpdate',
@@ -65,7 +65,7 @@ function initializeWebSocketServer(server) {
                     status: 'En Attente'
                 }
             };
-            broadcastToRoom('superviseur', connectEvent);
+            broadcast(connectEvent);
         }
 
         ws.on('message', (message) => {
@@ -83,7 +83,8 @@ function initializeWebSocketServer(server) {
                             status: event.payload.status
                         }
                     };
-                    broadcastToRoom('superviseur', broadcastEvent);
+                    // FIX: Broadcast to all clients so the agent's own UI updates.
+                    broadcast(broadcastEvent);
                 }
                 
                 // FIX: Made the check more robust to handle a potential typo ('agentRaiseHand' instead of 'agentRaisedHand').
@@ -145,8 +146,8 @@ function initializeWebSocketServer(server) {
 
         ws.on('close', () => {
             console.log(`[WS] Client disconnected: User ID ${ws.user.id}`);
-            // FIX: When an agent disconnects, broadcast this to supervisors so they disappear
-            // from the real-time dashboard immediately.
+            // FIX: When an agent disconnects, broadcast this to all clients to ensure
+            // all dashboards (including the agent's if reconnecting) are in sync.
             if (ws.user.role === 'Agent') {
                 const disconnectEvent = {
                     type: 'agentStatusUpdate',
@@ -155,7 +156,7 @@ function initializeWebSocketServer(server) {
                         status: 'Déconnecté'
                     }
                 };
-                broadcastToRoom('superviseur', disconnectEvent);
+                broadcast(disconnectEvent);
             }
             clients.delete(ws);
         });
