@@ -189,6 +189,7 @@
     "callControls": {
       "title": "Contrôles d'Appel",
       "call": "Appeler",
+      "endCall": "Terminer l'appel",
       "hangup": "Qualifier la Fiche",
       "hold": "Mettre en attente",
       "transfer": "Transférer"

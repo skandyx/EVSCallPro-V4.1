@@ -172,20 +172,15 @@ export const useStore = create<AppState>()(
                         const data = response.data;
                 
                         set(state => {
-                            // Take a snapshot of the current real-time states
                             const existingAgentStates = new Map(state.agentStates.map(a => [a.id, a]));
                 
-                            // Build the new list of agent states from the fetched user list
                             const updatedAgentStates = data.users
                                 .filter((user: User) => user.role === 'Agent')
                                 .map((agentUser: User) => {
                                     const existingState = existingAgentStates.get(agentUser.id);
                                     if (existingState) {
-                                        // If a state already exists (e.g., from a WS event),
-                                        // update it with fresh user data but KEEP its real-time status.
-                                        return { ...existingState, ...agentUser };
+                                        return { ...agentUser, ...existingState };
                                     }
-                                    // Otherwise, create a new initial state for this agent.
                                     return {
                                         ...agentUser,
                                         status: 'Déconnecté' as AgentStatus,
@@ -201,7 +196,6 @@ export const useStore = create<AppState>()(
                                     };
                                 });
                 
-                            // Update the store with all new data, including the intelligently merged agent states.
                             return { ...state, ...data, agentStates: updatedAgentStates, isLoading: false, error: null };
                         });
                     } catch (error: any) {
@@ -302,21 +296,21 @@ export const useStore = create<AppState>()(
                                     }
                                 } else {
                                     const user = state.users.find(u => u.id === payload.agentId) || (state.currentUser?.id === payload.agentId ? state.currentUser : null);
-                                    if (user) {
-                                        state.agentStates.push({
-                                            ...(user as AgentState),
-                                            status: payload.status,
-                                            statusDuration: 0,
-                                            callsHandledToday: 0,
-                                            averageHandlingTime: 0,
-                                            averageTalkTime: 0,
-                                            pauseCount: payload.status === 'En Pause' ? 1 : 0,
-                                            trainingCount: payload.status === 'Formation' ? 1 : 0,
-                                            totalPauseTime: 0,
-                                            totalTrainingTime: 0,
-                                            totalConnectedTime: 0,
-                                        });
-                                    }
+                                    const baseData = user || { id: payload.agentId };
+                                    
+                                    state.agentStates.push({
+                                        ...(baseData as AgentState),
+                                        status: payload.status,
+                                        statusDuration: 0,
+                                        callsHandledToday: 0,
+                                        averageHandlingTime: 0,
+                                        averageTalkTime: 0,
+                                        pauseCount: payload.status === 'En Pause' ? 1 : 0,
+                                        trainingCount: payload.status === 'Formation' ? 1 : 0,
+                                        totalPauseTime: 0,
+                                        totalTrainingTime: 0,
+                                        totalConnectedTime: 0,
+                                    });
                                 }
                                 break;
                             }

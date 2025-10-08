@@ -189,6 +189,7 @@
     "callControls": {
       "title": "Call Controls",
       "call": "Call",
+      "endCall": "End Call",
       "hangup": "Qualify Record",
       "hold": "Hold",
       "transfer": "Transfer"
