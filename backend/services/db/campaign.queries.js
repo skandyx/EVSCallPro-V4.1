@@ -84,7 +84,6 @@ const saveCampaign = async (campaign, id) => {
         // Sync assigned agents
         await client.query('DELETE FROM campaign_agents WHERE campaign_id = $1', [campaignId]);
         if (assignedUserIds && assignedUserIds.length > 0) {
-            // FIX: Ensure assignedUserIds are unique before inserting to prevent duplicate key errors.
             const uniqueUserIds = [...new Set(assignedUserIds)];
             for (const userId of uniqueUserIds) {
                 await client.query('INSERT INTO campaign_agents (campaign_id, user_id) VALUES ($1, $2)', [campaignId, userId]);
@@ -94,7 +93,7 @@ const saveCampaign = async (campaign, id) => {
         await client.query('COMMIT');
 
         const finalCampaign = await getCampaignById(campaignId);
-        publish('events:crud', { type: 'campaignUpdate', payload: finalCampaign }); // RT: emit so all clients refresh instantly
+        publish('events:crud', { type: 'campaignUpdate', payload: finalCampaign });
         return finalCampaign;
 
     } catch (e) {
@@ -111,17 +110,13 @@ const deleteCampaign = async (id) => {
     try {
         await client.query('BEGIN');
 
-        // Step 1: Find all users assigned to this campaign BEFORE deleting
         const assignedUsersRes = await client.query('SELECT user_id FROM campaign_agents WHERE campaign_id = $1', [id]);
         const affectedUserIds = assignedUsersRes.rows.map(r => r.user_id);
 
-        // Step 2: Delete the campaign. ON DELETE CASCADE will handle related tables.
         await client.query('DELETE FROM campaigns WHERE id = $1', [id]);
 
-        // Step 3: Publish the primary deletion event for the campaign itself
-        publish('events:crud', { type: 'deleteCampaign', payload: { id } }); // RT: emit so all clients refresh instantly
+        publish('events:crud', { type: 'deleteCampaign', payload: { id } });
 
-        // Step 4: For each affected user, fetch their updated data and publish an updateUser event
         if (affectedUserIds.length > 0) {
             const SAFE_USER_COLUMNS = 'u.id, u.login_id, u.extension, u.first_name, u.last_name, u.email, u."role", u.is_active, u.site_id, u.created_at, u.updated_at, u.mobile_number, u.use_mobile_as_station, u.profile_picture_url, u.planning_enabled';
             const userQuery = `
@@ -135,7 +130,7 @@ const deleteCampaign = async (id) => {
             
             for (const userRow of updatedUsersRes.rows) {
                 const updatedUser = keysToCamel(userRow);
-                publish('events:crud', { type: 'updateUser', payload: updatedUser }); // RT: emit so all clients refresh instantly
+                publish('events:crud', { type: 'updateUser', payload: updatedUser });
             }
         }
 
@@ -168,7 +163,6 @@ const importContacts = async (campaignId, contacts, deduplicationConfig) => {
         const standardFieldMap = { phoneNumber: 'phone_number', firstName: 'first_name', lastName: 'last_name', postalCode: 'postal_code' };
         const dedupDbFields = deduplicationConfig.fieldIds.map(fid => standardFieldMap[fid] || fid);
 
-        // Fetch existing contacts for deduplication checks if enabled
         let existingContacts = new Set();
         if (deduplicationConfig.enabled) {
             const existingQuery = `SELECT ${dedupDbFields.join(', ')} FROM contacts WHERE campaign_id = $1`;
@@ -180,13 +174,11 @@ const importContacts = async (campaignId, contacts, deduplicationConfig) => {
         }
         
         for (const contact of contacts) {
-            // Basic validation
             if (!contact.phoneNumber || !/^\d+$/.test(contact.phoneNumber)) {
                 invalids.push({ row: contact.originalRow, reason: "Numéro de téléphone invalide." });
                 continue;
             }
 
-            // Deduplication check
             if (deduplicationConfig.enabled) {
                 const key = deduplicationConfig.fieldIds.map(fieldId => contact[fieldId] || '').join('||');
                 if (existingContacts.has(key)) {
@@ -212,9 +204,8 @@ const importContacts = async (campaignId, contacts, deduplicationConfig) => {
         client.release();
     }
     
-    // After commit, fetch and broadcast the updated campaign state
     const updatedCampaign = await getCampaignById(campaignId);
-    publish('events:crud', { type: 'campaignUpdate', payload: updatedCampaign }); // RT: emit so all clients refresh instantly
+    publish('events:crud', { type: 'campaignUpdate', payload: updatedCampaign });
 
     return { valids, invalids };
 };
@@ -223,7 +214,6 @@ const getNextContactForCampaign = async (agentId, campaignId) => {
     const client = await pool.connect();
     try {
         await client.query('BEGIN');
-        // Find one pending contact from the specified campaign and lock it
         const res = await client.query(
             `SELECT * FROM contacts WHERE campaign_id = $1 AND status = 'pending' LIMIT 1 FOR UPDATE SKIP LOCKED`,
             [campaignId]
@@ -236,7 +226,6 @@ const getNextContactForCampaign = async (agentId, campaignId) => {
 
         const contact = res.rows[0];
         
-        // Update its status to 'called' to prevent other agents from picking it
         await client.query(`UPDATE contacts SET status = 'called' WHERE id = $1`, [contact.id]);
         
         const campaignRes = await client.query('SELECT * FROM campaigns WHERE id = $1', [campaignId]);
@@ -258,11 +247,9 @@ const qualifyContact = async (contactId, qualificationId, campaignId, agentId) =
     try {
         await client.query('BEGIN');
 
-        // --- Step 1: Check if qualification is positive ---
         const qualRes = await client.query('SELECT type FROM qualifications WHERE id = $1', [qualificationId]);
         const isPositive = qualRes.rows.length > 0 && qualRes.rows[0].type === 'positive';
 
-        // --- Step 2: If positive, update quota ---
         if (isPositive) {
             const campaignRes = await client.query('SELECT quota_rules FROM campaigns WHERE id = $1 FOR UPDATE', [campaignId]);
             const contactRes = await client.query('SELECT * FROM contacts WHERE id = $1', [contactId]);
@@ -282,7 +269,7 @@ const qualifyContact = async (contactId, qualificationId, campaignId, agentId) =
                     if (match) {
                         rule.currentCount = (rule.currentCount || 0) + 1;
                         rulesUpdated = true;
-                        break; // Assume a contact can only match one quota rule at a time
+                        break;
                     }
                 }
 
@@ -292,7 +279,6 @@ const qualifyContact = async (contactId, qualificationId, campaignId, agentId) =
             }
         }
 
-        // --- Step 3: Original logic (update contact status & create history) ---
         await client.query("UPDATE contacts SET status = 'qualified', updated_at = NOW() WHERE id = $1", [contactId]);
         
         const contactResForHistory = await client.query("SELECT phone_number FROM contacts WHERE id = $1", [contactId]);
@@ -316,7 +302,6 @@ const qualifyContact = async (contactId, qualificationId, campaignId, agentId) =
 
         await client.query('COMMIT');
         
-        // --- Step 4: After commit, fetch and broadcast the updated campaign state ---
         const updatedCampaign = await getCampaignById(campaignId);
         publish('events:crud', {
             type: 'campaignUpdate',
@@ -336,11 +321,7 @@ const recycleContactsByQualification = async (campaignId, qualificationId) => {
     const client = await pool.connect();
     try {
         await client.query('BEGIN');
-
-        // This single, robust query performs the entire update atomically.
-        // It finds all contacts in the campaign that are 'qualified' AND whose
-        // most recent qualification in the call history matches the desired one,
-        // then updates their status to 'pending'.
+        
         const updateQuery = `
             UPDATE contacts
             SET status = 'pending', updated_at = NOW()
@@ -365,7 +346,7 @@ const recycleContactsByQualification = async (campaignId, qualificationId) => {
         const updateRes = await client.query(updateQuery, [campaignId, qualificationId]);
         
         await client.query('COMMIT');
-
+        
         // After commit, fetch and broadcast the updated campaign state
         const updatedCampaign = await getCampaignById(campaignId);
         publish('events:crud', {
@@ -409,7 +390,6 @@ const updateContact = async (contactId, contactData) => {
             }
         });
 
-        // Clean the customFields object to prevent saving standard fields inside the JSONB column
         const cleanCustomFields = { ...contactData.customFields };
         Object.values(standardFieldMap).forEach(dbKey => delete cleanCustomFields[dbKey]);
         Object.keys(standardFieldMap).forEach(jsKey => delete cleanCustomFields[jsKey]);
@@ -438,9 +418,8 @@ const updateContact = async (contactId, contactData) => {
         await client.query('COMMIT');
         
         const updatedContact = keysToCamel(rows[0]);
-        // After commit, fetch the full campaign and broadcast it
         const updatedCampaign = await getCampaignById(updatedContact.campaignId);
-        publish('events:crud', { type: 'campaignUpdate', payload: updatedCampaign }); // RT: emit so all clients refresh instantly
+        publish('events:crud', { type: 'campaignUpdate', payload: updatedCampaign });
         
         return updatedContact;
 
