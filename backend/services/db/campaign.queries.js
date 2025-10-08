@@ -336,25 +336,33 @@ const recycleContactsByQualification = async (campaignId, qualificationId) => {
     const client = await pool.connect();
     try {
         await client.query('BEGIN');
-        
-        // Find all contact_ids that have been qualified with the given qualificationId in this campaign
-        const contactsToRecycleRes = await client.query(
-            `SELECT DISTINCT contact_id FROM call_history WHERE campaign_id = $1 AND qualification_id = $2`,
-            [campaignId, qualificationId]
-        );
-        
-        const contactIds = contactsToRecycleRes.rows.map(r => r.contact_id);
 
-        if (contactIds.length === 0) {
-            await client.query('COMMIT'); // Nothing to do, but commit to end transaction
-            return 0;
-        }
+        // This single, robust query performs the entire update atomically.
+        // It finds all contacts in the campaign that are 'qualified' AND whose
+        // most recent qualification in the call history matches the desired one,
+        // then updates their status to 'pending'.
+        const updateQuery = `
+            UPDATE contacts
+            SET status = 'pending', updated_at = NOW()
+            WHERE
+                id IN (
+                    SELECT c.id
+                    FROM contacts c
+                    INNER JOIN (
+                        SELECT DISTINCT ON (contact_id) contact_id, qualification_id
+                        FROM call_history
+                        WHERE campaign_id = $1
+                        ORDER BY contact_id, start_time DESC
+                    ) AS last_qual ON c.id = last_qual.contact_id
+                    WHERE
+                        c.campaign_id = $1
+                        AND c.status = 'qualified'
+                        AND last_qual.qualification_id = $2
+                )
+            RETURNING id;
+        `;
 
-        // Update the status of these contacts back to 'pending'
-        const updateRes = await client.query(
-            `UPDATE contacts SET status = 'pending', updated_at = NOW() WHERE id = ANY($1::text[])`,
-            [contactIds]
-        );
+        const updateRes = await client.query(updateQuery, [campaignId, qualificationId]);
         
         await client.query('COMMIT');
 
