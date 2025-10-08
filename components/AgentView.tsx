@@ -350,22 +350,21 @@ const AgentView: React.FC<AgentViewProps> = ({ onUpdatePassword, onUpdateProfile
             alert("Veuillez sélectionner une qualification avant de finaliser.");
             return;
         }
-
+    
         const selectedQualificationObject = qualificationsForCampaign.find(q => q.id === selectedQual);
-        const personalCallbackQual = qualificationsForCampaign.find(q => q.code === '94');
         
-        if (selectedQualificationObject && personalCallbackQual && selectedQualificationObject.id === personalCallbackQual.id) {
+        if (selectedQualificationObject && selectedQualificationObject.code === '94') {
             setIsCallbackModalOpen(true);
             return;
         }
-
+    
         try {
             await apiClient.post(`/contacts/${currentContact.id}/qualify`, {
                 qualificationId: selectedQual,
                 campaignId: currentCampaign.id,
                 agentId: currentUser.id
             });
-
+    
             if (activeCallbackId) {
                 await apiClient.put(`/planning-events/callbacks/${activeCallbackId}`, { status: 'completed' });
             }
@@ -380,7 +379,7 @@ const AgentView: React.FC<AgentViewProps> = ({ onUpdatePassword, onUpdateProfile
             
             campaignForWrapUp.current = currentCampaign;
             changeAgentStatus('En Post-Appel');
-
+    
         } catch (error) {
             console.error("Failed to qualify contact:", error);
             alert("Erreur lors de la qualification.");
