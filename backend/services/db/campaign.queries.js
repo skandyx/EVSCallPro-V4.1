@@ -40,13 +40,12 @@ const getCampaignById = async (id, client = pool) => {
         FROM campaigns c
         LEFT JOIN (
             SELECT campaign_id, json_agg(contacts.* ORDER BY contacts.last_name, contacts.first_name) as contacts
-            WHERE campaign_id = $1
+            FROM contacts
             GROUP BY campaign_id
         ) ct_agg ON c.id = ct_agg.campaign_id
         LEFT JOIN (
             SELECT campaign_id, array_agg(user_id) as assigned_user_ids
             FROM campaign_agents
-            WHERE campaign_id = $1
             GROUP BY campaign_id
         ) ca_agg ON c.id = ca_agg.campaign_id
         WHERE c.id = $1;
