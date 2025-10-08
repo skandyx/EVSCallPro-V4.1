@@ -103,200 +103,68 @@
     "welcome": "أهلاً بك!",
     "selectFeature": "حدد ميزة من القائمة اليسرى للبدء."
   },
-  "agentView": {
-    "title": "واجهة الوكيل",
-    "header": {
-      "agentInterface": "واجهة الوكيل",
-      "settings": "الإعدادات",
-      "logout": "تسجيل الخروج"
-    },
-    "contact": {
-      "name": "الاسم",
-      "phone": "الهاتف",
+  "reporting": {
+    "exportPdf": "تصدير إلى PDF",
+    "filters": {
+      "dateRange": "النطاق الزمني",
+      "from": "من",
+      "to": "إلى",
       "campaign": "الحملة",
-      "noContact": "في انتظار جهة الاتصال التالية..."
+      "agent": "الوكيل",
+      "dateRanges": {
+        "last7days": "آخر 7 أيام",
+        "last30days": "آخر 30 يومًا",
+        "thisMonth": "هذا الشهر"
+      },
+      "allCampaigns": "كل الحملات",
+      "allAgents": "كل الوكلاء"
     },
-    "script": {
-      "placeholder": "سيتم عرض النص هنا عند تنشيط جهة اتصال."
-    },
-    "qualification": {
-      "title": "تأهيل المكالمة",
-      "noQualifs": "لا توجد مؤهلات لهذه الحملة."
-    },
-    "actions": {
-      "scheduleCallback": "جدولة معاودة الاتصال",
-      "finalize": "إنهاء"
-    },
-    "status": "حالة الوكيل",
-    "waitingForCall": "في انتظار مكالمة...",
-    "nextCall": "المكالمة التالية",
-    "searching": "يبحث...",
-    "qualifications": "المؤهلات",
-    "noScript": "هذه الحملة ليس لديها نص مرتبط.",
-    "scriptWillBeHere": "سيتم عرض النص هنا.",
-    "loading": "تحميل واجهة الوكيل...",
-    "selectQualification": "اختر مؤهلاً...",
-    "activeCampaigns": "الحملات النشطة",
-    "noCampaigns": "لا توجد حملات معينة.",
-    "askForHelp": "طلب المساعدة",
-    "helpRequestSent": "تم إرسال طلب المساعدة إلى المشرف.",
-    "myCallbacks": "مكالماتي المعاودة",
-    "noCallbacks": "لا توجد مكالمات معاودة لهذا اليوم.",
-    "supervisorResponse": "رد المشرف",
-    "messages": "الرسائل",
-    "clearAll": "مسح الكل",
     "kpis": {
-      "title": "المعلومات",
-      "callsHandled": "المكالمات التي تم التعامل معها",
-      "pauseCount": "عدد التوقفات",
-      "totalPauseTime": "إجمالي وقت التوقف",
-      "totalTrainingTime": "إجمالي وقت التدريب",
-      "trainingCount": "عدد التدريبات",
-      "totalConnectedTime": "إجمالي وقت الاتصال"
+      "processedCalls": "المكالمات المعالجة",
+      "totalTalkTime": "إجمالي وقت التحدث",
+      "avgCallDuration": "متوسط مدة المكالمة",
+      "successRate": "معدل النجاح",
+      "occupancyRate": "معدل الإشغال (محاكاة)"
     },
-    "pause": "إيقاف مؤقت",
-    "ready": "جاهز",
-    "statuses": {
-      "EnAttente": "متاح",
-      "EnAppel": "في مكالمة",
-      "EnPostAppel": "بعد المكالمة",
-      "EnPause": "في استراحة",
-      "Ringing": "يرن",
-      "Déconnecté": "غير متصل",
-      "Mise en attente": "في الانتظار",
-      "Formation": "في تدريب"
-    },
-    "feedback": {
-      "activateCampaign": "الرجاء تفعيل حملة لبدء الاتصال.",
-      "noContactAvailable": "لا يوجد اتصال متاح لـ {campaignName}.",
-      "errorFetchingContact": "خطأ أثناء جلب الاتصال.",
-      "mustEndTask": "الرجاء إنهاء مهمتك الحالية قبل تحميل معاودة الاتصال."
-    },
-    "callNumber": "اتصل بـ {phoneName}",
-    "statusManager": {
-      "title": "حالتي",
-      "settings": "تعديل الملف الشخصي"
-    },
-    "respond": "رد",
-    "yourResponsePlaceholder": "ردك...",
     "tabs": {
-        "script": "النص",
-        "callbacks": "معاودة الاتصال"
+      "charts": "الرسوم البيانية",
+      "timesheet": "ورقة الدوام",
+      "campaign": "حسب الحملة",
+      "agent": "حسب الوكيل",
+      "history": "سجل المكالمات"
     },
-    "dialpad": {
-        "title": "لوحة الاتصال",
-        "call": "اتصال"
+    "charts": {
+      "dailyVolumeTitle": "حجم المكالمات اليومي",
+      "callCountLabel": "عدد المكالمات",
+      "callsByCampaignTitle": "التوزيع الهرمي",
+      "successByHourTitle": "ساعات النجاح (التحويلات)",
+      "successByAgentTitle": "معدل النجاح حسب الوكيل",
+      "adherenceByAgentTitle": "متوسط الالتزام بالجدول الزمني",
+      "successRateLabel": "معدل النجاح (٪)",
+      "avgAdherenceLabel": "متوسط الالتزام (دقيقة)",
+      "conversionsLabel": "التحويلات"
     },
-    "footer": {
-        "status": "الحالة",
-        "campaign": "الحملة",
-        "noCampaignActive": "لا توجد حملة نشطة",
-        "dial": "اتصال يدوي"
-    },
-    "callControls": {
-      "title": "ضوابط المكالمة",
-      "call": "اتصال",
-      "endCall": "إنهاء المكالمة",
-      "hangup": "تأهيل السجل",
-      "hold": "تعليق",
-      "transfer": "تحويل"
-    },
-    "qualifyFirst": "الرجاء تحديد مؤهل قبل الإنهاء.",
-    "errorQualifying": "خطأ أثناء التأهيل."
-  },
-  "campaignDetail": {
-    "backToCampaigns": "العودة إلى الحملات",
-    "associatedScript": "النص المرتبط: {scriptName}",
-    "tabs": {
-      "contacts": "جهات الاتصال ({count})",
-      "dashboard": "لوحة القيادة",
-      "dashboard2": "تحليل مفصل",
-      "settings": "الإعدادات"
-    },
-    "contacts": {
-      "searchPlaceholder": "البحث عن جهة اتصال...",
-      "deleteSelection": "حذف التحديد ({count})",
-      "headers": {
-        "lastName": "اسم العائلة",
-        "firstName": "الاسم الأول",
-        "phone": "الهاتف",
-        "postalCode": "الرمز البريدي",
-        "status": "الحالة",
-        "lastQualif": "آخر تأهيل",
-        "lastNote": "آخر ملاحظة"
+    "tables": {
+      "campaignPerf": {
+        "title": "الأداء حسب الحملة"
       },
-      "noContacts": "لم يتم العثور على جهات اتصال.",
-      "pagination": "صفحة {currentPage} من {totalPages}"
-    },
-    "dashboard": {
-      "kpis": {
-        "completionRate": "معدل الإنجاز",
-        "contactRate": "معدل الاتصال",
-        "conversionRate": "معدل التحويل",
-        "aht": "متوسط وقت المعالجة"
+      "agentPerf": {
+        "titleCalls": "الأداء حسب الوكيل (المكالمات)",
+        "titleTimesheet": "الأداء حسب الوكيل (ورقة الدوام)"
       },
-      "fileProgress": {
-        "title": "تقدم الملف",
-        "processed": "تمت المعالجة:",
-        "remaining": "المتبقي:"
+      "timesheet": {
+        "title": "ورقة الدوام (تسجيل الدخول/الخروج)"
       },
-      "quota": {
-        "title": "تتبع الحصص",
-        "ruleStartsWith": "الحصة: {field} يبدأ بـ \"{value}\"",
-        "ruleEquals": "الحصة: {field} يساوي \"{value}\"",
-        "achieved": "المحقق:"
-      },
-      "charts": {
-        "qualifDistributionTitle": "توزيع المؤهلات",
-        "successByHourTitle": "ساعات النجاح (التحويلات)",
-        "conversionsLabel": "التحويلات"
-      },
-      "tables": {
-        "qualifPerfTitle": "الأداء حسب المؤهل",
-        "agentPerfTitle": "الأداء حسب الوكيل",
-        "headers": {
-          "qualification": "المؤهل",
-          "processedRecords": "السجلات المعالجة",
-          "rate": "المعدل",
-          "agent": "الوكيل",
-          "processedCalls": "المكالمات المعالجة",
-          "conversions": "التحويلات"
-        }
+      "callHistory": {
+        "title": "سجل المكالمات"
       }
     },
-    "settings": {
-      "recycling": {
-        "title": "إعادة تدوير السجلات",
-        "description": "إعادة تعيين حالة جهات الاتصال المؤهلة لجعلها متاحة مرة أخرى للوكلاء.",
-        "headers": {
-          "qualification": "المؤهل",
-          "processedRecords": "السجلات المعالجة",
-          "action": "الإجراء"
-        },
-        "recycleButton": "إعادة تدوير",
-        "recycleButtonTooltip": "إعادة تعيين حالة جميع السجلات بهذا المؤهل.",
-        "notRecyclableTooltip": "هذا المؤهل غير قابل لإعادة التدوير."
-      }
-    },
-    "export": "تصدير",
-    "noDataToExport": "لا توجد بيانات معالجة للتصدير."
-  },
-  "databaseManager": {
-    "attention": "تحذير: الإجراءات التي يتم تنفيذها هنا تعدل قاعدة البيانات مباشرة. استخدم هذه الأداة بحذر شديد. أي فقدان للبيانات لا يمكن التراجع عنه.",
-    "schema": "المخطط",
-    "predefinedQueries": "استعلامات محددة مسبقًا",
-    "queries": {
-      "listUsers": "عرض المستخدمين",
-      "listActiveCampaigns": "عرض الحملات النشطة",
-      "countContactsByCampaign": "عد جهات الاتصال حسب الحملة",
-      "viewLast20Contacts": "عرض آخر 20 جهة اتصال",
-      "listScripts": "عرض النصوص"
-    },
-    "readOnlyMode": "وضع القراءة فقط",
-    "execute": "تنفيذ الاستعلام",
-    "executing": "جار التنفيذ...",
-    "resultsPlaceholder": "ستظهر النتائج هنا.",
-    "resultsCount": "تم إرجاع {count} صف (صفوف)."
+    "noCallData": "لا توجد بيانات مكالمات للمرشحات المحددة.",
+    "noSessionData": "لا توجد بيانات جلسة للمرشحات المحددة.",
+    "pdf": {
+      "title": "تقرير التحليلات المفصل",
+      "period": "الفترة من {startDate} إلى {endDate} - تم إنشاؤه في {today}"
+    }
   },
   "features": {
     "users": {
@@ -369,7 +237,26 @@
     },
     "languages": {
       "title": "اللغات",
-      "description": "إدارة اللغات المتاحة في التطبيق."
+      "description": "إدارة اللغات المتاحة في التطبيق.",
+      "userJourney": {
+        "title": "رحلة المستخدم",
+        "steps": [
+          "يصل المستخدم إلى وحدة اللغات من الإعدادات.",
+          "واجهة بسيطة تعرض الحالة الحالية.",
+          "رسالة إعلامية توجههم إلى محول اللغة في الرأس."
+        ]
+      },
+      "specs": {
+        "title": "المواصفات الفنية",
+        "points": [
+          "تغيير اللغة يحدّث الحالة العامة والتخزين المحلي.",
+          "تُعاد عرض الواجهة فورًا باللغة المحددة."
+        ]
+      },
+      "simplificationTip": {
+        "title": "معلومة",
+        "content": "للحصول على تجربة مستخدم أكثر سلاسة ، تم وضع اختيار اللغة مباشرة في رأس التطبيق. تعمل هذه القائمة كنقطة معلومات وتأكيدًا على وجود الميزة."
+      }
     },
     "database-client": {
       "title": "قاعدة البيانات",
