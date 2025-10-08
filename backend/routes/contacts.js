@@ -85,7 +85,7 @@ router.post('/:id/schedule-callback', async (req, res) => {
         res.status(201).json(newCallback);
     } catch (error) {
         console.error('Error scheduling callback:', error);
-        res.status(500).json({ error: 'Failed to schedule callback' });
+        res.status(500).json({ error: `Failed to schedule callback: ${error.message}` });
     }
 });
 

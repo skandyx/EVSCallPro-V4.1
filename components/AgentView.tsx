@@ -406,7 +406,10 @@ const AgentView: React.FC<AgentViewProps> = ({ onUpdatePassword, onUpdateProfile
             campaignForWrapUp.current = currentCampaign;
             changeAgentStatus('En Post-Appel');
 
-        } catch (error) { console.error("Failed to schedule callback:", error); alert("Une erreur est survenue."); }
+        } catch (error: any) { 
+            console.error("Failed to schedule callback:", error); 
+            alert(error.response?.data?.error || "Une erreur est survenue."); 
+        }
     };
     
     const handleSaveNote = async () => {

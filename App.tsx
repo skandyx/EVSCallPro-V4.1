@@ -11,6 +11,7 @@ import AgentView from './components/AgentView.tsx';
 import MonitoringDashboard from './components/MonitoringDashboard.tsx';
 import UserProfileModal from './components/UserProfileModal.tsx';
 import { publicApiClient } from './src/lib/axios.ts';
+import wsClient from './src/services/wsClient.ts';
 
 const LoadingSpinner: React.FC = () => (
     <div className="flex items-center justify-center h-full">
@@ -19,13 +20,15 @@ const LoadingSpinner: React.FC = () => (
 );
 
 const AppContent: React.FC = () => {
-    const { currentUser, appSettings, fetchApplicationData, logout, updatePassword, updateProfilePicture } = useStore(state => ({
+    const { currentUser, token, appSettings, fetchApplicationData, logout, updatePassword, updateProfilePicture, handleWsEvent } = useStore(state => ({
         currentUser: state.currentUser,
+        token: state.token,
         appSettings: state.appSettings,
         fetchApplicationData: state.fetchApplicationData,
         logout: state.logout,
         updatePassword: state.updatePassword,
-        updateProfilePicture: state.updateProfilePicture
+        updateProfilePicture: state.updateProfilePicture,
+        handleWsEvent: state.handleWsEvent,
     }));
     
     const { setLanguage } = useI18n();
@@ -35,13 +38,16 @@ const AppContent: React.FC = () => {
     const [appView, setAppView] = useState<'app' | 'monitoring'>('app');
 
     useEffect(() => {
-        if (currentUser) {
+        if (currentUser && token) {
             setIsLoading(true);
+            // Reconnect WebSocket on refresh
+            wsClient.connect(token);
+            wsClient.onMessage(handleWsEvent);
             fetchApplicationData().finally(() => setIsLoading(false));
         } else {
             setIsLoading(false);
         }
-    }, [currentUser, fetchApplicationData]);
+    }, [currentUser, token, fetchApplicationData, handleWsEvent]);
 
     useEffect(() => {
       const handleLogoutEvent = () => logout();
