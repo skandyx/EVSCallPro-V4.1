@@ -127,7 +127,7 @@ const AgentView: React.FC<AgentViewProps> = ({ onUpdatePassword, onUpdateProfile
         changeAgentStatus: state.changeAgentStatus,
     }));
     
-    const agentState = useMemo(() => agentStates.find(a => a.id === currentUser.id) || {
+    const agentState: AgentState = useMemo(() => agentStates.find(a => a.id === currentUser.id) || {
         ...currentUser, status: 'Déconnecté', statusDuration: 0, callsHandledToday: 0,
         averageHandlingTime: 0, averageTalkTime: 0, pauseCount: 0, trainingCount: 0,
         totalPauseTime: 0, totalTrainingTime: 0, totalConnectedTime: 0
