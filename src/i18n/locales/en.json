@@ -103,6 +103,535 @@
     "welcome": "Welcome!",
     "selectFeature": "Select a feature from the left menu to get started."
   },
+  "agentView": {
+    "title": "Agent Interface",
+    "header": {
+        "agentInterface": "Agent Interface",
+        "settings": "Settings",
+        "logout": "Logout"
+    },
+    "contact": {
+        "name": "NAME",
+        "phone": "PHONE",
+        "campaign": "CAMPAIGN",
+        "noContact": "Waiting for next contact..."
+    },
+    "script": {
+        "placeholder": "Script will be displayed here when a contact is active."
+    },
+    "qualification": {
+        "title": "Call Qualification",
+        "noQualifs": "No qualifications for this campaign."
+    },
+    "actions": {
+        "scheduleCallback": "Schedule Callback",
+        "finalize": "Finalize & End"
+    },
+    "status": "Agent Status",
+    "waitingForCall": "Waiting for a call...",
+    "nextCall": "Next Call",
+    "searching": "Searching...",
+    "qualifications": "Qualifications",
+    "noScript": "This campaign has no associated script.",
+    "scriptWillBeHere": "The script will be displayed here.",
+    "loading": "Loading agent interface...",
+    "selectQualification": "Select a qualification...",
+    "activeCampaigns": "Active Campaigns",
+    "noCampaigns": "No assigned campaigns.",
+    "askForHelp": "Ask for help",
+    "helpRequestSent": "Help request sent to supervisor.",
+    "myCallbacks": "My Callbacks",
+    "noCallbacks": "No callbacks for this day.",
+    "supervisorResponse": "Supervisor's Response",
+    "messages": "Messages",
+    "clearAll": "Clear all",
+    "kpis": {
+      "title": "Information",
+      "callsHandled": "Calls Handled",
+      "pauseCount": "Pause Count",
+      "totalPauseTime": "Total Pause Time",
+      "totalTrainingTime": "Total Training Time",
+      "trainingCount": "Training Count",
+      "totalConnectedTime": "Total Connected Time"
+    },
+    "pause": "Pause",
+    "ready": "Ready",
+    "statuses": {
+      "EnAttente": "Available",
+      "EnAppel": "On Call",
+      "EnPostAppel": "Wrap-up",
+      "EnPause": "On Pause",
+      "Ringing": "Ringing",
+      "Déconnecté": "Disconnected",
+      "Mise en attente": "On Hold",
+      "Formation": "Training"
+    },
+    "feedback": {
+      "activateCampaign": "Please activate a campaign to start calling.",
+      "noContactAvailable": "No contact available for {campaignName}.",
+      "errorFetchingContact": "Error while fetching contact.",
+      "mustEndTask": "Please finish your current task before loading a callback."
+    },
+    "callNumber": "Call {phoneName}",
+    "statusManager": {
+      "title": "My Status",
+      "settings": "Edit Profile"
+    },
+    "respond": "Reply",
+    "yourResponsePlaceholder": "Your response...",
+    "tabs": {
+        "script": "Script",
+        "callbacks": "Callbacks"
+    },
+    "dialpad": {
+        "title": "Dialpad",
+        "call": "Call"
+    },
+    "footer": {
+        "status": "Status",
+        "campaign": "Campaign",
+        "noCampaignActive": "No active campaign",
+        "dial": "Manual Dial"
+    },
+    "callControls": {
+      "title": "Call Controls",
+      "call": "Call",
+      "endCall": "End Call",
+      "hangup": "Qualify Record",
+      "hold": "Hold",
+      "transfer": "Transfer"
+    },
+    "qualifyFirst": "Please select a qualification before finalizing.",
+    "errorQualifying": "Error during qualification."
+  },
+  "userManager": {
+    "title": "Users",
+    "importButton": "Import (CSV)",
+    "generateButton": "Bulk Generate",
+    "addUserButton": "Add User",
+    "searchPlaceholder": "Search by name, ID, email, role...",
+    "headers": {
+      "name": "Name",
+      "id": "ID",
+      "loginId": "Login ID / Ext.",
+      "role": "Role",
+      "status": "Status"
+    },
+    "modal": {
+      "addTitle": "Add New User",
+      "editTitle": "Edit User",
+      "tabs": {
+        "general": "General",
+        "groups": "Assigned Groups",
+        "campaigns": "Assigned Campaigns"
+      },
+      "firstName": "First Name",
+      "lastName": "Last Name",
+      "loginId": "Login ID / Extension",
+      "loginIdHelp": "Must be a unique 4 to 6 digit number.",
+      "email": "Email",
+      "mobileNumber": "Mobile Number (for \"Connect to Phone\")",
+      "useMobileAsStation": "Use mobile as workstation",
+      "useMobileAsStationHelp": "If enabled, calls will be sent to this mobile number.",
+      "passwordHelp": "Leave blank to keep unchanged",
+      "generate": "Generate",
+      "site": "Assigned Site",
+      "noSite": "No site",
+      "activeUser": "Active User",
+      "loginIdExists": "Login ID / extension already exists for another user.",
+      "emailExists": "Email address is already in use by another user.",
+      "lastSuperAdmin": "Cannot change the role of the last SuperAdmin."
+    },
+    "generateModal": {
+      "title": "Bulk Generate Users",
+      "label": "Number of users to create",
+      "confirm": "Confirm"
+    },
+    "delete": {
+      "superAdmin": "A SuperAdmin cannot be deleted.",
+      "activeUser": "Deactivate the user before deleting.",
+      "lastAdmin": "Cannot delete the last administrator."
+    }
+  },
+  "groupManager": {
+    "modal": {
+      "noAgents": "No active agents available.",
+      "titleNew": "New Group",
+      "titleEdit": "Edit Group",
+      "groupName": "Group Name",
+      "members": "Group Members (Agents)"
+    },
+    "title": "Agent Groups",
+    "create": "Create Group",
+    "search": "Search by group name...",
+    "headers": {
+      "name": "Group Name",
+      "count": "Member Count"
+    },
+    "noGroups": "No groups created."
+  },
+  "outboundCampaignsManager": {
+    "title": "Campaigns",
+    "createCampaign": "Create Campaign",
+    "headers": {
+      "name": "Name",
+      "id": "ID",
+      "status": "Status",
+      "mode": "Mode",
+      "contacts": "Contacts",
+      "remaining": "Remaining"
+    },
+    "import": "Import",
+    "deleteDisabledTooltip": "Deactivate the campaign to delete it.",
+    "deleteEnabledTooltip": "Delete campaign",
+    "modal": {
+      "editTitle": "Edit Campaign",
+      "addTitle": "New Campaign",
+      "readyTooltip": "Ready to start",
+      "notReadyTooltip": "Required fields missing",
+      "tabs": {
+        "general": "General",
+        "planning": "Schedule",
+        "quotas": "Quotas",
+        "filters": "Inclusion/Exclusion"
+      },
+      "agentScript": "Agent Script",
+      "noScript": "No script",
+      "qualifGroup": "Qualification Group",
+      "dialingMode": "Dialing Mode",
+      "predictive": "Predictive",
+      "progressive": "Progressive",
+      "manual": "Manual",
+      "callerId": "Caller ID",
+      "wrapUpTime": "Wrap-up Time (seconds)",
+      "wrapUpTimeHelp": "Max duration for agent in \"Wrap-up\" state (max 120s).",
+      "assignedAgents": "Assigned Agents & Groups",
+      "groups": "Groups",
+      "individualAgents": "Individual Agents",
+      "activeCampaign": "Active Campaign",
+      "weekdays": {
+        "monday": "Monday",
+        "tuesday": "Tuesday",
+        "wednesday": "Wednesday",
+        "thursday": "Thursday",
+        "friday": "Friday",
+        "saturday": "Saturday",
+        "sunday": "Sunday"
+      },
+      "activityDays": "Activity Days",
+      "timeRange": "Time Range",
+      "startTime": "Start Time",
+      "endTime": "End Time",
+      "operators": {
+        "equals": "equals",
+        "startsWith": "starts with",
+        "contains": "contains",
+        "isNotEmpty": "is not empty"
+      },
+      "value": "Value",
+      "limit": "Limit",
+      "include": "Include",
+      "exclude": "Exclude",
+      "addQuotaRule": "Add quota rule",
+      "addFilterRule": "Add filter rule"
+    }
+  },
+  "scriptFeature": {
+    "title": "Saved Scripts",
+    "addScript": "Create Script",
+    "confirmDelete": "Are you sure you want to delete this script?",
+    "pageCount": "{count, plural, =0 {0 pages} one {1 page} other {# pages}}"
+  },
+  "scriptBuilder": {
+    "elements": "Elements",
+    "preview": "Preview",
+    "background": "Background:",
+    "changeBackgroundColor": "Change script background color",
+    "page_of_pages": "Page {currentPage} / {totalPages}",
+    "zoomIn": "Zoom In",
+    "zoomOut": "Zoom Out",
+    "resetView": "Reset View",
+    "pageNotFound": "Error: Active page not found.",
+    "nameAlreadyExists": "Block name \"{name}\" is already used on this page.",
+    "technicalNameAlreadyExists": "This name generates a technical ID (\"{fieldName}\") that is already in use. Please choose a slightly different name.",
+    "palette": {
+      "group": "Group",
+      "label": "Title",
+      "text": "Text",
+      "input": "Input Field",
+      "textarea": "Text Area",
+      "email": "Email",
+      "phone": "Phone",
+      "date": "Date",
+      "time": "Time",
+      "radio": "Single Choice",
+      "checkbox": "Multiple Choice",
+      "dropdown": "Dropdown",
+      "button": "Button",
+      "history": "History"
+    },
+    "defaults": {
+      "label": "Title",
+      "text": "Text paragraph...",
+      "placeholder": "Enter here...",
+      "emailPlaceholder": "email@example.com",
+      "phonePlaceholder": "0123456789",
+      "question": "Question?",
+      "radioOption1": "Option 1",
+      "radioOption2": "Option 2",
+      "checkboxOptionA": "Option A",
+      "checkboxOptionB": "Option B",
+      "dropdownValue1": "Value 1",
+      "dropdownValue2": "Value 2",
+      "buttonText": "Click"
+    },
+    "properties": {
+      "blockNameLabel": "Block Name (visible to agent)",
+      "technicalName": "Technical Name:",
+      "tabs": {
+        "content": "Content",
+        "style": "Style"
+      },
+      "showField": "Show this field in the script",
+      "showFieldHelp": "Hides the field from the agent.",
+      "placeholder": "Placeholder",
+      "format": "Format",
+      "formats": {
+        "text": "Text",
+        "number": "Number",
+        "password": "Password"
+      },
+      "buttonText": "Button Text",
+      "question": "Question",
+      "options": "Options",
+      "addOption": "Add option",
+      "newOption": "New Option",
+      "historyHelp": "This block has no configurable properties. It will display the contact's call history.",
+      "blocksInGroup": "Blocks in group",
+      "dragBlocksHere": "Drag blocks here.",
+      "deleteBlockTooltip": "Delete block {name}",
+      "readOnly": "Read-only",
+      "readOnlyHelp": "The agent will not be able to edit this field.",
+      "width": "Width (px)",
+      "height": "Height (px)",
+      "font": "Font",
+      "size": "Size (px)",
+      "alignment": "Alignment",
+      "background": "Background",
+      "text": "Text",
+      "buttonAction": "Button Action",
+      "action": "Action",
+      "destinationPage": "Destination Page",
+      "selectPage": "Select a page",
+      "deleteBlockButton": "Delete \"{name}\""
+    },
+    "actions": {
+      "none": "No action",
+      "next": "Next page",
+      "previous": "Previous page",
+      "navigate": "Go to page...",
+      "save": "Save data",
+      "insertContact": "Insert record"
+    },
+    "canvas": {
+      "historyPreview": "History Preview",
+      "deleteBlock": "Delete block"
+    }
+  },
+  "ivrManager": {
+    "title": "Saved IVR Flows",
+    "createFlow": "Create New Flow",
+    "searchPlaceholder": "Search by flow name or ID...",
+    "headers": {
+      "id": "ID",
+      "name": "Flow Name"
+    },
+    "noFlows": "No IVR flows found."
+  },
+  "qualificationsManager": {
+    "title": "Qualification Groups",
+    "createGroup": "Create Group",
+    "addGroup": "Add Qualification",
+    "searchPlaceholder": "Search for a group...",
+    "headers": {
+      "name": "Group Name",
+      "count": "Qualifications"
+    },
+    "noGroups": "No groups found.",
+    "modal": {
+      "editTitle": "Edit Qualification",
+      "addTitle": "Add Qualification",
+      "parent": "Parent (Optional)",
+      "noParent": "No parent",
+      "code": "Code",
+      "codeUsed": "This code is already in use.",
+      "description": "Description",
+      "type": "Type",
+      "types": {
+        "positive": "Positive",
+        "neutral": "Neutral",
+        "negative": "Negative"
+      },
+      "recyclable": "Recyclable",
+      "recyclableHelp": "Allows records with this qualification to be re-queued."
+    },
+    "groups": "Groups",
+    "allQualifs": "All qualifications",
+    "unassigned": "Unassigned"
+  },
+  "supervision": {
+    "controlPanel": "Control Panel",
+    "tabs": {
+      "live": "Live",
+      "agents": "Agents",
+      "calls": "Calls",
+      "campaigns": "Campaigns"
+    },
+    "kpis": {
+      "agentsReady": "Agents Ready",
+      "agentsOnCall": "Agents on Call",
+      "agentsOnWrapup": "Agents in Wrap-up",
+      "agentsOnPause": "Agents on Pause",
+      "activeCalls": "Active Calls"
+    },
+    "agentBoard": {
+      "headers": {
+        "agent": "Agent",
+        "status": "Status",
+        "duration": "Duration",
+        "calls": "Calls",
+        "avgHandleTime": "AHT",
+        "actions": "Actions"
+      },
+      "actions": {
+        "contact": "Message for {agentName}:",
+        "listen": "Listen (Whisper)",
+        "barge": "Barge-in",
+        "coach": "Coach",
+        "forcePause": "Force Pause",
+        "forceLogout": "Force Logout"
+      },
+      "noAgents": "No agents connected at the moment.",
+      "confirmForceLogout": "Are you sure you want to force logout agent {agentName}?"
+    }
+  },
+  "agentStatuses": {
+    "EnAttente": "Available",
+    "EnAppel": "On Call",
+    "EnPostAppel": "Wrap-up",
+    "EnPause": "On Pause",
+    "Ringing": "Ringing",
+    "Déconnecté": "Disconnected",
+    "Miseenattente": "On Hold",
+    "Formation": "Training"
+  },
+  "callBoard": {
+    "noCalls": "No active calls at the moment."
+  },
+  "campaignBoard": {
+    "confirmStop": "Are you sure you want to permanently stop the campaign {campaignName}?",
+    "noCampaigns": "No campaigns to supervise."
+  },
+  "campaignDetail": {
+    "backToCampaigns": "Back to campaigns",
+    "associatedScript": "Associated script: {scriptName}",
+    "tabs": {
+      "contacts": "Contacts ({count})",
+      "dashboard": "Dashboard",
+      "dashboard2": "Detailed Analysis",
+      "settings": "Settings"
+    },
+    "contacts": {
+      "searchPlaceholder": "Search a contact...",
+      "deleteSelection": "Delete selection ({count})",
+      "headers": {
+        "lastName": "LAST NAME",
+        "firstName": "FIRST NAME",
+        "phone": "PHONE",
+        "postalCode": "POSTAL CODE",
+        "status": "STATUS",
+        "lastQualif": "Last Qualification",
+        "lastNote": "Last Note"
+      },
+      "noContacts": "No contacts found.",
+      "pagination": "Page {currentPage} of {totalPages}"
+    },
+    "dashboard": {
+      "kpis": {
+        "completionRate": "Completion Rate",
+        "contactRate": "Contact Rate",
+        "conversionRate": "Conversion Rate",
+        "aht": "AHT"
+      },
+      "fileProgress": {
+        "title": "File Progress",
+        "processed": "Processed:",
+        "remaining": "Remaining:"
+      },
+      "quota": {
+        "title": "Quotas Tracking",
+        "ruleStartsWith": "Quota: {field} starts with \"{value}\"",
+        "ruleEquals": "Quota: {field} equals \"{value}\"",
+        "achieved": "Achieved:"
+      },
+      "charts": {
+        "qualifDistributionTitle": "Qualifications Distribution",
+        "successByHourTitle": "Success Hours (Conversions)",
+        "conversionsLabel": "Conversions"
+      },
+      "tables": {
+        "qualifPerfTitle": "Performance by Qualification",
+        "agentPerfTitle": "Performance by Agent",
+        "headers": {
+          "qualification": "QUALIFICATION",
+          "processedRecords": "PROCESSED RECORDS",
+          "rate": "RATE",
+          "agent": "Agent",
+          "processedCalls": "Processed Calls",
+          "conversions": "Conversions"
+        }
+      }
+    },
+    "settings": {
+      "recycling": {
+        "title": "Records Recycling",
+        "description": "Reset the status of qualified contacts to make them available again for agents.",
+        "headers": {
+          "qualification": "Qualification",
+          "processedRecords": "Processed Records",
+          "action": "Action"
+        },
+        "recycleButton": "Recycle",
+        "recycleButtonTooltip": "Reset the status of all records with this qualification.",
+        "notRecyclableTooltip": "This qualification is not marked as recyclable."
+      }
+    },
+    "export": "Export",
+    "noDataToExport": "No processed data to export."
+  },
+  "qualifications": {
+    "types": {
+      "positive": "Positive",
+      "neutral": "Neutral",
+      "negative": "Negative"
+    }
+  },
+  "contactHistory": {
+    "title": "Contact History",
+    "loading": "Loading history...",
+    "kpis": {
+      "totalCalls": "Total Calls",
+      "talkTime": "Talk Time",
+      "uniqueAgents": "Unique Agents",
+      "positiveQuals": "Positive Qualifications"
+    },
+    "timelineTitle": "Interaction Timeline",
+    "callBy": "Call by {agentName}",
+    "noteBy": "Note by {agentName}",
+    "duration": "Duration:",
+    "qualification": "Qualification:",
+    "noHistory": "No interaction history for this contact."
+  },
   "reporting": {
     "exportPdf": "Export to PDF",
     "filters": {
@@ -124,7 +653,10 @@
       "totalTalkTime": "Total Talk Time",
       "avgCallDuration": "Average Call Duration",
       "successRate": "Success Rate",
-      "occupancyRate": "Occupancy Rate (Simulated)"
+      "occupancyRate": "Occupancy Rate (Simulated)",
+      "activeAgents": "Active Agents",
+      "totalLoginTime": "Total Login Time",
+      "avgAdherence": "Average Schedule Adherence"
     },
     "tabs": {
       "charts": "Charts",
@@ -136,35 +668,295 @@
     "charts": {
       "dailyVolumeTitle": "Daily Call Volume",
       "callCountLabel": "Number of calls",
-      "callsByCampaignTitle": "Hierarchical Distribution",
-      "successByHourTitle": "Success Hours (Conversions)",
+      "callsByCampaignTitle": "Call Distribution by Campaign",
       "successByAgentTitle": "Success Rate by Agent",
-      "adherenceByAgentTitle": "Average Schedule Adherence",
       "successRateLabel": "Success Rate (%)",
-      "avgAdherenceLabel": "Average Adherence (min)",
-      "conversionsLabel": "Conversions"
+      "adherenceByAgentTitle": "Average Schedule Adherence",
+      "avgAdherenceLabel": "Average Adherence (min)"
     },
     "tables": {
       "campaignPerf": {
-        "title": "Performance by Campaign"
+        "title": "Performance by Campaign",
+        "headers": {
+          "campaign": "Campaign",
+          "calls": "Calls",
+          "totalDuration": "Total Duration",
+          "avgDuration": "Average Duration",
+          "successRate": "Success Rate"
+        }
       },
       "agentPerf": {
         "titleCalls": "Performance by Agent (Calls)",
-        "titleTimesheet": "Performance by Agent (Timesheet)"
+        "titleTimesheet": "Performance by Agent (Timesheet)",
+        "headers": {
+          "agent": "Agent",
+          "calls": "Calls",
+          "totalDuration": "Total Duration",
+          "avgDuration": "Average Duration",
+          "successRate": "Success Rate",
+          "daysWorked": "Days Worked",
+          "totalLoginDuration": "Total Login Duration",
+          "avgAdherence": "Average Adherence"
+        }
       },
       "timesheet": {
-        "title": "Timesheet (Login/Logout)"
+        "title": "Timesheet (Login/Logout)",
+        "headers": {
+          "date": "Date",
+          "agent": "Agent",
+          "firstLogin": "1st Login",
+          "lastLogout": "Last Logout",
+          "totalDuration": "Total Duration",
+          "adherence": "Adherence"
+        }
       },
       "callHistory": {
-        "title": "Call History"
+        "title": "Call History",
+        "headers": {
+          "dateTime": "Date & Time",
+          "agent": "Agent",
+          "campaign": "Campaign",
+          "number": "Number",
+          "duration": "Duration",
+          "qualification": "Qualification"
+        }
       }
     },
     "noCallData": "No call data for the selected filters.",
     "noSessionData": "No session data for the selected filters.",
     "pdf": {
       "title": "Detailed Analytics Report",
-      "period": "Period from {startDate} to {endDate} - Generated on {today}"
+      "period": "Period from {startDate} to {endDate} - Generated on {today}",
+      "kpiTitle": "Key Performance Indicators (KPIs)",
+      "callKpis": "Call Indicators",
+      "value": "Value",
+      "timesheetKpis": "Timesheet Indicators",
+      "detailedAnalysis": "Detailed Analysis",
+      "detailedLogs": "Detailed Logs"
     }
+  },
+  "systemSettings": {
+    "smtp": {
+      "test": {
+        "recipientMissing": "Please enter a destination email address for the test.",
+        "title": "Test SMTP Configuration",
+        "recipient": "Recipient's Email",
+        "sendButton": "Send Test Email",
+        "sending": "Sending...",
+        "success": "Test email sent successfully!",
+        "error": "Failed to send email."
+      },
+      "server": {
+        "title": "SMTP Server",
+        "host": "Host",
+        "port": "Port"
+      },
+      "auth": {
+        "label": "Authentication",
+        "description": "Use username and password.",
+        "user": "User",
+        "passwordPlaceholder": "Leave blank to keep unchanged"
+      },
+      "security": {
+        "label": "Security (TLS)",
+        "description": "Enable encrypted connection (recommended)."
+      },
+      "fromAddress": "Sender Address",
+      "saveButton": "Save SMTP Settings"
+    },
+    "appearance": {
+      "company": {
+        "title": "Company Information",
+        "address": "Company Address",
+        "logoUrl": "Application Logo URL",
+        "logoPreview": "Logo Preview",
+        "appName": "Application Name",
+        "appNamePlaceholder": "e.g., EVSCallPro"
+      },
+      "theme": {
+        "title": "Color Palette",
+        "description": "Choose the main color theme of the application."
+      },
+      "language": {
+        "title": "Default Language",
+        "description": "Choose the default language for new users.",
+        "french": "French",
+        "english": "English"
+      },
+      "saveButton": "Save Appearance Settings"
+    },
+    "licenses": {
+      "title": "Licenses",
+      "wip": "This module is under development."
+    },
+    "tabs": {
+      "appearance": "Appearance",
+      "email": "Email (SMTP)",
+      "licenses": "Licenses"
+    },
+    "savedConfirmation": "Saved successfully!",
+    "saving": "Saving..."
+  },
+  "planning": {
+    "today": "Today",
+    "show": "Show:",
+    "all": "All",
+    "groups": "Groups",
+    "agents": "Agents",
+    "hour": "Hour",
+    "modal": {
+      "editTitle": "Edit Event",
+      "newTitle": "New Event",
+      "for": "For",
+      "selectTarget": "Select...",
+      "activity": "Activity",
+      "selectActivity": "Select an activity",
+      "start": "Start",
+      "end": "End",
+      "validationError": "Please select a target (agent/group) and an activity.",
+      "recurringEvent": "Recurring Event",
+      "repeatOn": "Repeat on",
+      "recurrenceEnd": "Recurrence End",
+      "massEditTitle": "Mass Edit",
+      "massEditDescription": "You are about to edit {eventCount} event(s) for {userCount} selected user(s) on the current week.",
+      "findActivity": "Find Activity",
+      "allActivities": "All activities",
+      "replaceWith": "Replace with",
+      "validationErrorActivity": "Please select a new activity."
+    },
+    "legend": {
+        "title": "Legend & Actions",
+        "selectAll": "Select All"
+    },
+    "actions": {
+        "selection": "Selection: {count} agent(s)",
+        "massEdit": "Mass Edit",
+        "massDelete": "Mass Delete",
+        "confirmDelete": "Are you sure you want to delete {eventCount} event(s) for the {userCount} selected user(s) this week?"
+    },
+    "clearAllButton": "Clear Schedule",
+    "clearAllConfirm": "Are you sure you want to PERMANENTLY delete all planning events for ALL users? This action is irreversible.",
+    "clearAllSuccess": "The schedule has been completely cleared.",
+    "clearAllError": "An error occurred while clearing the schedule."
+  },
+  "weekdays": {
+    "monday": "Monday",
+    "tuesday": "Tuesday",
+    "wednesday": "Wednesday",
+    "thursday": "Thursday",
+    "friday": "Friday",
+    "saturday": "Saturday",
+    "sunday": "Sunday",
+    "short": {
+        "monday": "M",
+        "tuesday": "T",
+        "wednesday": "W",
+        "thursday": "T",
+        "friday": "F",
+        "saturday": "S",
+        "sunday": "S"
+    }
+  },
+  "monitoring": {
+    "title": "System Status",
+    "health": {
+      "up": "Operational",
+      "degraded": "Degraded Performance",
+      "down": "Major Outage"
+    },
+    "kpis": {
+      "cpu": "CPU Load",
+      "ram": "RAM Usage",
+      "disk": "Disk Space",
+      "recordings": "Recordings",
+      "latency": "API Latency",
+      "totalSize": "Total size"
+    },
+    "logs": {
+      "title": "System Event Log",
+      "tabs": {
+        "system": "System",
+        "ami": "AMI",
+        "security": "Security"
+      },
+      "noLogs": "No logs to display."
+    },
+    "versions": {
+      "title": "Versions"
+    },
+    "purgeLogs": "Purge old logs",
+    "connectivity": {
+      "title": "Connectivity Tester",
+      "sitePrefix": "Site: ",
+      "testButton": "Test",
+      "success": "Success",
+      "failure": "Failure",
+      "testing": "Testing...",
+      "idle": "Idle"
+    }
+  },
+  "maintenance": {
+    "manual": {
+        "title": "Manual Backup",
+        "description": "Start a full backup of the system configuration at any time. Useful before major changes.",
+        "button": "Start a backup now",
+        "info": "The backup includes users, groups, scripts, IVRs, campaigns, and all settings. Call recordings are not included.",
+        "confirm": "Are you sure you want to start a manual backup now?",
+        "success": "Manual backup started successfully.",
+        "error": "Failed to start backup."
+    },
+    "schedule": {
+        "title": "Scheduling",
+        "frequency": "Frequency",
+        "frequencies": {
+            "none": "None",
+            "daily": "Daily",
+            "weekly": "Weekly"
+        },
+        "time": "Time (UTC)",
+        "saveSuccess": "Schedule saved!",
+        "saveError": "Failed to save schedule.",
+        "saving": "Saving...",
+        "saveButton": "Save Schedule"
+    },
+    "history": {
+        "title": "Backup History",
+        "headers": {
+            "datetime": "Date & Time",
+            "status": "Status",
+            "filename": "File Name"
+        },
+        "statuses": {
+            "success": "Success",
+            "failure": "Failure"
+        },
+        "download": "Download",
+        "restore": "Restore",
+        "confirmRestore": "Are you sure you want to restore the backup '{fileName}'? All current data will be overwritten.",
+        "confirmRestore_final": "IRREVERSIBLE ACTION. Do you confirm the restore? The application will be temporarily unavailable.",
+        "restoreSuccess": "Restore completed. The application will now restart.",
+        "restoreError": "Restore failed.",
+        "deleteSuccess": "Backup deleted.",
+        "deleteError": "Failed to delete backup.",
+        "noBackups": "No backups available."
+    }
+  },
+  "databaseManager": {
+    "attention": "Warning: Actions performed here directly modify the database. Use this tool with extreme caution. Any data loss is irreversible.",
+    "schema": "Schema",
+    "predefinedQueries": "Predefined Queries",
+    "queries": {
+      "listUsers": "List users",
+      "listActiveCampaigns": "List active campaigns",
+      "countContactsByCampaign": "Count contacts by campaign",
+      "viewLast20Contacts": "View last 20 contacts",
+      "listScripts": "List scripts"
+    },
+    "readOnlyMode": "Read-Only Mode",
+    "execute": "Execute Query",
+    "executing": "Executing...",
+    "resultsPlaceholder": "Results will be displayed here.",
+    "resultsCount": "{count} row(s) returned."
   },
   "features": {
     "users": {
@@ -237,26 +1029,7 @@
     },
     "languages": {
       "title": "Languages",
-      "description": "Manage the available languages in the application.",
-      "userJourney": {
-        "title": "User Journey",
-        "steps": [
-          "User accesses the Languages module from settings.",
-          "A simple interface presents the current status.",
-          "An informative message guides them to the language switcher in the header."
-        ]
-      },
-      "specs": {
-        "title": "Technical Specs",
-        "points": [
-          "Changing the language updates the global state and localStorage.",
-          "The interface instantly re-renders with the selected language."
-        ]
-      },
-      "simplificationTip": {
-        "title": "Information",
-        "content": "For a smoother user experience, language selection has been placed directly in the application header. This menu serves as an informational point and confirms that the feature is present."
-      }
+      "description": "Manage the available languages in the application."
     },
     "database-client": {
       "title": "Database",
