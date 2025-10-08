@@ -1054,10 +1054,6 @@
       "title": "Connexion Système",
       "description": "Configurez les connexions à la base de données et au serveur de téléphonie Asterisk."
     },
-    "maintenance": {
-        "title": "Maintenance",
-        "description": "Gérez les sauvegardes, les restaurations et la santé générale du système."
-    },
     "api-docs": {
       "title": "Documentation API",
       "description": "Consultez la documentation complète de l'API pour l'intégration et le développement."
@@ -1073,6 +1069,10 @@
     "help": {
       "title": "Centre d'Aide",
       "description": "Trouvez des réponses à vos questions et des guides sur les fonctionnalités."
+    },
+    "maintenance": {
+        "title": "Maintenance",
+        "description": "Gérez les sauvegardes, les restaurations et la santé générale du système."
     }
   }
 }
