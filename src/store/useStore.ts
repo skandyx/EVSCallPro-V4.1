@@ -170,24 +170,40 @@ export const useStore = create<AppState>()(
                         set({ isLoading: true });
                         const response = await apiClient.get('/application-data');
                         const data = response.data;
-
-                        const initialAgentStates: AgentState[] = data.users
-                            .filter((user: User) => user.role === 'Agent')
-                            .map((agent: User) => ({
-                                ...agent,
-                                status: 'Déconnecté' as AgentStatus,
-                                statusDuration: 0,
-                                callsHandledToday: 0,
-                                averageHandlingTime: 0,
-                                averageTalkTime: 0,
-                                pauseCount: 0,
-                                trainingCount: 0,
-                                totalPauseTime: 0,
-                                totalTrainingTime: 0,
-                                totalConnectedTime: 0,
-                            }));
-
-                        set({ ...data, agentStates: initialAgentStates, isLoading: false, error: null });
+                
+                        set(state => {
+                            // Take a snapshot of the current real-time states
+                            const existingAgentStates = new Map(state.agentStates.map(a => [a.id, a]));
+                
+                            // Build the new list of agent states from the fetched user list
+                            const updatedAgentStates = data.users
+                                .filter((user: User) => user.role === 'Agent')
+                                .map((agentUser: User) => {
+                                    const existingState = existingAgentStates.get(agentUser.id);
+                                    if (existingState) {
+                                        // If a state already exists (e.g., from a WS event),
+                                        // update it with fresh user data but KEEP its real-time status.
+                                        return { ...existingState, ...agentUser };
+                                    }
+                                    // Otherwise, create a new initial state for this agent.
+                                    return {
+                                        ...agentUser,
+                                        status: 'Déconnecté' as AgentStatus,
+                                        statusDuration: 0,
+                                        callsHandledToday: 0,
+                                        averageHandlingTime: 0,
+                                        averageTalkTime: 0,
+                                        pauseCount: 0,
+                                        trainingCount: 0,
+                                        totalPauseTime: 0,
+                                        totalTrainingTime: 0,
+                                        totalConnectedTime: 0,
+                                    };
+                                });
+                
+                            // Update the store with all new data, including the intelligently merged agent states.
+                            return { ...state, ...data, agentStates: updatedAgentStates, isLoading: false, error: null };
+                        });
                     } catch (error: any) {
                         console.error("Failed to fetch application data", error);
                         set({ isLoading: false, error: "Failed to load data." });
@@ -279,22 +295,26 @@ export const useStore = create<AppState>()(
                                 if (index > -1) {
                                     const agent = state.agentStates[index];
                                     if (agent.status !== payload.status) {
-                                        if (payload.status === 'En Pause') agent.pauseCount += 1;
-                                        if (payload.status === 'Formation') agent.trainingCount += 1;
+                                        if (payload.status === 'En Pause' && agent.status !== 'En Pause') agent.pauseCount += 1;
+                                        if (payload.status === 'Formation' && agent.status !== 'Formation') agent.trainingCount += 1;
                                         agent.status = payload.status;
                                         agent.statusDuration = 0;
                                     }
                                 } else {
-                                    const user = state.users.find(u => u.id === payload.agentId);
-                                    if (user && user.role === 'Agent') {
+                                    const user = state.users.find(u => u.id === payload.agentId) || (state.currentUser?.id === payload.agentId ? state.currentUser : null);
+                                    if (user) {
                                         state.agentStates.push({
-                                            ...user,
+                                            ...(user as AgentState),
                                             status: payload.status,
                                             statusDuration: 0,
-                                            callsHandledToday: 0, averageHandlingTime: 0, averageTalkTime: 0,
-                                            pauseCount: payload.status === 'En Pause' ? 1 : 0, 
-                                            trainingCount: payload.status === 'Formation' ? 1 : 0, 
-                                            totalPauseTime: 0, totalTrainingTime: 0, totalConnectedTime: 0
+                                            callsHandledToday: 0,
+                                            averageHandlingTime: 0,
+                                            averageTalkTime: 0,
+                                            pauseCount: payload.status === 'En Pause' ? 1 : 0,
+                                            trainingCount: payload.status === 'Formation' ? 1 : 0,
+                                            totalPauseTime: 0,
+                                            totalTrainingTime: 0,
+                                            totalConnectedTime: 0,
                                         });
                                     }
                                 }
