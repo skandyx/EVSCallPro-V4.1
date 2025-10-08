@@ -139,7 +139,7 @@ const ReportingDashboard: React.FC<{ feature: Feature }> = ({ feature }) => {
                 tree: Object.entries(counts).map(([name, value]) => ({ name, value })),
                 key: 'value',
                 spacing: 1, borderWidth: 1, borderColor: 'white',
-                backgroundColor: (ctx: any) => Chart.getChartColor(ctx.index),
+                backgroundColor: (ctx: any) => (typeof Chart !== 'undefined' && Chart.getChartColor) ? Chart.getChartColor(ctx.index) : 'rgba(79, 70, 229, 0.7)',
                 labels: { display: true, color: 'white', font: { size: 12 }, formatter: (ctx: any) => ctx.raw?._data.name },
             }]
         };
