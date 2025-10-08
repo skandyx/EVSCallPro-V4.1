@@ -1,6 +1,6 @@
 {
   "common": {
-    "loading": "Chargement",
+    "loading": "Chargement...",
     "save": "Enregistrer",
     "cancel": "Annuler",
     "close": "Fermer",
@@ -23,7 +23,10 @@
     "none": "Aucun",
     "previous": "Précédent",
     "next": "Suivant",
-    "send": "Envoyer"
+    "send": "Envoyer",
+    "date": "Date",
+    "agent": "Agent",
+    "campaign": "Campagne"
   },
   "alerts": {
     "appDataLoadError": "Impossible de charger les données de l'application.",
@@ -93,7 +96,12 @@
     "button": "Entrer",
     "disabledAccount": "Ce compte utilisateur est désactivé.",
     "invalidCredentials": "Identifiant ou mot de passe incorrect.",
-    "serverError": "Erreur de connexion au serveur."
+    "serverError": "Erreur de connexion au serveur.",
+    "copyright": "© 2024 Solution Simplifiée Inc."
+  },
+  "featureDetail": {
+    "welcome": "Bienvenue !",
+    "selectFeature": "Sélectionnez une fonctionnalité dans le menu de gauche pour commencer."
   },
   "agentView": {
     "title": "Interface Agent",
@@ -150,14 +158,13 @@
     "ready": "Prêt",
     "statuses": {
       "EnAttente": "Disponible",
-      "onCall": "En Appel",
-      "wrapUp": "En Post-Appel",
-      "onPause": "En Pause",
-      "ringing": "Sonnerie",
-      "disconnected": "Déconnecté",
-      "onHold": "Mise en attente",
-      "training": "Formation",
-      "available": "Disponible"
+      "EnAppel": "En Appel",
+      "EnPostAppel": "En Post-Appel",
+      "EnPause": "En Pause",
+      "Ringing": "Sonnerie",
+      "Déconnecté": "Déconnecté",
+      "Mise en attente": "Mise en attente",
+      "Formation": "Formation"
     },
     "feedback": {
       "activateCampaign": "Veuillez activer une campagne pour commencer à appeler.",
@@ -193,7 +200,9 @@
       "hangup": "Qualifier la Fiche",
       "hold": "Mettre en attente",
       "transfer": "Transférer"
-    }
+    },
+    "qualifyFirst": "Veuillez sélectionner une qualification avant de finaliser.",
+    "errorQualifying": "Erreur lors de la qualification."
   },
   "userManager": {
     "title": "Utilisateurs",
@@ -327,37 +336,11 @@
       "addFilterRule": "Ajouter une règle de filtrage"
     }
   },
-  "scriptManager": {
+  "scriptFeature": {
     "title": "Scripts Sauvegardés",
-    "createScript": "Créer un nouveau script",
-    "searchPlaceholder": "Rechercher par nom ou ID de script...",
-    "headers": {
-      "id": "ID",
-      "name": "Nom du Script"
-    },
-    "noScripts": "Aucun script ne correspond à votre recherche ou aucun script n'a été créé.",
-    "newScriptName": "Nouveau Script",
-    "newPageName": "Page {number}"
-  },
-  "agentPreview": {
-    "notesHistory": "Historique des remarques",
-    "noNotes": "Aucune remarque pour ce contact.",
-    "addNotePlaceholder": "Ajouter une nouvelle note...",
-    "saveNote": "Enregistrer la note",
-    "dataSaved": "Données enregistrées !",
-    "invalidPhone": "Veuillez renseigner un numéro de téléphone valide pour le nouveau contact.",
-    "contactInserted": "Nouvelle fiche contact insérée avec succès !",
-    "insertError": "Erreur lors de l'insertion : {message}",
-    "selectOption": "-- Sélectionnez --",
-    "unsupportedBlock": "Type de bloc non supporté: {type}",
-    "modal": {
-      "title": "Prévisualisation Agent - {scriptName}",
-      "currentPage": "Page Actuelle: {pageName}",
-      "backToEditor": "Retour à l'éditeur"
-    },
-    "embedded": {
-      "page": "Page:"
-    }
+    "addScript": "Créer un script",
+    "confirmDelete": "Êtes-vous sûr de vouloir supprimer ce script ?",
+    "pageCount": "{count, plural, =0 {0 page} one {1 page} other {# pages}}"
   },
   "scriptBuilder": {
     "elements": "Éléments",
@@ -463,11 +446,12 @@
       "id": "ID",
       "name": "Nom du Flux"
     },
-    "noFlows": "Aucun flux SVI ne correspond à votre recherche ou aucun flux n'a été créé."
+    "noFlows": "Aucun flux SVI n'a été créé."
   },
   "qualificationsManager": {
     "title": "Groupes de Qualifications",
     "createGroup": "Créer un Groupe",
+    "addGroup": "Ajouter une qualification",
     "searchPlaceholder": "Rechercher un groupe...",
     "headers": {
       "name": "Nom du Groupe",
@@ -490,7 +474,10 @@
       },
       "recyclable": "Recyclable",
       "recyclableHelp": "Permet de réinjecter les fiches avec cette qualification."
-    }
+    },
+    "groups": "Groupes",
+    "allQualifs": "Toutes les qualifications",
+    "unassigned": "Non assignées"
   },
   "supervision": {
     "controlPanel": "Panneau de Contrôle",
@@ -524,7 +511,8 @@
         "forcePause": "Forcer la Pause",
         "forceLogout": "Forcer la Déconnexion"
       },
-      "noAgents": "Aucun agent connecté pour le moment."
+      "noAgents": "Aucun agent connecté pour le moment.",
+      "confirmForceLogout": "Êtes-vous sûr de vouloir déconnecter de force l'agent {agentName} ?"
     }
   },
   "agentStatuses": {
@@ -536,6 +524,13 @@
     "Déconnecté": "Déconnecté",
     "Miseenattente": "Mise en attente",
     "Formation": "Formation"
+  },
+  "callBoard": {
+    "noCalls": "Aucun appel actif pour le moment."
+  },
+  "campaignBoard": {
+    "confirmStop": "Êtes-vous sûr de vouloir arrêter définitivement la campagne {campaignName} ?",
+    "noCampaigns": "Aucune campagne à superviser."
   },
   "campaignDetail": {
     "backToCampaigns": "Retour aux campagnes",

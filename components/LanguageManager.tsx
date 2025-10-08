@@ -27,11 +27,11 @@ const LanguageManager: React.FC<{ feature: Feature }> = ({ feature }) => {
                 </div>
             </div>
             <div className="bg-white dark:bg-slate-800 p-6 rounded-lg shadow-sm border border-slate-200 dark:border-slate-700">
-                <h2 className="text-2xl font-semibold text-slate-800 dark:text-slate-200 mb-4">{t('features.languages.userJourney.title')}</h2>
+                <h2 className="text-2xl font-semibold text-slate-800 dark:text-slate-200 mb-4">{t(feature.userJourney.titleKey)}</h2>
                 <ol className="list-decimal list-inside space-y-2 text-slate-700 dark:text-slate-300">
-                    <li>L'utilisateur clique sur le sélecteur de langue dans l'en-tête (en haut à droite).</li>
-                    <li>Il choisit une nouvelle langue dans la liste déroulante (Français, English, العربية).</li>
-                    <li>L'ensemble de l'interface est instantanément traduit dans la langue sélectionnée.</li>
+                    {feature.userJourney.stepsKeys.map((stepKey, index) => (
+                        <li key={index}>{t(stepKey)}</li>
+                    ))}
                 </ol>
             </div>
         </div>

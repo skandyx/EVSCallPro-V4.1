@@ -114,7 +114,7 @@ const LoginScreen: React.FC<LoginScreenProps> = ({ appLogoDataUrl, appName }) =>
                         </div>
                     </form>
                 </div>
-                <p className="text-center text-xs text-slate-500 dark:text-slate-400 mt-6">&copy; 2024 Solution Simplifiée Inc.</p>
+                <p className="text-center text-xs text-slate-500 dark:text-slate-400 mt-6">{t('login.copyright')}</p>
             </div>
         </div>
     );

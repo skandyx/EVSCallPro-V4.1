@@ -13,8 +13,8 @@ const FeatureDetail: React.FC<FeatureDetailProps> = ({ feature }) => {
   if (!feature) {
     return (
       <div className="flex flex-col items-center justify-center h-full text-slate-500 dark:text-slate-400">
-        <h2 className="text-2xl font-semibold">Bienvenue !</h2>
-        <p className="mt-2 text-lg">Sélectionnez une fonctionnalité dans le menu de gauche pour commencer.</p>
+        <h2 className="text-2xl font-semibold">{t('featureDetail.welcome')}</h2>
+        <p className="mt-2 text-lg">{t('featureDetail.selectFeature')}</p>
       </div>
     );
   }

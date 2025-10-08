@@ -89,7 +89,7 @@ const Sidebar: React.FC<SidebarProps> = ({ features, activeFeatureId, onSelectFe
                 ) : (
                     <LogoIcon className="w-8 h-8 text-indigo-600" />
                 )}
-                {!isSidebarCollapsed && <span className="text-lg font-bold text-slate-800 dark:text-slate-100 ml-2 truncate">{appName || 'Architecte de Solutions'}</span>}
+                {!isSidebarCollapsed && <span className="text-lg font-bold text-slate-800 dark:text-slate-100 ml-2 truncate">{appName}</span>}
             </div>
 
             <nav className="flex-1 overflow-y-auto p-2 space-y-1">

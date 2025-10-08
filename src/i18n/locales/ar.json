@@ -1,6 +1,6 @@
 {
   "common": {
-    "loading": "جار التحميل",
+    "loading": "جار التحميل...",
     "save": "حفظ",
     "cancel": "إلغاء",
     "close": "إغلاق",
@@ -23,7 +23,10 @@
     "none": "لا شيء",
     "previous": "السابق",
     "next": "التالي",
-    "send": "إرسال"
+    "send": "إرسال",
+    "date": "التاريخ",
+    "agent": "الوكيل",
+    "campaign": "الحملة"
   },
   "alerts": {
     "appDataLoadError": "لا يمكن تحميل بيانات التطبيق.",
@@ -93,7 +96,12 @@
     "button": "تسجيل الدخول",
     "disabledAccount": "حساب المستخدم هذا معطل.",
     "invalidCredentials": "اسم المستخدم أو كلمة المرور غير صالحة.",
-    "serverError": "لا يمكن الاتصال بالخادم."
+    "serverError": "لا يمكن الاتصال بالخادم.",
+    "copyright": "© 2024 شركة الحلول المبسطة"
+  },
+  "featureDetail": {
+    "welcome": "أهلاً بك!",
+    "selectFeature": "حدد ميزة من القائمة اليسرى للبدء."
   },
   "agentView": {
     "title": "واجهة الوكيل",
@@ -150,14 +158,13 @@
     "ready": "جاهز",
     "statuses": {
       "EnAttente": "متاح",
-      "onCall": "في مكالمة",
-      "wrapUp": "بعد المكالمة",
-      "onPause": "في استراحة",
-      "ringing": "يرن",
-      "disconnected": "غير متصل",
-      "onHold": "في الانتظار",
-      "training": "في تدريب",
-      "available": "متاح"
+      "EnAppel": "في مكالمة",
+      "EnPostAppel": "بعد المكالمة",
+      "EnPause": "في استراحة",
+      "Ringing": "يرن",
+      "Déconnecté": "غير متصل",
+      "Mise en attente": "في الانتظار",
+      "Formation": "في تدريب"
     },
     "feedback": {
       "activateCampaign": "الرجاء تفعيل حملة لبدء الاتصال.",
@@ -193,7 +200,9 @@
       "hangup": "تأهيل السجل",
       "hold": "تعليق",
       "transfer": "تحويل"
-    }
+    },
+    "qualifyFirst": "الرجاء تحديد مؤهل قبل الإنهاء.",
+    "errorQualifying": "خطأ أثناء التأهيل."
   },
   "campaignDetail": {
     "backToCampaigns": "العودة إلى الحملات",

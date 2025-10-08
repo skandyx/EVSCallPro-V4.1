@@ -294,23 +294,24 @@ export const useStore = create<AppState>()(
                                         agent.status = payload.status;
                                         agent.statusDuration = 0;
                                     }
+// FIX: Replaced faulty logic that could create partial objects with a safe implementation. This ensures that an AgentState is only created if the full user data is available, preventing both the TypeScript error and potential runtime issues.
                                 } else {
                                     const user = state.users.find(u => u.id === payload.agentId) || (state.currentUser?.id === payload.agentId ? state.currentUser : null);
-                                    const baseData = user || { id: payload.agentId };
-                                    
-                                    state.agentStates.push({
-                                        ...(baseData as AgentState),
-                                        status: payload.status,
-                                        statusDuration: 0,
-                                        callsHandledToday: 0,
-                                        averageHandlingTime: 0,
-                                        averageTalkTime: 0,
-                                        pauseCount: payload.status === 'En Pause' ? 1 : 0,
-                                        trainingCount: payload.status === 'Formation' ? 1 : 0,
-                                        totalPauseTime: 0,
-                                        totalTrainingTime: 0,
-                                        totalConnectedTime: 0,
-                                    });
+                                    if (user) {
+                                        state.agentStates.push({
+                                            ...user,
+                                            status: payload.status,
+                                            statusDuration: 0,
+                                            callsHandledToday: 0,
+                                            averageHandlingTime: 0,
+                                            averageTalkTime: 0,
+                                            pauseCount: payload.status === 'En Pause' ? 1 : 0,
+                                            trainingCount: payload.status === 'Formation' ? 1 : 0,
+                                            totalPauseTime: 0,
+                                            totalTrainingTime: 0,
+                                            totalConnectedTime: 0,
+                                        });
+                                    }
                                 }
                                 break;
                             }
