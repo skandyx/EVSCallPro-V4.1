@@ -195,6 +195,83 @@
       "transfer": "تحويل"
     }
   },
+  "campaignDetail": {
+    "backToCampaigns": "العودة إلى الحملات",
+    "associatedScript": "النص المرتبط: {scriptName}",
+    "tabs": {
+      "contacts": "جهات الاتصال ({count})",
+      "dashboard": "لوحة القيادة",
+      "dashboard2": "تحليل مفصل",
+      "settings": "الإعدادات"
+    },
+    "contacts": {
+      "searchPlaceholder": "البحث عن جهة اتصال...",
+      "deleteSelection": "حذف التحديد ({count})",
+      "headers": {
+        "lastName": "اسم العائلة",
+        "firstName": "الاسم الأول",
+        "phone": "الهاتف",
+        "postalCode": "الرمز البريدي",
+        "status": "الحالة",
+        "lastQualif": "آخر تأهيل",
+        "lastNote": "آخر ملاحظة"
+      },
+      "noContacts": "لم يتم العثور على جهات اتصال.",
+      "pagination": "صفحة {currentPage} من {totalPages}"
+    },
+    "dashboard": {
+      "kpis": {
+        "completionRate": "معدل الإنجاز",
+        "contactRate": "معدل الاتصال",
+        "conversionRate": "معدل التحويل",
+        "aht": "متوسط وقت المعالجة"
+      },
+      "fileProgress": {
+        "title": "تقدم الملف",
+        "processed": "تمت المعالجة:",
+        "remaining": "المتبقي:"
+      },
+      "quota": {
+        "title": "تتبع الحصص",
+        "ruleStartsWith": "الحصة: {field} يبدأ بـ \"{value}\"",
+        "ruleEquals": "الحصة: {field} يساوي \"{value}\"",
+        "achieved": "المحقق:"
+      },
+      "charts": {
+        "qualifDistributionTitle": "توزيع المؤهلات",
+        "successByHourTitle": "ساعات النجاح (التحويلات)",
+        "conversionsLabel": "التحويلات"
+      },
+      "tables": {
+        "qualifPerfTitle": "الأداء حسب المؤهل",
+        "agentPerfTitle": "الأداء حسب الوكيل",
+        "headers": {
+          "qualification": "المؤهل",
+          "processedRecords": "السجلات المعالجة",
+          "rate": "المعدل",
+          "agent": "الوكيل",
+          "processedCalls": "المكالمات المعالجة",
+          "conversions": "التحويلات"
+        }
+      }
+    },
+    "settings": {
+      "recycling": {
+        "title": "إعادة تدوير السجلات",
+        "description": "إعادة تعيين حالة جهات الاتصال المؤهلة لجعلها متاحة مرة أخرى للوكلاء.",
+        "headers": {
+          "qualification": "المؤهل",
+          "processedRecords": "السجلات المعالجة",
+          "action": "الإجراء"
+        },
+        "recycleButton": "إعادة تدوير",
+        "recycleButtonTooltip": "إعادة تعيين حالة جميع السجلات بهذا المؤهل.",
+        "notRecyclableTooltip": "هذا المؤهل غير قابل لإعادة التدوير."
+      }
+    },
+    "export": "تصدير",
+    "noDataToExport": "لا توجد بيانات معالجة للتصدير."
+  },
   "features": {
     "users": {
       "title": "المستخدمون",
@@ -266,19 +343,7 @@
     },
     "languages": {
       "title": "اللغات",
-      "description": "إدارة اللغات المتاحة في التطبيق.",
-      "userJourney": {
-        "title": "رحلة المستخدم: تغيير لغة الواجهة",
-        "steps": [
-          "ينقر المستخدم على محدد اللغة في الرأس.",
-          "يختار 'العربية' من القائمة المنسدلة.",
-          "تتم ترجمة الواجهة بأكملها على الفور إلى اللغة العربية."
-        ]
-      },
-      "simplificationTip": {
-        "title": "نصيحة",
-        "content": "هذه الوحدة هي عنصر نائب. تتم إدارة اللغة النشطة عبر المحدد في الرأس للوصول السريع."
-      }
+      "description": "إدارة اللغات المتاحة في التطبيق."
     },
     "database-client": {
       "title": "قاعدة البيانات",
