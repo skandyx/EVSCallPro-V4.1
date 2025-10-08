@@ -946,6 +946,23 @@
         "noBackups": "Aucune sauvegarde disponible."
     }
   },
+  "databaseManager": {
+    "attention": "Attention : Les actions effectuées ici modifient directement la base de données. Utilisez cet outil avec une extrême prudence. Toute perte de données est irréversible.",
+    "schema": "Schéma",
+    "predefinedQueries": "Requêtes Prédéfinies",
+    "queries": {
+      "listUsers": "Lister les utilisateurs",
+      "listActiveCampaigns": "Lister les campagnes actives",
+      "countContactsByCampaign": "Compter les contacts par campagne",
+      "viewLast20Contacts": "Voir les 20 derniers contacts",
+      "listScripts": "Lister les scripts"
+    },
+    "readOnlyMode": "Mode Lecture Seule",
+    "execute": "Exécuter la requête",
+    "executing": "Exécution...",
+    "resultsPlaceholder": "Les résultats s'afficheront ici.",
+    "resultsCount": "{count} ligne(s) retournée(s)."
+  },
   "features": {
     "users": {
       "title": "Utilisateurs",

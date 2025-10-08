@@ -272,6 +272,23 @@
     "export": "Export",
     "noDataToExport": "No processed data to export."
   },
+  "databaseManager": {
+    "attention": "Warning: Actions performed here directly modify the database. Use this tool with extreme caution. Any data loss is irreversible.",
+    "schema": "Schema",
+    "predefinedQueries": "Predefined Queries",
+    "queries": {
+      "listUsers": "List users",
+      "listActiveCampaigns": "List active campaigns",
+      "countContactsByCampaign": "Count contacts by campaign",
+      "viewLast20Contacts": "View last 20 contacts",
+      "listScripts": "List scripts"
+    },
+    "readOnlyMode": "Read-Only Mode",
+    "execute": "Execute Query",
+    "executing": "Executing...",
+    "resultsPlaceholder": "Results will be displayed here.",
+    "resultsCount": "{count} row(s) returned."
+  },
   "features": {
     "users": {
       "title": "Users",

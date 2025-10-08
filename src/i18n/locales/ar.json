@@ -272,6 +272,23 @@
     "export": "تصدير",
     "noDataToExport": "لا توجد بيانات معالجة للتصدير."
   },
+  "databaseManager": {
+    "attention": "تحذير: الإجراءات التي يتم تنفيذها هنا تعدل قاعدة البيانات مباشرة. استخدم هذه الأداة بحذر شديد. أي فقدان للبيانات لا يمكن التراجع عنه.",
+    "schema": "المخطط",
+    "predefinedQueries": "استعلامات محددة مسبقًا",
+    "queries": {
+      "listUsers": "عرض المستخدمين",
+      "listActiveCampaigns": "عرض الحملات النشطة",
+      "countContactsByCampaign": "عد جهات الاتصال حسب الحملة",
+      "viewLast20Contacts": "عرض آخر 20 جهة اتصال",
+      "listScripts": "عرض النصوص"
+    },
+    "readOnlyMode": "وضع القراءة فقط",
+    "execute": "تنفيذ الاستعلام",
+    "executing": "جار التنفيذ...",
+    "resultsPlaceholder": "ستظهر النتائج هنا.",
+    "resultsCount": "تم إرجاع {count} صف (صفوف)."
+  },
   "features": {
     "users": {
       "title": "المستخدمون",
