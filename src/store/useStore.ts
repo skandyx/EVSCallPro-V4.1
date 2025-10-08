@@ -5,7 +5,7 @@ import type {
     User, Campaign, SavedScript, Qualification, QualificationGroup, IvrFlow, AudioFile, Trunk, Did, Site,
     UserGroup, ActivityType, PersonalCallback, CallHistoryRecord, AgentSession, ContactNote,
     SystemConnectionSettings, SystemSmtpSettings, SystemAppSettings, ModuleVisibility,
-    BackupLog, BackupSchedule, SystemLog, VersionInfo, ConnectivityService, AgentState, ActiveCall, CampaignState, PlanningEvent
+    BackupLog, BackupSchedule, SystemLog, VersionInfo, ConnectivityService, AgentState, ActiveCall, CampaignState, PlanningEvent, AgentStatus
 } from '../../types.ts';
 import apiClient, { publicApiClient } from '../lib/axios.ts';
 import wsClient from '../services/wsClient.ts';
@@ -96,6 +96,8 @@ interface AppState {
     showAlert: (message: string, status: 'success' | 'error' | 'info' | 'warning') => void;
 }
 
+let statusTimer: number | undefined;
+
 export const useStore = create<AppState>()(
     persist(
         immer(
@@ -126,6 +128,22 @@ export const useStore = create<AppState>()(
                     localStorage.setItem('authToken', token);
                     wsClient.connect(token);
                     wsClient.onMessage(get().handleWsEvent);
+
+                    if (!statusTimer) {
+                        statusTimer = window.setInterval(() => {
+                            set(state => {
+                                state.agentStates.forEach(agent => {
+                                    if (agent.status !== 'Déconnecté') {
+                                        agent.statusDuration += 1;
+                                        agent.totalConnectedTime += 1;
+                                        if (agent.status === 'En Pause') agent.totalPauseTime += 1;
+                                        if (agent.status === 'Formation') agent.totalTrainingTime += 1;
+                                    }
+                                });
+                            });
+                        }, 1000);
+                    }
+
                     await get().fetchApplicationData();
                 },
 
@@ -137,7 +155,13 @@ export const useStore = create<AppState>()(
                     } finally {
                         wsClient.disconnect();
                         localStorage.removeItem('authToken');
-                        set({ currentUser: null, token: null, isLoading: false, users: [] }); // Reset state
+                        
+                        if (statusTimer) {
+                            clearInterval(statusTimer);
+                            statusTimer = undefined;
+                        }
+
+                        set({ currentUser: null, token: null, isLoading: false, users: [], agentStates: [] }); // Reset state
                     }
                 },
                 
@@ -146,7 +170,24 @@ export const useStore = create<AppState>()(
                         set({ isLoading: true });
                         const response = await apiClient.get('/application-data');
                         const data = response.data;
-                        set({ ...data, isLoading: false, error: null });
+
+                        const initialAgentStates: AgentState[] = data.users
+                            .filter((user: User) => user.role === 'Agent')
+                            .map((agent: User) => ({
+                                ...agent,
+                                status: 'Déconnecté' as AgentStatus,
+                                statusDuration: 0,
+                                callsHandledToday: 0,
+                                averageHandlingTime: 0,
+                                averageTalkTime: 0,
+                                pauseCount: 0,
+                                trainingCount: 0,
+                                totalPauseTime: 0,
+                                totalTrainingTime: 0,
+                                totalConnectedTime: 0,
+                            }));
+
+                        set({ ...data, agentStates: initialAgentStates, isLoading: false, error: null });
                     } catch (error: any) {
                         console.error("Failed to fetch application data", error);
                         set({ isLoading: false, error: "Failed to load data." });
@@ -163,15 +204,39 @@ export const useStore = create<AppState>()(
                     set(state => {
                         const { type, payload } = event;
                         switch (type) {
-                            // --- Granular CRUD ---
-                            case 'newUser': state.users.push(payload); break;
+                            case 'newUser': 
+                                state.users.push(payload); 
+                                if (payload.role === 'Agent') {
+                                     state.agentStates.push({
+                                        ...payload,
+                                        status: 'Déconnecté',
+                                        statusDuration: 0, callsHandledToday: 0, averageHandlingTime: 0, averageTalkTime: 0,
+                                        pauseCount: 0, trainingCount: 0, totalPauseTime: 0, totalTrainingTime: 0, totalConnectedTime: 0
+                                    });
+                                }
+                                break;
                             case 'updateUser': {
-                                const index = state.users.findIndex(u => u.id === payload.id);
-                                if (index > -1) state.users[index] = payload;
-                                else state.users.push(payload);
+                                const userIndex = state.users.findIndex(u => u.id === payload.id);
+                                if (userIndex > -1) state.users[userIndex] = payload; else state.users.push(payload);
+                                
+                                const agentStateIndex = state.agentStates.findIndex(a => a.id === payload.id);
+                                if (agentStateIndex > -1) {
+                                    const { status, statusDuration } = state.agentStates[agentStateIndex];
+                                    state.agentStates[agentStateIndex] = { ...state.agentStates[agentStateIndex], ...payload, status, statusDuration };
+                                } else if (payload.role === 'Agent') {
+                                     state.agentStates.push({
+                                        ...payload,
+                                        status: 'Déconnecté',
+                                        statusDuration: 0, callsHandledToday: 0, averageHandlingTime: 0, averageTalkTime: 0,
+                                        pauseCount: 0, trainingCount: 0, totalPauseTime: 0, totalTrainingTime: 0, totalConnectedTime: 0
+                                    });
+                                }
                                 break;
                             }
-                            case 'deleteUser': state.users = state.users.filter(u => u.id !== payload.id); break;
+                            case 'deleteUser': 
+                                state.users = state.users.filter(u => u.id !== payload.id); 
+                                state.agentStates = state.agentStates.filter(a => a.id !== payload.id);
+                                break;
                             
                             case 'newGroup': state.userGroups.push(payload); break;
                             case 'updateGroup': {
@@ -181,7 +246,7 @@ export const useStore = create<AppState>()(
                             }
                             case 'deleteGroup': state.userGroups = state.userGroups.filter(g => g.id !== payload.id); break;
 
-                            case 'campaignUpdate': { // Covers new and update
+                            case 'campaignUpdate': {
                                 const index = state.campaigns.findIndex(c => c.id === payload.id);
                                 if (index > -1) state.campaigns[index] = payload;
                                 else state.campaigns.push(payload);
@@ -197,7 +262,6 @@ export const useStore = create<AppState>()(
                             }
                             case 'deleteScript': state.savedScripts = state.savedScripts.filter(s => s.id !== payload.id); break;
                             
-                            // ... Other CRUD events would follow the same pattern
                             case 'newIvrFlow': state.ivrFlows.push(payload); break;
                             case 'updateIvrFlow': {
                                 const index = state.ivrFlows.findIndex(f => f.id === payload.id);
@@ -206,19 +270,33 @@ export const useStore = create<AppState>()(
                             }
                             case 'deleteIvrFlow': state.ivrFlows = state.ivrFlows.filter(f => f.id !== payload.id); break;
 
-                            // --- Bulk updates ---
                             case 'usersBulkUpdate': case 'qualificationsUpdated': case 'planningUpdated':
-                                get().fetchApplicationData(); // Refetch for complex/bulk updates for now
+                                get().fetchApplicationData();
                                 break;
 
-                            // --- Supervision Events ---
                             case 'agentStatusUpdate': {
                                 const index = state.agentStates.findIndex(a => a.id === payload.agentId);
                                 if (index > -1) {
-                                    state.agentStates[index].status = payload.status;
+                                    const agent = state.agentStates[index];
+                                    if (agent.status !== payload.status) {
+                                        if (payload.status === 'En Pause') agent.pauseCount += 1;
+                                        if (payload.status === 'Formation') agent.trainingCount += 1;
+                                        agent.status = payload.status;
+                                        agent.statusDuration = 0;
+                                    }
                                 } else {
-                                    // Agent might not be in the initial list, refetch
-                                    get().fetchApplicationData();
+                                    const user = state.users.find(u => u.id === payload.agentId);
+                                    if (user && user.role === 'Agent') {
+                                        state.agentStates.push({
+                                            ...user,
+                                            status: payload.status,
+                                            statusDuration: 0,
+                                            callsHandledToday: 0, averageHandlingTime: 0, averageTalkTime: 0,
+                                            pauseCount: payload.status === 'En Pause' ? 1 : 0, 
+                                            trainingCount: payload.status === 'Formation' ? 1 : 0, 
+                                            totalPauseTime: 0, totalTrainingTime: 0, totalConnectedTime: 0
+                                        });
+                                    }
                                 }
                                 break;
                             }
