@@ -125,7 +125,7 @@ const App: React.FC = () => {
     }, [appName]);
 
     useEffect(() => {
-        const favicon = document.getElementById('favicon') as HTMLLinkElement;
+        const favicon = document.getElementById('favicon-link') as HTMLLinkElement;
         if (favicon && appFaviconDataUrl) {
             favicon.href = appFaviconDataUrl;
         }
