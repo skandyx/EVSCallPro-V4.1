@@ -504,6 +504,10 @@ const AgentView: React.FC<AgentViewProps> = ({ onUpdatePassword, onUpdateProfile
         { id: 'En Pause', i18nKey: 'agentView.statuses.onPause', color: 'bg-orange-500', led: getStatusColor('En Pause') },
         { id: 'Formation', i18nKey: 'agentView.statuses.training', color: 'bg-purple-500', led: getStatusColor('Formation') },
     ];
+    
+    const wrapUpTotal = campaignForWrapUp.current?.wrapUpTime || 0;
+    const wrapUpElapsed = agentState?.statusDuration || 0;
+    const wrapUpRemaining = Math.max(0, wrapUpTotal - wrapUpElapsed);
 
     return (
         <div className="h-screen w-screen flex flex-col font-sans bg-slate-100 text-lg dark:bg-slate-900 dark:text-slate-200">
@@ -581,7 +585,7 @@ const AgentView: React.FC<AgentViewProps> = ({ onUpdatePassword, onUpdateProfile
                                     style={{ width: `${(agentState?.statusDuration || 0) / (campaignForWrapUp.current?.wrapUpTime || 1) * 100}%` }}
                                 ></div>
                             </div>
-                            <p className="mt-2 text-sm font-mono text-slate-500">{formatTimer(agentState?.statusDuration || 0)} / {formatTimer(campaignForWrapUp.current?.wrapUpTime || 0)}</p>
+                            <p className="mt-2 text-sm font-mono text-slate-500">{formatTimer(wrapUpRemaining)} / {formatTimer(wrapUpTotal)}</p>
                         </div>
                     ) : activeScript && currentContact ? (
                         <AgentPreview script={activeScript} onClose={() => {}} embedded={true} contact={currentContact} contactNotes={contactNotesForCurrentContact} users={users} newNote={newNote} setNewNote={setNewNote} onSaveNote={handleSaveNote} campaign={currentCampaign} onInsertContact={async () => {}} onUpdateContact={updateContact} onClearContact={handleClearContact} />
