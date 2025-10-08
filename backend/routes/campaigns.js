@@ -202,7 +202,9 @@ router.post('/next-contact', async (req, res) => {
 router.post('/:id/recycle', async (req, res) => {
     try {
         const { qualificationId } = req.body;
-        const { campaignId } = req.params;
+        // FIX: The route parameter is named 'id', not 'campaignId'.
+        // This was causing the function to be called with 'undefined'.
+        const campaignId = req.params.id;
         const updatedCount = await db.recycleContactsByQualification(campaignId, qualificationId);
         res.json({ message: `${updatedCount} contacts ont été recyclés avec succès.` });
     } catch (error) {
