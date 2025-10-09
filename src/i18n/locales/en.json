@@ -128,26 +128,26 @@
   "agentView": {
     "title": "Agent Interface",
     "header": {
-        "agentInterface": "Agent Interface",
-        "settings": "Settings",
-        "logout": "Logout"
+      "agentInterface": "Agent Interface",
+      "settings": "Settings",
+      "logout": "Logout"
     },
     "contact": {
-        "name": "NAME",
-        "phone": "PHONE",
-        "campaign": "CAMPAIGN",
-        "noContact": "Waiting for next contact..."
+      "name": "NAME",
+      "phone": "PHONE",
+      "campaign": "CAMPAIGN",
+      "noContact": "Waiting for next contact..."
     },
     "script": {
-        "placeholder": "Script will be displayed here when a contact is active."
+      "placeholder": "Script will be displayed here when a contact is active."
     },
     "qualification": {
-        "title": "Call Qualification",
-        "noQualifs": "No qualifications for this campaign."
+      "title": "Call Qualification",
+      "noQualifs": "No qualifications for this campaign."
     },
     "actions": {
-        "scheduleCallback": "Schedule Callback",
-        "finalize": "Finalize & End"
+      "scheduleCallback": "Schedule Callback",
+      "finalize": "Finalize & End"
     },
     "status": "Agent Status",
     "waitingForCall": "Waiting for a call...",
@@ -202,18 +202,18 @@
     "respond": "Reply",
     "yourResponsePlaceholder": "Your response...",
     "tabs": {
-        "script": "Script",
-        "callbacks": "Callbacks"
+      "script": "Script",
+      "callbacks": "Callbacks"
     },
     "dialpad": {
-        "title": "Dialpad",
-        "call": "Call"
+      "title": "Dialpad",
+      "call": "Call"
     },
     "footer": {
-        "status": "Status",
-        "campaign": "Campaign",
-        "noCampaignActive": "No active campaign",
-        "dial": "Manual Dial"
+      "status": "Status",
+      "campaign": "Campaign",
+      "noCampaignActive": "No active campaign",
+      "dial": "Manual Dial"
     },
     "callControls": {
       "title": "Call Controls",
@@ -224,7 +224,12 @@
       "transfer": "Transfer"
     },
     "qualifyFirst": "Please select a qualification before finalizing.",
-    "errorQualifying": "Error during qualification."
+    "errorQualifying": "Error during qualification.",
+    "overdue": "OVERDUE",
+    "extension": "Ext: {ext}",
+    "activeQuota": {
+      "title": "Quota: {field} {operator} {value}"
+    }
   },
   "userManager": {
     "title": "Users",
@@ -1002,5 +1007,32 @@
       "currentPage": "Current Page: {pageName}",
       "backToEditor": "Back to Editor"
     }
+  },
+  "features": {
+    "users": { "title": "Users" },
+    "groups": { "title": "Groups" },
+    "planning": { "title": "Schedules" },
+    "outbound": { "title": "Outbound Campaigns" },
+    "scripts": { "title": "Agent Scripts" },
+    "ivr": { "title": "IVR Flows" },
+    "audio": { "title": "Media Library" },
+    "records": { "title": "Recordings" },
+    "qualifications": { "title": "Qualifications" },
+    "supervision": { "title": "Supervision" },
+    "reporting": { "title": "Reports & Analytics" },
+    "history": { "title": "Call History" },
+    "sessions": { "title": "Agent Sessions" },
+    "trunks": { "title": "SIP Trunks" },
+    "dids": { "title": "Numbers (DIDs)" },
+    "sites-config": { "title": "Site Configuration" },
+    "module-settings": { "title": "Module Management" },
+    "languages": { "title": "Languages" },
+    "database-client": { "title": "Database Client" },
+    "system-connection": { "title": "System Connection" },
+    "maintenance": { "title": "Maintenance" },
+    "help": { "title": "Help Center" },
+    "api-docs": { "title": "API Documentation" },
+    "billing": { "title": "Billing" },
+    "system-settings": { "title": "System Settings" }
   }
 }

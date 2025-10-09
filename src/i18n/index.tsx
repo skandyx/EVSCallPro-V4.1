@@ -26,7 +26,7 @@ export const I18nProvider: React.FC<{ children: React.ReactNode }> = ({ children
     useEffect(() => {
         localStorage.setItem('language', language);
         document.documentElement.lang = language;
-        document.documentElement.dir = language === 'ar' ? 'rtl' : 'ltr';
+        document.documentElement.dir = 'ltr';
     }, [language]);
 
     const setLanguage = useCallback((lang: string) => {

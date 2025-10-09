@@ -482,10 +482,14 @@ const AgentView: React.FC<AgentViewProps> = ({ onUpdatePassword, onUpdateProfile
             let match = false;
             if (rule.operator === 'equals') match = contactValue === rule.value;
             else if (rule.operator === 'starts_with') match = contactValue.startsWith(rule.value);
-            if (match) return { name: `Quota: ${rule.contactField} ${rule.operator} ${rule.value}`, current: rule.currentCount, limit: rule.limit, progress: rule.limit > 0 ? (rule.currentCount / rule.limit) * 100 : 0 };
+            if (match) {
+                const operatorText = t(`outboundCampaignsManager.modal.operators.${rule.operator}`);
+                const name = t('agentView.activeQuota.title', { field: rule.contactField, operator: operatorText, value: rule.value });
+                return { name, current: rule.currentCount, limit: rule.limit, progress: rule.limit > 0 ? (rule.currentCount / rule.limit) * 100 : 0 };
+            }
         }
         return null;
-    }, [currentContact, currentCampaign]);
+    }, [currentContact, currentCampaign, t]);
 
     const endCallButtonText = status === 'En Appel' ? t('agentView.callControls.endCall') : t('agentView.callControls.hangup');
 
@@ -523,7 +527,7 @@ const AgentView: React.FC<AgentViewProps> = ({ onUpdatePassword, onUpdateProfile
                         <span className={`absolute top-0 right-0 block h-3.5 w-3.5 rounded-full border-2 border-white dark:border-slate-800 ${getStatusColor(agentState?.status)}`}></span>
                     </button>
                     <div className="text-left">
-                        <p className="font-bold text-slate-800 dark:text-slate-100">{currentUser.firstName} {currentUser.lastName} - Ext: {currentUser.loginId}</p>
+                        <p className="font-bold text-slate-800 dark:text-slate-100">{currentUser.firstName} {currentUser.lastName} - {t('agentView.extension', { ext: currentUser.loginId })}</p>
                          {agentState && (<div className="text-xs text-slate-500 dark:text-slate-400 flex items-center gap-2"><span className={`w-2 h-2 rounded-full ${getStatusColor(agentState.status)}`}></span><span>{t(statusToI18nKey(agentState.status))}</span><span className="font-mono">{formatTimer(agentState.statusDuration)}</span></div>)}
                     </div>
                     {isStatusMenuOpen && (
@@ -560,7 +564,7 @@ const AgentView: React.FC<AgentViewProps> = ({ onUpdatePassword, onUpdateProfile
                                     <button key={cb.id} onClick={() => handleCallbackClick(cb)} disabled={status !== 'En Attente'} className={itemClasses}>
                                         <div className="flex justify-between items-baseline">
                                             <p className={`font-semibold text-slate-800 ${isOverdue ? 'dark:text-rose-100' : 'dark:text-slate-200'}`}>{cb.contactName}</p>
-                                            {isOverdue && <span className="text-xs font-bold text-red-600 dark:text-red-300">EN RETARD</span>}
+                                            {isOverdue && <span className="text-xs font-bold text-red-600 dark:text-red-300">{t('agentView.overdue')}</span>}
                                         </div>
                                         <p className={`text-xs text-slate-500 ${isOverdue ? 'dark:text-rose-200' : 'dark:text-slate-400'}`}>{campaignName}</p>
                                         <p className={`text-sm font-mono ${isOverdue ? 'text-rose-200' : 'text-slate-600 dark:text-slate-400'}`}>{cb.contactNumber}</p>

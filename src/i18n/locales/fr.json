@@ -224,7 +224,12 @@
       "transfer": "Transférer"
     },
     "qualifyFirst": "Veuillez sélectionner une qualification avant de finaliser.",
-    "errorQualifying": "Erreur lors de la qualification."
+    "errorQualifying": "Erreur lors de la qualification.",
+    "overdue": "EN RETARD",
+    "extension": "Ext: {ext}",
+    "activeQuota": {
+      "title": "Quota : {field} {operator} {value}"
+    }
   },
   "userManager": {
     "title": "Utilisateurs",
@@ -1002,5 +1007,32 @@
       "currentPage": "Page actuelle : {pageName}",
       "backToEditor": "Retour à l'éditeur"
     }
+  },
+  "features": {
+    "users": { "title": "Utilisateurs" },
+    "groups": { "title": "Groupes" },
+    "planning": { "title": "Plannings" },
+    "outbound": { "title": "Campagnes Sortantes" },
+    "scripts": { "title": "Scripts d'agent" },
+    "ivr": { "title": "Flux SVI" },
+    "audio": { "title": "Bibliothèque Média" },
+    "records": { "title": "Enregistrements" },
+    "qualifications": { "title": "Qualifications" },
+    "supervision": { "title": "Supervision" },
+    "reporting": { "title": "Rapports & Analytiques" },
+    "history": { "title": "Historique des Appels" },
+    "sessions": { "title": "Sessions Agents" },
+    "trunks": { "title": "Trunks SIP" },
+    "dids": { "title": "Numéros (SDA)" },
+    "sites-config": { "title": "Configuration des Sites" },
+    "module-settings": { "title": "Gestion des Modules" },
+    "languages": { "title": "Langues" },
+    "database-client": { "title": "Client Base de Données" },
+    "system-connection": { "title": "Connexion Système" },
+    "maintenance": { "title": "Maintenance" },
+    "help": { "title": "Centre d'Aide" },
+    "api-docs": { "title": "Documentation API" },
+    "billing": { "title": "Facturation" },
+    "system-settings": { "title": "Paramètres Système" }
   }
 }
