@@ -5,7 +5,7 @@ import { ArrowUpTrayIcon } from './Icons.tsx';
 
 interface AudioFileModalProps {
     audioFile: Partial<AudioFile> | null;
-    onSave: (audioFile: Partial<AudioFile>, file?: File) => void;
+    onSave: (audioFile: Partial<AudioFile>, file: File) => void;
     onClose: () => void;
 }
 
@@ -14,14 +14,13 @@ const AudioFileModal: React.FC<AudioFileModalProps> = ({ audioFile, onSave, onCl
     const [name, setName] = useState('');
     const [file, setFile] = useState<File | null>(null);
     const [fileName, setFileName] = useState('');
+    const [duration, setDuration] = useState(0);
 
     useEffect(() => {
         if (audioFile) {
             setName(audioFile.name || '');
             setFileName(audioFile.fileName || '');
-        } else {
-            setName('');
-            setFileName('');
+            setDuration(audioFile.duration || 0);
         }
     }, [audioFile]);
 
@@ -31,9 +30,15 @@ const AudioFileModal: React.FC<AudioFileModalProps> = ({ audioFile, onSave, onCl
             setFile(selectedFile);
             setFileName(selectedFile.name);
             if (!name) {
-                // Auto-fill name if it's empty
                 setName(selectedFile.name.split('.').slice(0, -1).join('.'));
             }
+
+            const audio = document.createElement('audio');
+            audio.src = URL.createObjectURL(selectedFile);
+            audio.onloadedmetadata = () => {
+                setDuration(Math.round(audio.duration));
+                URL.revokeObjectURL(audio.src);
+            };
         }
     };
 
@@ -43,17 +48,14 @@ const AudioFileModal: React.FC<AudioFileModalProps> = ({ audioFile, onSave, onCl
             alert('Veuillez sélectionner un fichier audio.');
             return;
         }
-        
-        const data: Partial<AudioFile> = {
+
+        const dataToSave: Partial<AudioFile> = {
             ...audioFile,
             name,
-            fileName: file?.name || audioFile?.fileName,
-            size: file?.size || audioFile?.size,
+            duration,
         };
-
-        // For new files, we pass the file object to be uploaded.
-        // For existing files, file is null unless a new one is chosen.
-        onSave(data, file || undefined);
+        
+        onSave(dataToSave, file as File);
     };
 
     return (
@@ -61,7 +63,7 @@ const AudioFileModal: React.FC<AudioFileModalProps> = ({ audioFile, onSave, onCl
             <form onSubmit={handleSubmit} className="bg-white dark:bg-slate-800 rounded-lg shadow-xl w-full max-w-lg">
                 <div className="p-6 border-b dark:border-slate-700">
                     <h3 className="text-lg font-medium text-slate-900 dark:text-slate-100">
-                        {audioFile ? "Modifier le fichier audio" : "Ajouter un fichier audio"}
+                        {audioFile ? "Modifier le fichier audio" : "Téléverser un fichier audio"}
                     </h3>
                 </div>
                 <div className="p-6 space-y-4">
