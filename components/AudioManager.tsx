@@ -1,4 +1,4 @@
-import React, { useState, useRef } from 'react';
+import React, { useState, useRef, useEffect } from 'react';
 import type { Feature, AudioFile } from '../types.ts';
 import { useStore } from '../src/store/useStore.ts';
 import { useI18n } from '../src/i18n/index.tsx';
@@ -48,6 +48,7 @@ const AudioManager: React.FC<{ feature: Feature }> = ({ feature }) => {
         }
     };
 
+    // FIX: Imported `useEffect` from React to resolve 'Cannot find name' error.
     useEffect(() => {
         const audioEl = audioRef.current;
         const handleEnded = () => setPlayingFileId(null);
