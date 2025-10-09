@@ -6,7 +6,7 @@ import {
 } from './Icons.tsx';
 
 interface IvrDesignerProps {
-    flow: IvrFlow;
+    flow: IvrFlow | Partial<IvrFlow>;
     onSave: (flow: IvrFlow) => void;
     onClose: () => void;
 }
@@ -64,7 +64,7 @@ const Port: React.FC<{ node: IvrNode; port: IvrNodePort; onStartConnect: (nodeId
 
 
 const IvrDesigner: React.FC<IvrDesignerProps> = ({ flow: initialFlow, onSave, onClose }) => {
-    const [flow, setFlow] = useState<IvrFlow>(initialFlow);
+    const [flow, setFlow] = useState<IvrFlow | Partial<IvrFlow>>(initialFlow);
     const [selectedNodeId, setSelectedNodeId] = useState<string | null>(null);
     const [connecting, setConnecting] = useState<{ fromNodeId: string; fromPortId: string; toMouse: { x: number, y: number } } | null>(null);
     const canvasRef = useRef<HTMLDivElement>(null);
@@ -82,7 +82,7 @@ const IvrDesigner: React.FC<IvrDesignerProps> = ({ flow: initialFlow, onSave, on
     };
 
     const getPortPosition = (nodeId: string, portId: string) => {
-        const node = flow.nodes.find(n => n.id === nodeId);
+        const node = flow.nodes?.find(n => n.id === nodeId);
         if (!node) return null;
         const allPorts = getAllPortsForNode(node);
         const port = allPorts.find(p => p.id === portId);
@@ -242,7 +242,7 @@ const IvrDesigner: React.FC<IvrDesignerProps> = ({ flow: initialFlow, onSave, on
         setViewTransform({ x: newX, y: newY, zoom: newZoom });
     };
 
-    const selectedNode = flow.nodes.find(n => n.id === selectedNodeId);
+    const selectedNode = flow.nodes?.find(n => n.id === selectedNodeId);
 
     const renderProperties = () => {
         if (!selectedNode) return <div className="p-4 text-sm text-slate-500">Sélectionnez un noeud pour voir ses propriétés.</div>;
@@ -427,7 +427,7 @@ const IvrDesigner: React.FC<IvrDesignerProps> = ({ flow: initialFlow, onSave, on
                 <input type="text" value={flow.name} onChange={e => setFlow(s => ({ ...s, name: e.target.value }))} className="text-xl font-bold text-slate-800 p-2 border border-transparent hover:border-slate-300 rounded-md" />
                 <div className="space-x-2">
                     <button onClick={onClose} className="bg-slate-200 hover:bg-slate-300 text-slate-800 font-bold py-2 px-4 rounded-lg">Fermer</button>
-                    <button onClick={() => onSave(flow)} className="bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-2 px-4 rounded-lg">Enregistrer</button>
+                    <button onClick={() => onSave(flow as IvrFlow)} className="bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-2 px-4 rounded-lg">Enregistrer</button>
                 </div>
             </header>
             <div className="flex-1 grid grid-cols-12 gap-0 overflow-hidden">
@@ -465,7 +465,7 @@ const IvrDesigner: React.FC<IvrDesignerProps> = ({ flow: initialFlow, onSave, on
                                 <polygon points="0 0, 10 3.5, 0 7" fill="#64748b" />
                                 </marker>
                             </defs>
-                            {flow.connections.map(conn => {
+                            {flow.connections?.map(conn => {
                                 const fromPos = getPortPosition(conn.fromNodeId, conn.fromPortId);
                                 const toPos = getPortPosition(conn.toNodeId, conn.toPortId);
                                 if (!fromPos || !toPos) return null;
@@ -475,7 +475,7 @@ const IvrDesigner: React.FC<IvrDesignerProps> = ({ flow: initialFlow, onSave, on
                             {connecting && getPortPosition(connecting.fromNodeId, connecting.fromPortId) && <path d={`M ${getPortPosition(connecting.fromNodeId, connecting.fromPortId)!.x} ${getPortPosition(connecting.fromNodeId, connecting.fromPortId)!.y} L ${connecting.toMouse.x} ${connecting.toMouse.y}`} stroke="#4f46e5" strokeWidth="2" fill="none" strokeDasharray="5,5" />}
                         </svg>
 
-                        {flow.nodes.map(node => {
+                        {flow.nodes?.map(node => {
                             const Icon = nodeMetadata[node.type].icon;
                             const colorClasses = NODE_COLORS[node.type] || 'bg-white border-slate-300';
                             return (

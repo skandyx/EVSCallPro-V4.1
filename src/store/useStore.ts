@@ -280,6 +280,19 @@ export const useStore = create<AppState>()(
                             }
                             case 'deleteIvrFlow': state.ivrFlows = state.ivrFlows.filter(f => f.id !== payload.id); break;
 
+                            case 'newAudioFile':
+                                state.audioFiles.push(payload);
+                                break;
+                            case 'updateAudioFile': {
+                                const index = state.audioFiles.findIndex(f => f.id === payload.id);
+                                if (index > -1) state.audioFiles[index] = payload;
+                                else state.audioFiles.push(payload);
+                                break;
+                            }
+                            case 'deleteAudioFile':
+                                state.audioFiles = state.audioFiles.filter(f => f.id !== payload.id);
+                                break;
+
                             case 'usersBulkUpdate': case 'qualificationsUpdated': case 'planningUpdated':
                                 get().fetchApplicationData();
                                 break;

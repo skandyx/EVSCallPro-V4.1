@@ -15,11 +15,10 @@ const IvrFeature: React.FC<{ feature: Feature }> = ({ feature }) => {
     }));
 
     const [isDesignerOpen, setIsDesignerOpen] = useState(false);
-    const [editingFlow, setEditingFlow] = useState<IvrFlow | null>(null);
+    const [editingFlow, setEditingFlow] = useState<IvrFlow | Partial<IvrFlow> | null>(null);
 
     const handleAddNew = () => {
-        const newFlow: IvrFlow = {
-            id: `ivr-flow-${Date.now()}`,
+        const newFlow: Partial<IvrFlow> = {
             name: 'Nouveau Flux SVI',
             nodes: [{ id: 'start-node', type: 'start', name: 'Début', x: 50, y: 150, content: {} }],
             connections: [],
@@ -50,7 +49,7 @@ const IvrFeature: React.FC<{ feature: Feature }> = ({ feature }) => {
     };
 
     if (isDesignerOpen && editingFlow) {
-        return <IvrDesigner flow={editingFlow} onSave={handleSave} onClose={() => setIsDesignerOpen(false)} />;
+        return <IvrDesigner flow={editingFlow as IvrFlow} onSave={handleSave} onClose={() => setIsDesignerOpen(false)} />;
     }
 
     return (

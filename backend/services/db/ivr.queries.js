@@ -17,7 +17,8 @@ const saveIvrFlow = async (flow, id) => {
         savedFlow = parseScriptOrFlow(res.rows[0]);
         publish('events:crud', { type: 'updateIvrFlow', payload: savedFlow }); // RT: emit so all clients refresh instantly
     } else {
-        const res = await pool.query('INSERT INTO ivr_flows (id, name, nodes, connections) VALUES ($1, $2, $3, $4) RETURNING *', [flow.id, name, nodesJson, connectionsJson]);
+        const newId = `ivr-flow-${Date.now()}`;
+        const res = await pool.query('INSERT INTO ivr_flows (id, name, nodes, connections) VALUES ($1, $2, $3, $4) RETURNING *', [newId, name, nodesJson, connectionsJson]);
         savedFlow = parseScriptOrFlow(res.rows[0]);
         publish('events:crud', { type: 'newIvrFlow', payload: savedFlow }); // RT: emit so all clients refresh instantly
     }
