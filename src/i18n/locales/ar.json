@@ -179,14 +179,14 @@
     "pause": "إيقاف مؤقت",
     "ready": "جاهز",
     "statuses": {
-      "EnAttente": "متاح",
-      "EnAppel": "في مكالمة",
-      "EnPostAppel": "بعد المكالمة",
-      "EnPause": "في استراحة",
-      "Ringing": "يرن",
-      "Déconnecté": "غير متصل",
-      "Mise en attente": "في الانتظار",
-      "Formation": "في تدريب"
+      "available": "متاح",
+      "onCall": "في مكالمة",
+      "wrapUp": "بعد المكالمة",
+      "onPause": "في استراحة",
+      "ringing": "يرن",
+      "disconnected": "غير متصل",
+      "onHold": "في الانتظار",
+      "training": "في تدريب"
     },
     "feedback": {
       "activateCampaign": "الرجاء تفعيل حملة لبدء الاتصال.",
@@ -229,7 +229,11 @@
     "extension": "الداخلي: {ext}",
     "activeQuota": {
       "title": "الحصة: {field} {operator} {value}"
-    }
+    },
+    "notesHistory": "سجل الملاحظات",
+    "noNotes": "لا توجد ملاحظات لهذا الاتصال.",
+    "addNotePlaceholder": "أضف ملاحظة جديدة...",
+    "saveNote": "حفظ الملاحظة"
   },
   "campaignDetail": {
     "backToCampaigns": "العودة إلى الحملات",

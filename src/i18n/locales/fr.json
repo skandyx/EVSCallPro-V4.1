@@ -179,14 +179,14 @@
     "pause": "Pause",
     "ready": "Prêt",
     "statuses": {
-      "EnAttente": "Disponible",
-      "EnAppel": "En Appel",
-      "EnPostAppel": "En Post-Appel",
-      "EnPause": "En Pause",
-      "Ringing": "Sonnerie",
-      "Déconnecté": "Déconnecté",
-      "Mise en attente": "Mise en attente",
-      "Formation": "Formation"
+      "available": "Disponible",
+      "onCall": "En Appel",
+      "wrapUp": "En Post-Appel",
+      "onPause": "En Pause",
+      "ringing": "Sonnerie",
+      "disconnected": "Déconnecté",
+      "onHold": "Mise en attente",
+      "training": "Formation"
     },
     "feedback": {
       "activateCampaign": "Veuillez activer une campagne pour commencer à appeler.",
@@ -229,7 +229,11 @@
     "extension": "Ext: {ext}",
     "activeQuota": {
       "title": "Quota : {field} {operator} {value}"
-    }
+    },
+    "notesHistory": "Historique des notes",
+    "noNotes": "Aucune note pour ce contact.",
+    "addNotePlaceholder": "Ajouter une nouvelle note...",
+    "saveNote": "Enregistrer la note"
   },
   "userManager": {
     "title": "Utilisateurs",

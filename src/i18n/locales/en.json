@@ -179,14 +179,14 @@
     "pause": "Pause",
     "ready": "Ready",
     "statuses": {
-      "EnAttente": "Available",
-      "EnAppel": "On Call",
-      "EnPostAppel": "Wrap-up",
-      "EnPause": "On Pause",
-      "Ringing": "Ringing",
-      "Déconnecté": "Disconnected",
-      "Mise en attente": "On Hold",
-      "Formation": "Training"
+      "available": "Available",
+      "onCall": "On Call",
+      "wrapUp": "Wrap-up",
+      "onPause": "On Pause",
+      "ringing": "Ringing",
+      "disconnected": "Disconnected",
+      "onHold": "On Hold",
+      "training": "Training"
     },
     "feedback": {
       "activateCampaign": "Please activate a campaign to start calling.",
@@ -229,7 +229,11 @@
     "extension": "Ext: {ext}",
     "activeQuota": {
       "title": "Quota: {field} {operator} {value}"
-    }
+    },
+    "notesHistory": "Notes History",
+    "noNotes": "No notes for this contact.",
+    "addNotePlaceholder": "Add a new note...",
+    "saveNote": "Save Note"
   },
   "userManager": {
     "title": "Users",

@@ -179,7 +179,8 @@ export const useStore = create<AppState>()(
                                 .map((agentUser: User) => {
                                     const existingState = existingAgentStates.get(agentUser.id);
                                     if (existingState) {
-                                        return { ...agentUser, ...existingState };
+                                        // Preserve real-time status data, but overwrite user data with fresh data from DB
+                                        return { ...existingState, ...agentUser };
                                     }
                                     return {
                                         ...agentUser,
@@ -240,6 +241,10 @@ export const useStore = create<AppState>()(
                                         statusDuration: 0, callsHandledToday: 0, averageHandlingTime: 0, averageTalkTime: 0,
                                         pauseCount: 0, trainingCount: 0, totalPauseTime: 0, totalTrainingTime: 0, totalConnectedTime: 0
                                     });
+                                }
+                                // Keep the currently logged-in user object in sync
+                                if (state.currentUser && state.currentUser.id === payload.id) {
+                                    state.currentUser = { ...state.currentUser, ...(payload as User) };
                                 }
                                 break;
                             }
