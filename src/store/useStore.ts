@@ -353,7 +353,11 @@ export const useStore = create<AppState>()(
                     
                     try {
                         const response = await apiClient[method](url, data);
-                        get().showAlert('Enregistrement réussi', 'success');
+                        let successMessage = 'Enregistrement réussi';
+                        if (entityName === 'audio-files' && isNew) {
+                            successMessage = 'Import media réussi';
+                        }
+                        get().showAlert(successMessage, 'success');
                         return response.data;
                     } catch (error: any) {
                         get().showAlert(error.response?.data?.error || `Erreur lors de l'enregistrement.`, 'error');

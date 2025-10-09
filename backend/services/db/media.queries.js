@@ -12,12 +12,14 @@ const saveAudioFile = async (file, id) => {
             'UPDATE audio_files SET name=$1, file_name=$2, duration=$3, size=$4, upload_date=$5, updated_at=NOW() WHERE id=$6 RETURNING *',
             [name, fileName, duration, size, uploadDate, id]
         );
+        if (res.rows.length === 0) throw new Error(`Fichier audio avec id ${id} non trouvé.`);
         savedFile = keysToCamel(res.rows[0]);
         publish('events:crud', { type: 'updateAudioFile', payload: savedFile });
     } else {
+        const newId = `audio-${Date.now()}`;
         const res = await pool.query(
             'INSERT INTO audio_files (id, name, file_name, duration, size, upload_date) VALUES ($1, $2, $3, $4, $5, $6) RETURNING *',
-            [file.id, name, fileName, duration, size, uploadDate]
+            [newId, name, fileName, duration, size, new Date(uploadDate).toISOString()]
         );
         savedFile = keysToCamel(res.rows[0]);
         publish('events:crud', { type: 'newAudioFile', payload: savedFile });
