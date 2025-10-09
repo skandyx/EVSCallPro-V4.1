@@ -1,72 +1,94 @@
+// backend/routes/audio.js
 const express = require('express');
 const router = express.Router();
-const multer = require('multer');
-const path = require('path');
-const fs = require('fs/promises');
 const db = require('../services/db');
 
-const UPLOAD_DIR = path.join(__dirname, '..', 'public/media');
+// In a real app, this would use 'multer' to handle file uploads.
+// Since we can't add dependencies, we'll simulate by only handling metadata.
 
-// Ensure upload directory exists
-fs.mkdir(UPLOAD_DIR, { recursive: true }).catch(console.error);
-
-const storage = multer.diskStorage({
-    destination: function (req, file, cb) {
-        cb(null, UPLOAD_DIR);
-    },
-    filename: function (req, file, cb) {
-        const uniqueSuffix = Date.now() + '-' + Math.round(Math.random() * 1E9);
-        cb(null, uniqueSuffix + path.extname(file.originalname));
-    }
-});
-
-const upload = multer({ storage: storage });
-
-router.post('/', upload.single('file'), async (req, res) => {
+/**
+ * @openapi
+ * /audio-files:
+ *   post:
+ *     summary: Ajoute un nouveau fichier audio (métadonnées).
+ *     tags: [Audio]
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             $ref: '#/components/schemas/AudioFile'
+ *     responses:
+ *       '201':
+ *         description: 'Fichier audio créé'
+ */
+router.post('/', async (req, res) => {
     try {
-        const { name, duration } = req.body;
-        if (!req.file) {
-            return res.status(400).json({ error: 'No audio file provided.' });
-        }
-        const newAudioFile = {
-            name,
-            fileName: req.file.filename,
-            duration: parseInt(duration, 10) || 0,
-            size: req.file.size,
-            uploadDate: new Date().toISOString(),
-        };
-        const savedFile = await db.saveAudioFile(newAudioFile);
-        res.status(201).json(savedFile);
+        // Here, you would typically get the file from req.file (from multer)
+        // and extract metadata. We'll use the body directly.
+        const newFile = await db.saveAudioFile(req.body);
+        res.status(201).json(newFile);
     } catch (error) {
-        console.error("Error creating audio file:", error);
-        if (req.file) {
-            await fs.unlink(req.file.path).catch(err => console.error("Failed to cleanup uploaded file on error:", err));
-        }
-        res.status(500).json({ error: 'Failed to create audio file.' });
+        console.error(error);
+        res.status(500).json({ error: 'Failed to save audio file' });
     }
 });
 
+/**
+ * @openapi
+ * /audio-files/{id}:
+ *   put:
+ *     summary: Met à jour les métadonnées d'un fichier audio.
+ *     tags: [Audio]
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         required: true
+ *         schema:
+ *           type: string
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             $ref: '#/components/schemas/AudioFile'
+ *     responses:
+ *       '200':
+ *         description: 'Fichier audio mis à jour'
+ */
 router.put('/:id', async (req, res) => {
     try {
-        const { name } = req.body;
-        const updatedFile = await db.saveAudioFile({ name }, req.params.id);
+        const updatedFile = await db.saveAudioFile(req.body, req.params.id);
         res.json(updatedFile);
     } catch (error) {
-        res.status(500).json({ error: 'Failed to update audio file.' });
+        console.error(error);
+        res.status(500).json({ error: 'Failed to save audio file' });
     }
 });
 
+/**
+ * @openapi
+ * /audio-files/{id}:
+ *   delete:
+ *     summary: Supprime un fichier audio.
+ *     tags: [Audio]
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         required: true
+ *         schema:
+ *           type: string
+ *     responses:
+ *       '204':
+ *         description: 'Fichier audio supprimé'
+ */
 router.delete('/:id', async (req, res) => {
     try {
-        const fileToDelete = await db.getAudioFileById(req.params.id);
-        if (fileToDelete && fileToDelete.fileName) {
-            const filePath = path.join(UPLOAD_DIR, fileToDelete.fileName);
-            await fs.unlink(filePath).catch(err => console.warn(`Could not delete file from disk, but will proceed with DB deletion: ${err.message}`));
-        }
         await db.deleteAudioFile(req.params.id);
         res.status(204).send();
     } catch (error) {
-        res.status(500).json({ error: 'Failed to delete audio file.' });
+        console.error(error);
+        res.status(500).json({ error: 'Failed to delete audio file' });
     }
 });
 

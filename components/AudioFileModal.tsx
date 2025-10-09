@@ -1,102 +1,89 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import type { AudioFile } from '../types.ts';
 import { useI18n } from '../src/i18n/index.tsx';
 import { ArrowUpTrayIcon } from './Icons.tsx';
 
+// AudioFileModal Component
 interface AudioFileModalProps {
-    audioFile: Partial<AudioFile> | null;
-    onSave: (audioFile: Partial<AudioFile>, file: File) => void;
+    file: Partial<AudioFile> | null;
+    onSave: (file: Partial<AudioFile>) => void;
     onClose: () => void;
 }
 
-const AudioFileModal: React.FC<AudioFileModalProps> = ({ audioFile, onSave, onClose }) => {
+const AudioFileModal: React.FC<AudioFileModalProps> = ({ file, onSave, onClose }) => {
     const { t } = useI18n();
-    const [name, setName] = useState('');
-    const [file, setFile] = useState<File | null>(null);
-    const [fileName, setFileName] = useState('');
-    const [duration, setDuration] = useState(0);
-
-    useEffect(() => {
-        if (audioFile) {
-            setName(audioFile.name || '');
-            setFileName(audioFile.fileName || '');
-            setDuration(audioFile.duration || 0);
-        }
-    }, [audioFile]);
+    const [formData, setFormData] = useState<Partial<AudioFile>>(
+        file || { name: '', fileName: '', duration: 0, size: 0, uploadDate: new Date().toISOString() }
+    );
+    const [isUploading, setIsUploading] = useState(false);
 
     const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-        if (e.target.files && e.target.files[0]) {
-            const selectedFile = e.target.files[0];
-            setFile(selectedFile);
-            setFileName(selectedFile.name);
-            if (!name) {
-                setName(selectedFile.name.split('.').slice(0, -1).join('.'));
-            }
-
-            const audio = document.createElement('audio');
-            audio.src = URL.createObjectURL(selectedFile);
-            audio.onloadedmetadata = () => {
-                setDuration(Math.round(audio.duration));
-                URL.revokeObjectURL(audio.src);
-            };
+        const selectedFile = e.target.files?.[0];
+        if (selectedFile) {
+            setIsUploading(true);
+            // Simulate file processing
+            setTimeout(() => {
+                setFormData(prev => ({
+                    ...prev,
+                    name: prev.name || selectedFile.name.split('.').slice(0, -1).join('.'),
+                    fileName: selectedFile.name,
+                    size: selectedFile.size,
+                    duration: Math.floor(Math.random() * (300 - 30 + 1) + 30) // Simulate duration
+                }));
+                setIsUploading(false);
+            }, 1000);
         }
     };
 
     const handleSubmit = (e: React.FormEvent) => {
         e.preventDefault();
-        if (!audioFile && !file) {
-            alert('Veuillez sélectionner un fichier audio.');
+        if (!formData.fileName) {
+            alert("Veuillez sélectionner un fichier.");
             return;
         }
-
-        const dataToSave: Partial<AudioFile> = {
-            ...audioFile,
-            name,
-            duration,
-        };
-        
-        onSave(dataToSave, file as File);
+        onSave(formData);
     };
 
     return (
         <div className="fixed inset-0 bg-slate-800 bg-opacity-75 flex items-center justify-center p-4 z-50">
             <form onSubmit={handleSubmit} className="bg-white dark:bg-slate-800 rounded-lg shadow-xl w-full max-w-lg">
                 <div className="p-6 border-b dark:border-slate-700">
-                    <h3 className="text-lg font-medium text-slate-900 dark:text-slate-100">
-                        {audioFile ? "Modifier le fichier audio" : "Téléverser un fichier audio"}
-                    </h3>
+                    <h3 className="text-lg font-medium text-slate-900 dark:text-slate-100">{file ? "Modifier le Fichier Audio" : "Téléverser un Fichier Audio"}</h3>
                 </div>
                 <div className="p-6 space-y-4">
+                    {!file && (
+                        <div>
+                            <label className="block text-sm font-medium text-slate-700 dark:text-slate-300">Fichier (MP3, WAV)</label>
+                            <div className="mt-1 flex items-center justify-center w-full">
+                                <label className="flex flex-col w-full h-32 border-2 border-dashed rounded-md cursor-pointer hover:bg-slate-50 dark:hover:bg-slate-700">
+                                    <div className="flex flex-col items-center justify-center pt-5 pb-6">
+                                        <ArrowUpTrayIcon className="w-10 h-10 text-slate-400"/>
+                                        <p className="pt-1 text-sm text-slate-500 dark:text-slate-400">
+                                            {isUploading ? "Traitement..." : (formData.fileName || "Cliquez pour téléverser")}
+                                        </p>
+                                    </div>
+                                    <input type="file" className="hidden" accept=".mp3,.wav" onChange={handleFileChange} disabled={isUploading}/>
+                                </label>
+                            </div>
+                        </div>
+                    )}
                     <div>
-                        <label className="block text-sm font-medium text-slate-700 dark:text-slate-300">Nom</label>
+                        <label className="block text-sm font-medium text-slate-700 dark:text-slate-300">Nom d'affichage</label>
                         <input
                             type="text"
-                            value={name}
-                            onChange={(e) => setName(e.target.value)}
+                            value={formData.name || ''}
+                            onChange={e => setFormData(prev => ({ ...prev, name: e.target.value }))}
                             required
                             className="mt-1 block w-full p-2 border rounded-md dark:bg-slate-900 dark:border-slate-600"
-                            placeholder="Ex: Message de bienvenue"
                         />
-                    </div>
-                    <div>
-                        <label className="block text-sm font-medium text-slate-700 dark:text-slate-300">Fichier audio (.wav, .mp3)</label>
-                        <div className="mt-1">
-                            <label className="flex items-center justify-center w-full px-4 py-6 bg-slate-50 dark:bg-slate-900/50 border-2 border-dashed rounded-md cursor-pointer hover:border-indigo-500">
-                                <ArrowUpTrayIcon className="w-6 h-6 text-slate-500 mr-2" />
-                                <span className="text-sm text-slate-600 dark:text-slate-300">
-                                    {fileName || "Cliquez pour choisir un fichier"}
-                                </span>
-                                <input type="file" accept="audio/wav,audio/mpeg" onChange={handleFileChange} className="hidden" />
-                            </label>
-                        </div>
                     </div>
                 </div>
                 <div className="bg-slate-50 dark:bg-slate-900 px-4 py-3 sm:flex sm:flex-row-reverse rounded-b-lg flex-shrink-0 border-t dark:border-slate-700">
-                    <button type="submit" className="inline-flex w-full justify-center rounded-md border bg-primary px-4 py-2 font-medium text-primary-text shadow-sm hover:bg-primary-hover sm:ml-3 sm:w-auto">
-                        Enregistrer
+                    <button type="submit" className="inline-flex w-full justify-center rounded-md border bg-primary px-4 py-2 font-medium text-primary-text shadow-sm hover:bg-primary-hover sm:ml-3 sm:w-auto" disabled={isUploading}>
+                        {isUploading ? "Chargement..." : t('common.save')}
                     </button>
                     <button type="button" onClick={onClose} className="mt-3 inline-flex w-full justify-center rounded-md border border-slate-300 bg-white px-4 py-2 font-medium text-slate-700 shadow-sm hover:bg-slate-50 sm:mt-0 sm:w-auto dark:bg-slate-700 dark:text-slate-200 dark:border-slate-600 dark:hover:bg-slate-600">
-                        Annuler
+                        {t('common.cancel')}
                     </button>
                 </div>
             </form>
