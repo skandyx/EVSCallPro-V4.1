@@ -49,6 +49,8 @@ app.use(cors());
 app.use(express.json({ limit: '5mb' })); // Increased limit for base64 images
 app.use(cookieParser(process.env.COOKIE_SECRET));
 app.use(express.static(path.join(__dirname, '..', 'dist')));
+// Serve media files statically
+app.use('/media', express.static(path.join(__dirname, 'public', 'media')));
 
 // --- SWAGGER CONFIGURATION ---
 const swaggerOptions = {
