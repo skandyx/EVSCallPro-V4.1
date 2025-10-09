@@ -299,7 +299,8 @@ export const useStore = create<AppState>()(
                                     const user = state.users.find(u => u.id === payload.agentId) || (state.currentUser?.id === payload.agentId ? state.currentUser : null);
                                     if (user) {
                                         state.agentStates.push({
-                                            ...user,
+                                            // FIX: Explicitly cast the `user` object to type `User` before spreading it. This resolves a TypeScript error where the compiler could not guarantee that `user` was an object type, despite a preceding null check.
+                                            ...(user as User),
                                             status: payload.status,
                                             statusDuration: 0,
                                             callsHandledToday: 0,

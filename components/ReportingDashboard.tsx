@@ -159,7 +159,8 @@ const ReportingDashboard: React.FC<{ feature: Feature }> = ({ feature }) => {
     }, [filteredHistory, qualifications, t]);
 
     const successByAgentData = useMemo(() => {
-        const agentStats = filteredHistory.reduce((acc, call) => {
+        // FIX: Explicitly typed the accumulator for the `reduce` function. This ensures TypeScript correctly infers the type of `agentStats`, allowing `Object.values` to return a strongly-typed array and resolving property access errors on 'unknown'.
+        const agentStats = filteredHistory.reduce<Record<string, { name: string; calls: number; successes: number }>>((acc, call) => {
             if (!acc[call.agentId]) {
                 const agent = users.find(u => u.id === call.agentId);
                 acc[call.agentId] = { name: agent ? `${agent.firstName} ${agent.lastName}` : 'Inconnu', calls: 0, successes: 0 };
@@ -169,7 +170,7 @@ const ReportingDashboard: React.FC<{ feature: Feature }> = ({ feature }) => {
                 acc[call.agentId].successes++;
             }
             return acc;
-        }, {} as Record<string, { name: string; calls: number; successes: number }>);
+        }, {});
         const data = Object.values(agentStats).map(s => s.calls > 0 ? (s.successes / s.calls) * 100 : 0);
         return {
             labels: Object.values(agentStats).map(s => s.name),

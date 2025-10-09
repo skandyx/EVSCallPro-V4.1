@@ -961,97 +961,571 @@
   "features": {
     "users": {
       "title": "Utilisateurs",
-      "description": "Gérez les comptes des collaborateurs, leurs rôles et leurs permissions."
+      "description": "Gérez les comptes des collaborateurs, leurs rôles et leurs permissions.",
+      "userJourney": {
+        "title": "Parcours Utilisateur type",
+        "steps": [
+          "Un administrateur se connecte à la plateforme.",
+          "Il navigue vers la section 'Utilisateurs' pour ajouter un nouvel agent.",
+          "Il remplit le formulaire avec les informations de l'agent (nom, identifiant, mot de passe) et lui assigne le rôle 'Agent'.",
+          "Il assigne l'agent à un ou plusieurs groupes et campagnes.",
+          "L'agent peut maintenant se connecter avec ses identifiants et commencer à travailler."
+        ]
+      },
+      "specs": {
+        "title": "Spécifications Techniques",
+        "points": [
+          "Stockage des mots de passe sous forme de hash sécurisé (bcrypt) en base de données.",
+          "Validation des entrées (unicité de l'identifiant, format de l'email).",
+          "Gestion des permissions basée sur les rôles (RBAC).",
+          "Possibilité d'import/export en masse (CSV/Excel)."
+        ]
+      },
+      "simplificationTip": {
+        "title": "Conseil de Simplification",
+        "content": "Pour une petite équipe, vous pouvez vous passer des 'Groupes' et assigner directement les agents aux campagnes pour une gestion plus directe."
+      }
     },
     "groups": {
       "title": "Groupes",
-      "description": "Créez des groupes d'agents pour une gestion et un routage d'appels simplifiés."
+      "description": "Créez des groupes d'agents pour une gestion et un routage d'appels simplifiés.",
+      "userJourney": {
+        "title": "Parcours Utilisateur type",
+        "steps": [
+          "Un superviseur veut créer une équipe spécialisée 'Support Niveau 2'.",
+          "Il va dans 'Groupes' et crée un nouveau groupe avec ce nom.",
+          "Il sélectionne ensuite les agents experts dans la liste des membres.",
+          "Le groupe peut maintenant être utilisé pour assigner des campagnes ou pour le routage d'appels entrants.",
+          "Lorsqu'un agent quitte l'équipe, il est simplement retiré du groupe."
+        ]
+      },
+      "specs": {
+        "title": "Spécifications Techniques",
+        "points": [
+          "Table de liaison (many-to-many) entre les utilisateurs et les groupes.",
+          "L'interface doit permettre une sélection/désélection facile des membres.",
+          "La suppression d'un groupe ne doit pas supprimer les utilisateurs membres."
+        ]
+      },
+      "simplificationTip": {
+        "title": "Conseil de Simplification",
+        "content": "Commencez avec un seul groupe 'Tous les agents'. N'ajoutez de nouveaux groupes que lorsque vous avez des équipes avec des compétences ou des tâches réellement distinctes."
+      }
     },
     "planning": {
       "title": "Plannings",
-      "description": "Gérez les plannings hebdomadaires des agents et leurs différentes activités."
+      "description": "Gérez les plannings hebdomadaires des agents et leurs différentes activités.",
+      "userJourney": {
+        "title": "Parcours Utilisateur type",
+        "steps": [
+          "Le planificateur ouvre la vue 'Plannings'.",
+          "Il sélectionne un groupe d'agents, par exemple 'Équipe Matin'.",
+          "Il clique et glisse sur la plage horaire 9h-12h du lundi pour créer un événement.",
+          "Il assigne l'activité 'Campagne Promo' à cet événement.",
+          "Il utilise la fonctionnalité de récurrence pour appliquer ce créneau à toute la semaine.",
+          "L'agent, en se connectant, peut voir son planning personnel pour la journée."
+        ]
+      },
+      "specs": {
+        "title": "Spécifications Techniques",
+        "points": [
+          "Intégration d'une bibliothèque de calendrier frontend (ex: FullCalendar).",
+          "Stockage des événements avec support des règles de récurrence (iCalendar RRULE).",
+          "API pour récupérer les événements par période, par agent ou par groupe.",
+          "Types d'activités (Pause, Réunion, Appel) configurables par l'administrateur."
+        ]
+      },
+      "simplificationTip": {
+        "title": "Conseil de Simplification",
+        "content": "Au lieu de planifier chaque agent individuellement, planifiez par groupes. Cela permet de gérer l'ensemble de l'équipe en quelques clics."
+      }
     },
     "outbound": {
       "title": "Campagnes Sortantes",
-      "description": "Créez et gérez des campagnes d'appels sortants avec des stratégies d'appel avancées."
+      "description": "Créez et gérez des campagnes d'appels sortants avec des stratégies d'appel avancées.",
+      "userJourney": {
+        "title": "Parcours Utilisateur type",
+        "steps": [
+          "Un manager de campagne clique sur 'Créer une campagne'.",
+          "Il nomme la campagne, choisit le mode de numérotation (ex: Prédictif) et assigne un script d'agent.",
+          "Il définit les horaires d'appel (ex: 9h-18h, du lundi au vendredi).",
+          "Il importe un fichier de contacts (CSV) en faisant correspondre les colonnes (nom, téléphone, etc.).",
+          "Il assigne le groupe d'agents 'Ventes' à la campagne.",
+          "Il active la campagne pour que les agents commencent à recevoir des appels."
+        ]
+      },
+      "specs": {
+        "title": "Spécifications Techniques",
+        "points": [
+          "Module d'importation robuste (CSV, Excel) avec mapping de champs et dédoublonnage.",
+          "Configuration des stratégies de rappel (nombre de tentatives, intervalles).",
+          "Gestion des quotas (ex: ne pas dépasser 50 ventes à Paris).",
+          "Règles d'exclusion/inclusion pour filtrer les contacts à appeler."
+        ]
+      },
+      "simplificationTip": {
+        "title": "Conseil de Simplification",
+        "content": "Commencez avec le mode de numérotation 'Manuel' ou 'Progressif'. Le mode 'Prédictif' est puissant mais nécessite un réglage fin pour être efficace et conforme."
+      }
     },
     "scripts": {
       "title": "Scripts d'agent",
-      "description": "Construisez des guides d'appel interactifs pour vos agents avec un éditeur visuel."
+      "description": "Construisez des guides d'appel interactifs pour vos agents avec un éditeur visuel.",
+      "userJourney": {
+        "title": "Parcours Utilisateur type",
+        "steps": [
+          "Un superviseur ouvre l'éditeur de script pour une nouvelle campagne.",
+          "Il glisse-dépose un bloc 'Texte' pour le message d'accueil.",
+          "Il ajoute un champ 'Saisie' pour le nom du client et un 'Choix unique' pour l'issue de l'appel.",
+          "Il crée une deuxième page pour les objections et y ajoute un bouton 'Retour' sur la première page.",
+          "Il prévisualise le script pour s'assurer qu'il s'affiche correctement pour l'agent."
+        ]
+      },
+      "specs": {
+        "title": "Spécifications Techniques",
+        "points": [
+          "Sauvegarde de la structure du script en format JSON en base de données.",
+          "Moteur de rendu frontend qui interprète le JSON pour afficher le formulaire à l'agent.",
+          "Gestion du positionnement (x, y) et du dimensionnement (largeur, hauteur) des blocs.",
+          "Logique de navigation entre les pages du script."
+        ]
+      },
+      "simplificationTip": {
+        "title": "Conseil de Simplification",
+        "content": "Votre script n'a pas besoin d'être complexe. Souvent, un simple guide avec les points clés et les champs à remplir est plus efficace qu'un script trop directif."
+      }
     },
     "ivr": {
       "title": "Flux SVI",
-      "description": "Concevez des parcours d'appels entrants complexes avec un designer graphique."
+      "description": "Concevez des parcours d'appels entrants complexes avec un designer graphique.",
+      "userJourney": {
+        "title": "Parcours Utilisateur type",
+        "steps": [
+          "L'administrateur crée un nouveau flux SVI pour le service client.",
+          "Il ajoute un noeud 'Média' avec un message de bienvenue.",
+          "Il connecte ce noeud à un 'Menu' : 'Tapez 1 pour le support, 2 pour les ventes'.",
+          "L'option 1 est connectée à un noeud 'Transfert' vers le groupe 'Support'.",
+          "L'option 2 est connectée à un autre 'Transfert' vers le groupe 'Ventes'.",
+          "Il ajoute un noeud 'Messagerie Vocale' en cas de non-réponse."
+        ]
+      },
+      "specs": {
+        "title": "Spécifications Techniques",
+        "points": [
+          "Stockage de la structure du SVI (noeuds et connexions) en format JSON.",
+          "Un script côté serveur (AGI) qui interprète le JSON pour piloter l'appel dans Asterisk.",
+          "Interface glisser-déposer pour une expérience utilisateur intuitive."
+        ]
+      },
+      "simplificationTip": {
+        "title": "Conseil de Simplification",
+        "content": "Évitez les SVI trop longs. Un menu simple avec 2 ou 3 options suivi d'un transfert est souvent la solution la plus appréciée par les appelants."
+      }
     },
     "audio": {
       "title": "Bibliothèque Média",
-      "description": "Importez et gérez les messages audio pour les SVI et les musiques d'attente."
+      "description": "Importez et gérez les messages audio pour les SVI et les musiques d'attente.",
+      "userJourney": {
+        "title": "Parcours Utilisateur type",
+        "steps": [
+          "L'administrateur reçoit un nouveau fichier MP3 pour le message d'accueil.",
+          "Il se rend dans la 'Bibliothèque Média' et clique sur 'Téléverser'.",
+          "Il sélectionne le fichier et lui donne un nom descriptif, ex: 'Accueil_Principal_FR'.",
+          "Il peut écouter le fichier pour vérifier que c'est le bon.",
+          "Le fichier est maintenant disponible pour être sélectionné dans les noeuds 'Média' de l'éditeur SVI."
+        ]
+      },
+      "specs": {
+        "title": "Spécifications Techniques",
+        "points": [
+          "Stockage des fichiers audio sur le serveur dans un format standardisé (ex: .wav, .gsm).",
+          "Conversion automatique des formats audio lors du téléversement.",
+          "Validation du type de fichier et de la taille maximale.",
+          "Association des métadonnées (nom, durée) en base de données."
+        ]
+      },
+      "simplificationTip": {
+        "title": "Conseil de Simplification",
+        "content": "Utilisez des noms de fichiers clairs et une structure logique. Par exemple, préfixez tous les messages en français par 'FR_' pour les retrouver facilement."
+      }
     },
     "records": {
       "title": "Enregistrements",
-      "description": "Écoutez, téléchargez et archivez les enregistrements d'appels pour la qualité et la conformité."
+      "description": "Écoutez, téléchargez et archivez les enregistrements d'appels pour la qualité et la conformité.",
+      "userJourney": {
+        "title": "Parcours Utilisateur type",
+        "steps": [
+          "Un superviseur souhaite évaluer un appel de l'agent Alice.",
+          "Il va dans 'Enregistrements' et filtre par l'agent 'Alice' et la date d'hier.",
+          "Il trouve l'appel concerné dans la liste et clique sur 'Écouter'.",
+          "Il peut écouter l'intégralité de la conversation via le lecteur intégré.",
+          "S'il doit partager l'appel, il clique sur 'Télécharger' pour obtenir le fichier audio."
+        ]
+      },
+      "specs": {
+        "title": "Spécifications Techniques",
+        "points": [
+          "Activation de l'enregistrement dans Asterisk (MixMonitor).",
+          "Stockage des fichiers audio sur un espace de stockage accessible.",
+          "Interface de recherche avec des filtres performants (index sur les dates, agents, etc.).",
+          "Lecteur audio HTML5 pour une lecture directe dans le navigateur.",
+          "Politiques de rétention pour supprimer automatiquement les anciens enregistrements."
+        ]
+      },
+      "simplificationTip": {
+        "title": "Conseil de Simplification",
+        "content": "N'activez l'enregistrement que pour les campagnes où c'est nécessaire. L'enregistrement consomme de l'espace disque et peut être soumis à des contraintes légales."
+      }
     },
     "qualifications": {
       "title": "Qualifications d'appel",
-      "description": "Définissez les statuts de fin d'appel pour le reporting et les stratégies de rappel."
+      "description": "Définissez les statuts de fin d'appel pour le reporting et les stratégies de rappel.",
+      "userJourney": {
+        "title": "Parcours Utilisateur type",
+        "steps": [
+          "Le manager de campagne a besoin de nouvelles qualifications pour une campagne de sondage.",
+          "Il crée un groupe de qualifications nommé 'Sondage Opinion'.",
+          "Il y ajoute des qualifications personnalisées comme 'Sondage complété' (Positif), 'Refus de répondre' (Négatif), et 'Rappeler plus tard' (Neutre).",
+          "Il assigne ensuite le groupe 'Sondage Opinion' à sa campagne.",
+          "Les agents de cette campagne verront ces qualifications à la fin de leurs appels."
+        ]
+      },
+      "specs": {
+        "title": "Spécifications Techniques",
+        "points": [
+          "Table pour les qualifications (code, description, type: positif/négatif/neutre).",
+          "Table pour les groupes de qualifications.",
+          "Liaison entre les campagnes et les groupes de qualifications.",
+          "Les qualifications standards (Répondeur, Occupé, etc.) doivent être disponibles pour toutes les campagnes."
+        ]
+      },
+      "simplificationTip": {
+        "title": "Conseil de Simplification",
+        "content": "Limitez le nombre de qualifications à l'essentiel (moins de 10-12 par groupe). Trop de choix peut ralentir les agents et complexifier les rapports."
+      }
     },
     "supervision": {
       "title": "Supervision en Temps Réel",
-      "description": "Visualisez l'activité de votre centre de contact en direct et interagissez avec les agents."
+      "description": "Visualisez l'activité de votre centre de contact en direct et interagissez avec les agents.",
+      "userJourney": {
+        "title": "Parcours Utilisateur type",
+        "steps": [
+          "Un superviseur ouvre le tableau de bord de supervision.",
+          "Il voit en temps réel que 3 agents sont en attente, 5 en appel et 2 en pause.",
+          "Il remarque qu'un agent, Bob, est en post-appel depuis trop longtemps.",
+          "Il peut voir la liste des appels actifs, leur durée et la campagne associée.",
+          "Il peut choisir d'écouter discrètement un appel pour évaluer la qualité.",
+          "Si un agent a besoin d'aide, il peut intervenir directement dans la conversation (barge-in)."
+        ]
+      },
+      "specs": {
+        "title": "Spécifications Techniques",
+        "points": [
+          "Connexion à l'Asterisk Manager Interface (AMI) pour recevoir les événements en temps réel.",
+          "Utilisation des WebSockets pour pousser les mises à jour du backend vers le frontend sans délai.",
+          "Commandes AMI pour les actions de supervision (ChanSpy, Barge).",
+          "Agrégation des données pour les KPIs globaux (nombre d'agents par état)."
+        ]
+      },
+      "simplificationTip": {
+        "title": "Conseil de Simplification",
+        "content": "Concentrez-vous sur les indicateurs clés : le nombre d'agents en attente (prêts à prendre des appels) et le nombre d'appels en file d'attente. Ce sont les deux métriques les plus importantes pour piloter l'activité."
+      }
     },
     "reporting": {
       "title": "Rapports & Analytiques",
-      "description": "Explorez les données historiques, créez des rapports personnalisés et exportez les résultats."
+      "description": "Explorez les données historiques, créez des rapports personnalisés et exportez les résultats.",
+      "userJourney": {
+        "title": "Parcours Utilisateur type",
+        "steps": [
+          "Un manager souhaite analyser les performances de la semaine dernière.",
+          "Il se rend dans la section 'Rapports' et sélectionne la plage de dates.",
+          "Il consulte les KPIs globaux (nombre d'appels, durée moyenne, etc.).",
+          "Il regarde le graphique de répartition des qualifications pour voir les issues d'appel les plus fréquentes.",
+          "Il examine le tableau de performance par agent pour identifier les meilleurs performers.",
+          "Il exporte le rapport complet en PDF pour sa réunion hebdomadaire."
+        ]
+      },
+      "specs": {
+        "title": "Spécifications Techniques",
+        "points": [
+          "Requêtes SQL agrégées pour calculer les statistiques (COUNT, SUM, AVG).",
+          "Utilisation d'une bibliothèque de graphiques (ex: Chart.js) pour la visualisation des données.",
+          "Logique de filtrage performante en base de données.",
+          "Génération de documents PDF côté client (ex: jsPDF, html2canvas)."
+        ]
+      },
+      "simplificationTip": {
+        "title": "Conseil de Simplification",
+        "content": "Ne vous perdez pas dans des dizaines de métriques. Suivez 3 à 5 indicateurs clés qui sont réellement importants pour vos objectifs (ex: Taux de conversion, Durée moyenne de communication)."
+      }
     },
     "history": {
       "title": "Historique des Appels",
-      "description": "Consultez, filtrez et recherchez dans le journal détaillé de tous les appels entrants et sortants."
+      "description": "Consultez, filtrez et recherchez dans le journal détaillé de tous les appels entrants et sortants.",
+      "userJourney": {
+        "title": "Parcours Utilisateur type",
+        "steps": [
+          "Un client se plaint de ne pas avoir été rappelé.",
+          "Un superviseur va dans l'historique et recherche le numéro de téléphone du client.",
+          "Il trouve tous les appels passés avec ce numéro.",
+          "Il voit quel agent a traité le dernier appel et quelle qualification a été appliquée.",
+          "Il peut cliquer sur l'appel pour voir les détails et écouter l'enregistrement si disponible.",
+          "Il a maintenant toutes les informations pour recontacter le client."
+        ]
+      },
+      "specs": {
+        "title": "Spécifications Techniques",
+        "points": [
+          "Table `call_history` (CDR - Call Detail Records) bien indexée pour des recherches rapides.",
+          "Pagination côté serveur pour gérer de grands volumes de données.",
+          "Filtres combinables (date, agent, campagne, numéro, etc.).",
+          "Affichage des informations liées (nom de l'agent, nom de la campagne) via des jointures SQL.",
+          "Défilement infini sur le frontend pour une expérience utilisateur fluide."
+        ]
+      },
+      "simplificationTip": {
+        "title": "Conseil de Simplification",
+        "content": "Utilisez d'abord les filtres les plus restrictifs (comme le numéro de téléphone) pour accélérer vos recherches avant d'utiliser des filtres plus larges comme les plages de dates."
+      }
     },
     "sessions": {
       "title": "Login/Logout Agents",
-      "description": "Consultez le journal détaillé des connexions, déconnexions et temps de travail des agents."
+      "description": "Consultez le journal détaillé des connexions, déconnexions et temps de travail des agents.",
+      "userJourney": {
+        "title": "Parcours Utilisateur type",
+        "steps": [
+          "Le service RH a besoin de vérifier les heures de travail d'un agent pour la paie.",
+          "Le manager se rend dans 'Login/Logout Agents' et filtre par l'agent et la période concernée.",
+          "Il voit une liste de toutes les sessions de l'agent, avec l'heure de connexion, de déconnexion et la durée totale.",
+          "Il peut exporter ces données pour les intégrer dans son système de paie.",
+          "Il peut également identifier des anomalies, comme des sessions anormalement longues ou courtes."
+        ]
+      },
+      "specs": {
+        "title": "Spécifications Techniques",
+        "points": [
+          "Table `agent_sessions` avec l'ID de l'agent, l'heure de connexion et de déconnexion.",
+          "Mise à jour de la table via des triggers au moment du login et du logout dans le backend.",
+          "Pagination côté serveur pour l'affichage de l'historique.",
+          "Calcul des durées et des totaux via des requêtes SQL."
+        ]
+      },
+      "simplificationTip": {
+        "title": "Conseil de Simplification",
+        "content": "Ce module est principalement un outil de vérification. Pour une analyse approfondie des temps de travail, croisez ces données avec les rapports de performance pour voir le temps passé dans chaque statut (en appel, en pause, etc.)."
+      }
     },
     "trunks": {
       "title": "Trunks SIP",
-      "description": "Connectez vos opérateurs téléphoniques pour les appels entrants et sortants."
+      "description": "Connectez vos opérateurs téléphoniques pour les appels entrants et sortants.",
+      "userJourney": {
+        "title": "Parcours Utilisateur type",
+        "steps": [
+          "L'entreprise souscrit à un nouvel opérateur SIP.",
+          "L'administrateur système va dans 'Trunks SIP' et clique sur 'Ajouter'.",
+          "Il remplit les informations fournies par l'opérateur : nom, domaine/IP, identifiant et mot de passe.",
+          "Il enregistre la configuration.",
+          "Le trunk est maintenant disponible pour être utilisé dans les routes sortantes."
+        ]
+      },
+      "specs": {
+        "title": "Spécifications Techniques",
+        "points": [
+          "Génération dynamique des fichiers de configuration PJSIP d'Asterisk.",
+          "Gestion des deux types d'authentification : par enregistrement (register) et par IP.",
+          "Rechargement automatique de la configuration PJSIP d'Asterisk après modification."
+        ]
+      },
+      "simplificationTip": {
+        "title": "Conseil de Simplification",
+        "content": "Utilisez l'authentification par IP chaque fois que c'est possible. C'est plus simple à configurer et plus sécurisé si vous avez une adresse IP fixe."
+      }
     },
     "dids": {
       "title": "Numéros (SDA)",
-      "description": "Gérez vos numéros de téléphone entrants et leur routage initial."
+      "description": "Gérez vos numéros de téléphone entrants et leur routage initial.",
+      "userJourney": {
+        "title": "Parcours Utilisateur type",
+        "steps": [
+          "L'entreprise obtient un nouveau numéro de téléphone pour le service commercial.",
+          "L'administrateur va dans 'Numéros (SDA)' et ajoute ce nouveau numéro.",
+          "Il l'associe au trunk SIP de l'opérateur qui le fournit.",
+          "Dans la section 'Routage', il sélectionne le flux SVI 'Accueil Ventes' qu'il a préalablement créé.",
+          "Il enregistre. Les appels vers ce numéro seront maintenant dirigés vers le SVI des ventes."
+        ]
+      },
+      "specs": {
+        "title": "Spécifications Techniques",
+        "points": [
+          "Table `dids` pour stocker les numéros et leurs associations.",
+          "Le dialplan d'Asterisk doit être configuré pour interroger cette table afin de déterminer le routage.",
+          "Liaison vers les tables `trunks` et `ivr_flows`."
+        ]
+      },
+      "simplificationTip": {
+        "title": "Conseil de Simplification",
+        "content": "Même si vous n'avez qu'un seul numéro, configurez-le ici et associez-le à un SVI simple. Cela vous donnera la flexibilité de changer le routage plus tard sans toucher à la configuration technique."
+      }
     },
     "sites-config": {
       "title": "Configuration des Sites",
-      "description": "Gérez les différents sites physiques pour le routage des appels sortants."
+      "description": "Gérez les différents sites physiques pour le routage des appels sortants.",
+      "userJourney": {
+        "title": "Parcours Utilisateur type",
+        "steps": [
+          "L'entreprise ouvre une nouvelle agence à Lyon.",
+          "L'administrateur va dans 'Configuration des Sites' et crée un site 'Lyon'.",
+          "Il y renseigne l'adresse IP de la passerelle téléphonique (ex: Yeastar) de l'agence de Lyon.",
+          "Il va ensuite dans 'Utilisateurs' et assigne les agents de Lyon à ce nouveau site.",
+          "Désormais, lorsque ces agents passeront un appel, le système saura l'acheminer via la passerelle de Lyon."
+        ]
+      },
+      "specs": {
+        "title": "Spécifications Techniques",
+        "points": [
+          "Table `sites` pour stocker le nom et l'IP de la passerelle de chaque site.",
+          "Logique dans le dialplan d'Asterisk pour récupérer le site de l'agent et utiliser le trunk PJSIP correspondant.",
+          "Un script pour ajouter dynamiquement la configuration PJSIP d'un nouveau site."
+        ]
+      },
+      "simplificationTip": {
+        "title": "Conseil de Simplification",
+        "content": "Si vous n'avez qu'un seul site physique, créez un seul site 'Principal' et assignez-y tous vos agents. Cela permettra au système de fonctionner correctement."
+      }
     },
     "module-settings": {
       "title": "Gestion des Modules",
-      "description": "Activez ou désactivez les menus pour les rôles administrateur et superviseur."
+      "description": "Activez ou désactivez les menus pour les rôles administrateur et superviseur.",
+      "userJourney": {
+        "title": "Parcours Utilisateur type",
+        "steps": [
+          "Le SuperAdmin décide que les superviseurs ne doivent pas pouvoir modifier les Trunks SIP.",
+          "Il va dans 'Gestion des Modules'.",
+          "Il décoche la case 'Trunks SIP' pour le rôle 'Superviseur'.",
+          "Il enregistre les modifications.",
+          "Désormais, lorsqu'un superviseur se connecte, le menu 'Trunks SIP' n'apparaît plus dans la barre latérale."
+        ]
+      },
+      "specs": {
+        "title": "Spécifications Techniques",
+        "points": [
+          "Stockage des préférences de visibilité en JSON dans la base de données ou un fichier de configuration.",
+          "Le backend envoie ces préférences lors du chargement initial de l'application.",
+          "Le frontend utilise ces données pour afficher ou masquer dynamiquement les éléments de menu.",
+          "Important : la sécurité doit également être appliquée côté backend pour bloquer l'accès aux APIs correspondantes."
+        ]
+      },
+      "simplificationTip": {
+        "title": "Conseil de Simplification",
+        "content": "Par défaut, laissez tous les modules activés. Ne masquez des fonctionnalités que si vous avez une raison de gestion ou de sécurité spécifique pour limiter l'accès d'un certain rôle."
+      }
     },
     "languages": {
       "title": "Langues",
       "description": "Gérez les langues disponibles dans l'application.",
       "userJourney": {
-        "title": "Gestion de la Langue",
+        "title": "Parcours de l'utilisateur",
         "steps": [
-          "L'utilisateur change la langue via le sélecteur dans l'en-tête pour une expérience traduite instantanément."
+          "Un utilisateur sélectionne une langue dans le sélecteur de langue.",
+          "L'interface se met à jour instantanément pour afficher le contenu dans la langue choisie.",
+          "Ce choix est sauvegardé pour les prochaines visites de l'utilisateur."
+        ]
+      },
+      "specs": {
+        "title": "Spécifications Techniques",
+        "points": [
+          "Utilisation de fichiers de traduction JSON (un par langue).",
+          "Intégration d'une bibliothèque i18n (comme i18next) pour gérer le changement de langue et la traduction des clés."
         ]
       },
       "simplificationTip": {
-        "title": "Information",
-        "content": "Ce module est un placeholder. La gestion de la langue se fait via le sélecteur dans l'en-tête pour un accès rapide."
+        "title": "Astuce de Simplification",
+        "content": "Le menu 'Langues' est un placeholder. La gestion de la langue se fait via le sélecteur dans l'en-tête pour un accès rapide et intuitif."
       }
     },
     "database-client": {
       "title": "Base de Données",
-      "description": "Exécutez des requêtes SQL directement sur la base de données pour le débogage et les rapports avancés."
+      "description": "Exécutez des requêtes SQL directement sur la base de données pour le débogage et les rapports avancés.",
+      "userJourney": {
+        "title": "Parcours Utilisateur type",
+        "steps": [
+          "Un administrateur a besoin d'une statistique très spécifique non disponible dans les rapports standards.",
+          "Il se rend dans le client 'Base de Données'.",
+          "Il écrit une requête SQL, par exemple : 'SELECT COUNT(*) FROM contacts WHERE postal_code LIKE '75%';'.",
+          "Il s'assure que le mode 'Lecture Seule' est activé.",
+          "Il exécute la requête et obtient le résultat directement dans l'interface.",
+          "Il peut copier-coller les résultats pour son analyse."
+        ]
+      },
+      "specs": {
+        "title": "Spécifications Techniques",
+        "points": [
+          "Un éditeur de texte pour écrire les requêtes SQL.",
+          "Un endpoint API sécurisé qui reçoit la requête et l'exécute sur la base de données.",
+          "Un mode 'Lecture Seule' qui bloque les requêtes non-SELECT (UPDATE, DELETE, etc.) côté backend.",
+          "Affichage des résultats sous forme de tableau.",
+          "Sécurité : l'accès à ce module doit être strictement limité au rôle SuperAdmin."
+        ]
+      },
+      "simplificationTip": {
+        "title": "Conseil de Simplification",
+        "content": "Utilisez les 'Requêtes Prédéfinies' comme point de départ. Elles fournissent des exemples utiles et peuvent être modifiées pour vos besoins spécifiques."
+      }
     },
     "system-connection": {
       "title": "Connexion Système",
-      "description": "Configurez les connexions à la base de données et au serveur de téléphonie Asterisk."
+      "description": "Configurez les connexions à la base de données et au serveur de téléphonie Asterisk.",
+      "userJourney": {
+        "title": "Parcours Utilisateur type",
+        "steps": [
+          "Lors de l'installation initiale, ou si le mot de passe de la base de données change.",
+          "Le SuperAdmin se rend dans 'Connexion Système'.",
+          "Il met à jour l'adresse IP du serveur de base de données ou le nouveau mot de passe.",
+          "Il fait de même pour les informations de connexion à l'AMI d'Asterisk.",
+          "Il enregistre les modifications.",
+          "Il est informé qu'un redémarrage du service backend est nécessaire pour appliquer les changements."
+        ]
+      },
+      "specs": {
+        "title": "Spécifications Techniques",
+        "points": [
+          "L'interface lit les valeurs actuelles depuis un endpoint API (qui ne doit jamais renvoyer les mots de passe).",
+          "Lors de l'enregistrement, l'API met à jour le fichier de configuration de l'environnement (ex: .env) du backend.",
+          "Les mots de passe ne sont mis à jour que s'ils sont explicitement fournis.",
+          "Un mécanisme de test de connexion pour chaque service (base de données, AMI) est fortement recommandé."
+        ]
+      },
+      "simplificationTip": {
+        "title": "Conseil de Simplification",
+        "content": "Ce menu est à utiliser avec une extrême prudence. Une mauvaise configuration ici peut rendre toute l'application indisponible. Ne modifiez ces paramètres que si vous êtes certain de ce que vous faites."
+      }
     },
     "api-docs": {
       "title": "Documentation API",
-      "description": "Consultez la documentation complète de l'API pour l'intégration et le développement."
+      "description": "Consultez la documentation complète de l'API pour l'intégration et le développement.",
+      "userJourney": {
+        "title": "Parcours Utilisateur type",
+        "steps": [
+          "Un développeur souhaite intégrer un outil externe avec le CRM.",
+          "Il se rend dans la section 'Documentation API'.",
+          "Il y trouve la liste de tous les endpoints disponibles, formatés avec Swagger/OpenAPI.",
+          "Il peut voir les paramètres requis, les corps de requête et les formats de réponse pour chaque endpoint.",
+          "Il peut même tester les endpoints directement depuis cette interface."
+        ]
+      },
+      "specs": {
+        "title": "Spécifications Techniques",
+        "points": [
+          "Génération automatique de la documentation à partir de commentaires dans le code du backend (ex: JSDoc, Swagger).",
+          "Utilisation de `swagger-ui-express` pour afficher l'interface interactive.",
+          "L'interface est embarquée dans une `iframe` dans le frontend."
+        ]
+      },
+      "simplificationTip": {
+        "title": "Conseil de Simplification",
+        "content": "Utilisez le bouton 'Authorize' en haut de la page de documentation pour entrer votre token d'authentification. Cela vous permettra de tester les endpoints qui nécessitent d'être connecté."
+      }
     },
     "billing": {
       "title": "Facturation",
