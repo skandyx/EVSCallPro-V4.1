@@ -28,6 +28,28 @@
     "agent": "الوكيل",
     "campaign": "الحملة"
   },
+  "history": {
+    "filters": {
+      "searchTerm": "بحث",
+      "searchPlaceholder": "رقم، اسم...",
+      "startDate": "تاريخ البدء",
+      "endDate": "تاريخ الانتهاء",
+      "inbound": "وارد / لا شيء"
+    },
+    "headers": {
+      "dateTime": "التاريخ والوقت",
+      "direction": "الاتجاه",
+      "contactName": "اسم جهة الاتصال",
+      "number": "الرقم",
+      "duration": "المدة",
+      "qualification": "التأهيل"
+    },
+    "inbound": "وارد",
+    "outbound": "صادر",
+    "listen": "استماع",
+    "noRecords": "لم يتم العثور على سجلات للفلاتر المحددة.",
+    "pagination": "صفحة {currentPage} من {totalPages} ({totalRecords} سجلات)"
+  },
   "alerts": {
     "appDataLoadError": "لا يمكن تحميل بيانات التطبيق.",
     "saveSuccess": "تم الحفظ بنجاح!",
@@ -398,6 +420,112 @@
      "maintenance": {
         "title": "صيانة",
         "description": "إدارة النسخ الاحتياطية والاستعادة والصحة العامة للنظام."
+    }
+  },
+  "reporting": {
+    "exportPdf": "تصدير إلى PDF",
+    "inboundCalls": "المكالمات الواردة",
+    "filters": {
+      "dateRange": "نطاق التاريخ",
+      "from": "من",
+      "to": "إلى",
+      "campaign": "الحملة",
+      "agent": "الوكيل",
+      "dateRanges": {
+        "last7days": "آخر 7 أيام",
+        "last30days": "آخر 30 يومًا",
+        "thisMonth": "هذا الشهر"
+      },
+      "allCampaigns": "جميع الحملات",
+      "allAgents": "جميع الوكلاء"
+    },
+    "kpis": {
+      "processedCalls": "المكالمات المعالجة",
+      "totalTalkTime": "إجمالي وقت التحدث",
+      "avgCallDuration": "متوسط مدة المكالمة",
+      "successRate": "معدل النجاح",
+      "occupancyRate": "معدل الإشغال (محاكاة)",
+      "activeAgents": "الوكلاء النشطون",
+      "totalLoginTime": "إجمالي وقت تسجيل الدخول",
+      "avgAdherence": "متوسط الالتزام بالجدول"
+    },
+    "tabs": {
+      "charts": "الرسوم البيانية",
+      "timesheet": "جدول الحضور",
+      "campaign": "حسب الحملة",
+      "agent": "حسب الوكيل",
+      "history": "سجل المكالمات"
+    },
+    "charts": {
+      "dailyVolumeTitle": "حجم المكالمات اليومي",
+      "callCountLabel": "عدد المكالمات",
+      "callsByCampaignTitle": "توزيع المكالمات حسب الحملة",
+      "successByHourTitle": "ساعات النجاح (التحويلات)",
+      "conversionsLabel": "التحويلات",
+      "successByAgentTitle": "معدل النجاح حسب الوكيل",
+      "successRateLabel": "معدل النجاح (%)",
+      "adherenceByAgentTitle": "متوسط الالتزام بالجدول",
+      "avgAdherenceLabel": "متوسط الالتزام (دقيقة)"
+    },
+    "tables": {
+      "campaignPerf": {
+        "title": "الأداء حسب الحملة",
+        "headers": {
+          "campaign": "الحملة",
+          "calls": "المكالمات",
+          "totalDuration": "المدة الإجمالية",
+          "avgDuration": "متوسط المدة",
+          "successRate": "معدل النجاح"
+        }
+      },
+      "agentPerf": {
+        "titleCalls": "الأداء حسب الوكيل (المكالمات)",
+        "titleTimesheet": "الأداء حسب الوكيل (جدول الحضور)",
+        "headers": {
+          "agent": "الوكيل",
+          "calls": "المكالمات",
+          "totalDuration": "المدة الإجمالية",
+          "avgDuration": "متوسط المدة",
+          "successRate": "معدل النجاح",
+          "daysWorked": "أيام العمل",
+          "totalLoginDuration": "إجمالي مدة تسجيل الدخول",
+          "avgAdherence": "متوسط الالتزام"
+        }
+      },
+      "timesheet": {
+        "title": "سجل الحضور (تسجيل الدخول/الخروج)",
+        "headers": {
+          "date": "التاريخ",
+          "agent": "الوكيل",
+          "firstLogin": "أول تسجيل دخول",
+          "lastLogout": "آخر تسجيل خروج",
+          "totalDuration": "المدة الإجمالية",
+          "adherence": "الالتزام"
+        }
+      },
+      "callHistory": {
+        "title": "سجل المكالمات",
+        "headers": {
+          "dateTime": "التاريخ والوقت",
+          "agent": "الوكيل",
+          "campaign": "الحملة",
+          "number": "الرقم",
+          "duration": "المدة",
+          "qualification": "المؤهل"
+        }
+      }
+    },
+    "noCallData": "لا توجد بيانات مكالمات للفلاتر المحددة.",
+    "noSessionData": "لا توجد بيانات جلسة للفلاتر المحددة.",
+    "pdf": {
+      "title": "تقرير التحليلات المفصل",
+      "period": "الفترة من {startDate} إلى {endDate} - تم إنشاؤه في {today}",
+      "kpiTitle": "مؤشرات الأداء الرئيسية (KPIs)",
+      "callKpis": "مؤشرات المكالمات",
+      "value": "القيمة",
+      "timesheetKpis": "مؤشرات جدول الحضور",
+      "detailedAnalysis": "تحليلات مفصلة",
+      "detailedLogs": "سجلات مفصلة"
     }
   }
 }

@@ -28,6 +28,28 @@
     "agent": "Agent",
     "campaign": "Campagne"
   },
+  "history": {
+    "filters": {
+      "searchTerm": "Recherche",
+      "searchPlaceholder": "Numéro, nom...",
+      "startDate": "Date de début",
+      "endDate": "Date de fin",
+      "inbound": "Entrant / Aucun"
+    },
+    "headers": {
+      "dateTime": "Date & Heure",
+      "direction": "Sens",
+      "contactName": "Nom du Contact",
+      "number": "Numéro",
+      "duration": "Durée",
+      "qualification": "Qualification"
+    },
+    "inbound": "Entrant",
+    "outbound": "Sortant",
+    "listen": "Écouter",
+    "noRecords": "Aucun enregistrement trouvé pour les filtres sélectionnés.",
+    "pagination": "Page {currentPage} sur {totalPages} ({totalRecords} enregistrements)"
+  },
   "alerts": {
     "appDataLoadError": "Impossible de charger les données de l'application.",
     "saveSuccess": "Enregistrement réussi !",
@@ -634,6 +656,7 @@
   },
   "reporting": {
     "exportPdf": "Exporter en PDF",
+    "inboundCalls": "Appels Entrants",
     "filters": {
       "dateRange": "Période Prédéfinie",
       "from": "Du",
@@ -669,6 +692,8 @@
       "dailyVolumeTitle": "Volume d'appels par jour",
       "callCountLabel": "Nombre d'appels",
       "callsByCampaignTitle": "Répartition des appels par campagne",
+      "successByHourTitle": "Heures de Succès (Conversions)",
+      "conversionsLabel": "Conversions",
       "successByAgentTitle": "Taux de succès par agent",
       "successRateLabel": "Taux de Succès (%)",
       "adherenceByAgentTitle": "Adhérence moyenne au planning",

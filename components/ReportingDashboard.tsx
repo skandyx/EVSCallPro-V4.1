@@ -2,6 +2,7 @@ import React, { useState, useMemo, useRef, useEffect } from 'react';
 import type { Feature, CallHistoryRecord, User, Campaign, Qualification, AgentSession } from '../types.ts';
 import { useStore } from '../src/store/useStore.ts';
 import { useI18n } from '../src/i18n/index.tsx';
+import { ArrowLeftIcon, ArrowRightIcon } from './Icons.tsx';
 
 // Déclaration pour les bibliothèques globales chargées via CDN
 declare var Chart: any;
@@ -57,6 +58,8 @@ const ReportingDashboard: React.FC<{ feature: Feature }> = ({ feature }) => {
     }));
     
     const [activeTab, setActiveTab] = useState('charts');
+    const [historyPage, setHistoryPage] = useState(1);
+    const historyRecordsPerPage = 25;
     
     const today = new Date();
     const sevenDaysAgo = new Date(today);
@@ -86,11 +89,16 @@ const ReportingDashboard: React.FC<{ feature: Feature }> = ({ feature }) => {
         }));
     };
 
-    const filteredHistory = useMemo(() => {
+    const getDateFilterRange = () => {
         const start = new Date(filters.startDate);
         start.setHours(0, 0, 0, 0);
         const end = new Date(filters.endDate);
         end.setHours(23, 59, 59, 999);
+        return { start, end };
+    };
+
+    const filteredHistory = useMemo(() => {
+        const { start, end } = getDateFilterRange();
         
         return callHistory.filter(record => {
             const recordDate = new Date(record.timestamp);
@@ -99,6 +107,12 @@ const ReportingDashboard: React.FC<{ feature: Feature }> = ({ feature }) => {
                    (filters.campaignId === 'all' || record.campaignId === filters.campaignId);
         });
     }, [callHistory, filters]);
+
+    const findEntityName = (id: string | null, collection: any[], key: string = 'name') => {
+        if (!id) return 'N/A';
+        const item = collection.find(c => c.id === id);
+        return item ? (item[key] || `${item.firstName} ${item.lastName}`) : 'N/A';
+    };
 
     const kpis = useMemo(() => {
         const totalCalls = filteredHistory.length;
@@ -159,7 +173,6 @@ const ReportingDashboard: React.FC<{ feature: Feature }> = ({ feature }) => {
     }, [filteredHistory, qualifications, t]);
 
     const successByAgentData = useMemo(() => {
-        // FIX: Explicitly typed the accumulator for the `reduce` function. This ensures TypeScript correctly infers the type of `agentStats`, allowing `Object.values` to return a strongly-typed array and resolving property access errors on 'unknown'.
         const agentStats = filteredHistory.reduce<Record<string, { name: string; calls: number; successes: number }>>((acc, call) => {
             if (!acc[call.agentId]) {
                 const agent = users.find(u => u.id === call.agentId);
@@ -179,7 +192,6 @@ const ReportingDashboard: React.FC<{ feature: Feature }> = ({ feature }) => {
     }, [filteredHistory, users, qualifications, t]);
     
     const adherenceData = useMemo(() => {
-        // Placeholder data as real calculation is complex
         const agentsInHistory = [...new Set(filteredHistory.map(c => c.agentId))];
         const agentLabels = agentsInHistory.map(id => users.find(u => u.id === id)?.lastName || `Agent ${id}`);
         const data = agentsInHistory.map(() => Math.floor(Math.random() * 600)); // Random data up to 600
@@ -188,6 +200,74 @@ const ReportingDashboard: React.FC<{ feature: Feature }> = ({ feature }) => {
             datasets: [{ label: t('reporting.charts.avgAdherenceLabel'), data: data, backgroundColor: 'rgba(249, 115, 22, 0.7)' }]
         };
     }, [filteredHistory, users, t]);
+    
+    const campaignPerfData = useMemo(() => {
+        const statsByCampaign = filteredHistory.reduce((acc, call) => {
+            const campaignId = call.campaignId || 'inbound';
+            if (!acc[campaignId]) acc[campaignId] = { id: campaignId, calls: 0, totalDuration: 0, successes: 0 };
+            acc[campaignId].calls++;
+            acc[campaignId].totalDuration += call.duration;
+            if (qualifications.find(q => q.id === call.qualificationId)?.type === 'positive') acc[campaignId].successes++;
+            return acc;
+        }, {} as Record<string, { id: string; calls: number; totalDuration: number; successes: number }>);
+
+        return Object.values(statsByCampaign).map(stat => ({
+            ...stat,
+            name: findEntityName(stat.id, campaigns) || t('reporting.inboundCalls'),
+            avgDuration: stat.calls > 0 ? stat.totalDuration / stat.calls : 0,
+            successRate: stat.calls > 0 ? (stat.successes / stat.calls) * 100 : 0
+        })).sort((a,b) => b.calls - a.calls);
+    }, [filteredHistory, campaigns, qualifications, t]);
+
+    const agentPerfDataCalls = useMemo(() => {
+        const statsByAgent = filteredHistory.reduce((acc, call) => {
+            if (!acc[call.agentId]) acc[call.agentId] = { agentId: call.agentId, calls: 0, totalDuration: 0, successes: 0 };
+            acc[call.agentId].calls++;
+            acc[call.agentId].totalDuration += call.duration;
+            if (qualifications.find(q => q.id === call.qualificationId)?.type === 'positive') acc[call.agentId].successes++;
+            return acc;
+        }, {} as Record<string, { agentId: string; calls: number; totalDuration: number; successes: number }>);
+        return Object.values(statsByAgent).map(stat => ({
+            ...stat,
+            name: findEntityName(stat.agentId, users),
+            avgDuration: stat.calls > 0 ? stat.totalDuration / stat.calls : 0,
+            successRate: stat.calls > 0 ? (stat.successes / stat.calls) * 100 : 0
+        })).sort((a,b) => b.calls - a.calls);
+    }, [filteredHistory, users, qualifications]);
+    
+    const timesheetData = useMemo(() => {
+        const { start, end } = getDateFilterRange();
+        const filteredSessions = agentSessions.filter(s => new Date(s.loginTime) <= end && (!s.logoutTime || new Date(s.logoutTime) >= start));
+
+        const sessionsByAgentDay = filteredSessions.reduce((acc, session) => {
+            if (filters.agentId !== 'all' && session.agentId !== filters.agentId) return acc;
+            const key = `${session.agentId}-${new Date(session.loginTime).toDateString()}`;
+            if (!acc[key]) acc[key] = { agentId: session.agentId, date: new Date(session.loginTime), sessions: [] };
+            acc[key].sessions.push(session);
+            return acc;
+        }, {} as Record<string, { agentId: string; date: Date; sessions: AgentSession[] }>);
+
+        return Object.values(sessionsByAgentDay).map(group => {
+            const firstLogin = new Date(Math.min(...group.sessions.map(s => new Date(s.loginTime).getTime())));
+            const lastLogout = group.sessions.every(s => s.logoutTime) ? new Date(Math.max(...group.sessions.map(s => new Date(s.logoutTime!).getTime()))) : null;
+            const totalDuration = group.sessions.reduce((sum, s) => s.logoutTime ? sum + (new Date(s.logoutTime).getTime() - new Date(s.loginTime).getTime()) : sum, 0) / 1000;
+            return {
+                agentId: group.agentId,
+                agentName: findEntityName(group.agentId, users),
+                date: group.date,
+                firstLogin,
+                lastLogout,
+                totalDuration,
+                adherence: 'N/A' // Placeholder
+            };
+        }).sort((a,b) => b.date.getTime() - a.date.getTime() || a.agentName.localeCompare(b.agentName));
+    }, [agentSessions, users, filters]);
+    
+    const paginatedCallHistory = useMemo(() => {
+        const start = (historyPage - 1) * historyRecordsPerPage;
+        return filteredHistory.slice(start, start + historyRecordsPerPage);
+    }, [filteredHistory, historyPage]);
+    const totalHistoryPages = Math.ceil(filteredHistory.length / historyRecordsPerPage);
 
 
     const handleExportPdf = () => {
@@ -196,39 +276,41 @@ const ReportingDashboard: React.FC<{ feature: Feature }> = ({ feature }) => {
         
         doc.text("Rapport d'Analytique", 40, 40);
         
-        const tableData = [
+        const kpiTableData = [
             [kpis.processedCalls, kpis.totalTalkTime, kpis.avgCallDuration, kpis.successRate, kpis.occupancyRate]
         ];
         
         doc.autoTable({
             startY: 60,
             head: [[t('reporting.kpis.processedCalls'), t('reporting.kpis.totalTalkTime'), t('reporting.kpis.avgCallDuration'), t('reporting.kpis.successRate'), t('reporting.kpis.occupancyRate')]],
-            body: tableData,
+            body: kpiTableData,
         });
 
-        const charts = [
-            { id: 'treemapChart', title: t('reporting.charts.callsByCampaignTitle') },
-            { id: 'successByHourChart', title: t('reporting.charts.successByHourTitle') },
-            { id: 'successByAgentChart', title: t('reporting.charts.successByAgentTitle') },
-            { id: 'adherenceChart', title: t('reporting.charts.adherenceByAgentTitle') }
-        ];
-
-        let yPos = doc.autoTable.previous.finalY + 40;
-
-        charts.forEach((chartInfo, index) => {
-            const chartCanvas = document.getElementById(chartInfo.id) as HTMLCanvasElement;
-            if (chartCanvas) {
-                const imgData = chartCanvas.toDataURL('image/png');
-                if (index % 2 === 0 && index > 0) {
-                    doc.addPage();
-                    yPos = 40;
-                }
-                doc.text(chartInfo.title, 40, yPos);
-                yPos += 20;
-                doc.addImage(imgData, 'PNG', 40, yPos, 515, 250);
-                yPos += 280;
+        const addTableToPdf = (title: string, head: string[][], body: any[][]) => {
+            let lastY = (doc as any).lastAutoTable.finalY || doc.autoTable.previous.finalY || 100;
+            if (lastY + 80 > doc.internal.pageSize.height) {
+                doc.addPage();
+                lastY = 0;
             }
-        });
+            doc.text(title, 40, lastY + 40);
+            doc.autoTable({ startY: lastY + 50, head, body });
+        };
+        
+        addTableToPdf(
+            t('reporting.tables.campaignPerf.title'),
+            [[t('reporting.tables.campaignPerf.headers.campaign'), t('reporting.tables.campaignPerf.headers.calls'), t('reporting.tables.campaignPerf.headers.totalDuration'), t('reporting.tables.campaignPerf.headers.avgDuration'), t('reporting.tables.campaignPerf.headers.successRate')]],
+            campaignPerfData.map(c => [c.name, c.calls, formatDuration(c.totalDuration), formatDuration(c.avgDuration), `${c.successRate.toFixed(1)}%`])
+        );
+        addTableToPdf(
+            t('reporting.tables.agentPerf.titleCalls'),
+            [[t('reporting.tables.agentPerf.headers.agent'), t('reporting.tables.agentPerf.headers.calls'), t('reporting.tables.agentPerf.headers.totalDuration'), t('reporting.tables.agentPerf.headers.avgDuration'), t('reporting.tables.agentPerf.headers.successRate')]],
+            agentPerfDataCalls.map(a => [a.name, a.calls, formatDuration(a.totalDuration), formatDuration(a.avgDuration), `${a.successRate.toFixed(1)}%`])
+        );
+        addTableToPdf(
+            t('reporting.tables.timesheet.title'),
+            [[t('reporting.tables.timesheet.headers.date'), t('reporting.tables.timesheet.headers.agent'), t('reporting.tables.timesheet.headers.firstLogin'), t('reporting.tables.timesheet.headers.lastLogout'), t('reporting.tables.timesheet.headers.totalDuration')]],
+            timesheetData.slice(0, 50).map(t => [t.date.toLocaleDateString(), t.agentName, t.firstLogin.toLocaleTimeString(), t.lastLogout ? t.lastLogout.toLocaleTimeString() : 'N/A', formatDuration(t.totalDuration)])
+        );
         
         doc.save(`rapport_${filters.startDate}_${filters.endDate}.pdf`);
     };
@@ -278,9 +360,84 @@ const ReportingDashboard: React.FC<{ feature: Feature }> = ({ feature }) => {
                             <div className="bg-slate-50 dark:bg-slate-800/50 p-4 rounded-lg"><h3 className="font-semibold mb-2 dark:text-slate-200">{t('reporting.charts.adherenceByAgentTitle')}</h3><div className="h-64"><ChartComponent id="adherenceChart" type="bar" data={adherenceData} options={commonChartOptions} /></div></div>
                         </div>
                     )}
-                    {/* Placeholder for other tabs */}
-                    {activeTab !== 'charts' && (
-                        <div className="text-center text-slate-500 py-16">Contenu pour l'onglet "{t(`reporting.tabs.${activeTab}`)}" à implémenter.</div>
+                    {activeTab === 'timesheet' && (
+                        <div className="space-y-4">
+                            <h3 className="font-semibold text-lg">{t('reporting.tables.timesheet.title')}</h3>
+                            <div className="overflow-x-auto border rounded-md dark:border-slate-700 max-h-[600px]">
+                                <table className="min-w-full divide-y divide-slate-200 dark:divide-slate-700 text-sm">
+                                    <thead className="bg-slate-50 dark:bg-slate-700 sticky top-0"><tr>
+                                        <th className="px-4 py-2 text-left font-medium uppercase">{t('reporting.tables.timesheet.headers.date')}</th>
+                                        <th className="px-4 py-2 text-left font-medium uppercase">{t('reporting.tables.timesheet.headers.agent')}</th>
+                                        <th className="px-4 py-2 text-left font-medium uppercase">{t('reporting.tables.timesheet.headers.firstLogin')}</th>
+                                        <th className="px-4 py-2 text-left font-medium uppercase">{t('reporting.tables.timesheet.headers.lastLogout')}</th>
+                                        <th className="px-4 py-2 text-left font-medium uppercase">{t('reporting.tables.timesheet.headers.totalDuration')}</th>
+                                    </tr></thead>
+                                    <tbody className="divide-y divide-slate-200 dark:divide-slate-700">{timesheetData.map((d, i) => <tr key={i}>
+                                        <td className="px-4 py-2">{d.date.toLocaleDateString()}</td><td className="px-4 py-2">{d.agentName}</td>
+                                        <td className="px-4 py-2">{d.firstLogin.toLocaleTimeString()}</td><td className="px-4 py-2">{d.lastLogout ? d.lastLogout.toLocaleTimeString() : 'N/A'}</td>
+                                        <td className="px-4 py-2">{formatDuration(d.totalDuration)}</td></tr>)}
+                                    </tbody>
+                                </table>
+                                {timesheetData.length === 0 && <p className="text-center p-4">{t('reporting.noSessionData')}</p>}
+                            </div>
+                        </div>
+                    )}
+                    {activeTab === 'campaign' && (
+                        <div className="space-y-4">
+                             <h3 className="font-semibold text-lg">{t('reporting.tables.campaignPerf.title')}</h3>
+                             <div className="overflow-x-auto border rounded-md dark:border-slate-700 max-h-[600px]">
+                                <table className="min-w-full divide-y divide-slate-200 dark:divide-slate-700 text-sm">
+                                    <thead className="bg-slate-50 dark:bg-slate-700 sticky top-0"><tr>
+                                        <th className="px-4 py-2 text-left font-medium uppercase">{t('reporting.tables.campaignPerf.headers.campaign')}</th><th className="px-4 py-2 text-left font-medium uppercase">{t('reporting.tables.campaignPerf.headers.calls')}</th>
+                                        <th className="px-4 py-2 text-left font-medium uppercase">{t('reporting.tables.campaignPerf.headers.totalDuration')}</th><th className="px-4 py-2 text-left font-medium uppercase">{t('reporting.tables.campaignPerf.headers.avgDuration')}</th>
+                                        <th className="px-4 py-2 text-left font-medium uppercase">{t('reporting.tables.campaignPerf.headers.successRate')}</th></tr></thead>
+                                    <tbody className="divide-y divide-slate-200 dark:divide-slate-700">{campaignPerfData.map(c => <tr key={c.id}><td className="px-4 py-2">{c.name}</td><td className="px-4 py-2">{c.calls}</td>
+                                        <td className="px-4 py-2">{formatDuration(c.totalDuration)}</td><td className="px-4 py-2">{formatDuration(c.avgDuration)}</td><td className="px-4 py-2">{c.successRate.toFixed(1)}%</td></tr>)}</tbody>
+                                </table>
+                                {campaignPerfData.length === 0 && <p className="text-center p-4">{t('reporting.noCallData')}</p>}
+                            </div>
+                        </div>
+                    )}
+                    {activeTab === 'agent' && (
+                        <div className="space-y-6">
+                            <h3 className="font-semibold text-lg">{t('reporting.tables.agentPerf.titleCalls')}</h3>
+                            <div className="overflow-x-auto border rounded-md dark:border-slate-700 max-h-[600px]">
+                                <table className="min-w-full divide-y divide-slate-200 dark:divide-slate-700 text-sm">
+                                    <thead className="bg-slate-50 dark:bg-slate-700 sticky top-0"><tr>
+                                        <th className="px-4 py-2 text-left font-medium uppercase">{t('reporting.tables.agentPerf.headers.agent')}</th><th className="px-4 py-2 text-left font-medium uppercase">{t('reporting.tables.agentPerf.headers.calls')}</th>
+                                        <th className="px-4 py-2 text-left font-medium uppercase">{t('reporting.tables.agentPerf.headers.totalDuration')}</th><th className="px-4 py-2 text-left font-medium uppercase">{t('reporting.tables.agentPerf.headers.avgDuration')}</th>
+                                        <th className="px-4 py-2 text-left font-medium uppercase">{t('reporting.tables.agentPerf.headers.successRate')}</th></tr></thead>
+                                    <tbody className="divide-y divide-slate-200 dark:divide-slate-700">{agentPerfDataCalls.map(a => <tr key={a.agentId}><td className="px-4 py-2">{a.name}</td><td className="px-4 py-2">{a.calls}</td>
+                                        <td className="px-4 py-2">{formatDuration(a.totalDuration)}</td><td className="px-4 py-2">{formatDuration(a.avgDuration)}</td><td className="px-4 py-2">{a.successRate.toFixed(1)}%</td></tr>)}</tbody>
+                                </table>
+                                {agentPerfDataCalls.length === 0 && <p className="text-center p-4">{t('reporting.noCallData')}</p>}
+                            </div>
+                        </div>
+                    )}
+                    {activeTab === 'history' && (
+                         <div className="space-y-4">
+                            <h3 className="font-semibold text-lg">{t('reporting.tables.callHistory.title')}</h3>
+                            <div className="overflow-x-auto border rounded-md dark:border-slate-700 max-h-[600px]">
+                                <table className="min-w-full divide-y divide-slate-200 dark:divide-slate-700 text-sm">
+                                    <thead className="bg-slate-50 dark:bg-slate-700 sticky top-0"><tr>
+                                        <th className="px-4 py-2 text-left font-medium uppercase">{t('reporting.tables.callHistory.headers.dateTime')}</th><th className="px-4 py-2 text-left font-medium uppercase">{t('reporting.tables.callHistory.headers.agent')}</th>
+                                        <th className="px-4 py-2 text-left font-medium uppercase">{t('reporting.tables.callHistory.headers.campaign')}</th><th className="px-4 py-2 text-left font-medium uppercase">{t('reporting.tables.callHistory.headers.number')}</th>
+                                        <th className="px-4 py-2 text-left font-medium uppercase">{t('reporting.tables.callHistory.headers.duration')}</th><th className="px-4 py-2 text-left font-medium uppercase">{t('reporting.tables.callHistory.headers.qualification')}</th></tr></thead>
+                                    <tbody className="divide-y divide-slate-200 dark:divide-slate-700">{paginatedCallHistory.map(c => <tr key={c.id}>
+                                        <td className="px-4 py-2">{new Date(c.timestamp).toLocaleString()}</td><td className="px-4 py-2">{findEntityName(c.agentId, users)}</td>
+                                        <td className="px-4 py-2">{findEntityName(c.campaignId, campaigns)}</td><td className="px-4 py-2">{c.callerNumber}</td>
+                                        <td className="px-4 py-2">{formatDuration(c.duration)}</td><td className="px-4 py-2">{findEntityName(c.qualificationId, qualifications, 'description')}</td></tr>)}</tbody>
+                                </table>
+                                {filteredHistory.length === 0 && <p className="text-center p-4">{t('reporting.noCallData')}</p>}
+                            </div>
+                             {totalHistoryPages > 1 && <div className="flex justify-between items-center mt-4 text-sm">
+                                <p>Page {historyPage} sur {totalHistoryPages}</p>
+                                <div className="flex gap-2">
+                                    <button onClick={() => setHistoryPage(p => Math.max(1, p - 1))} disabled={historyPage === 1} className="p-2 disabled:opacity-50"><ArrowLeftIcon className="w-5 h-5"/></button>
+                                    <button onClick={() => setHistoryPage(p => Math.min(totalHistoryPages, p + 1))} disabled={historyPage === totalHistoryPages} className="p-2 disabled:opacity-50"><ArrowRightIcon className="w-5 h-5"/></button>
+                                </div>
+                            </div>}
+                        </div>
                     )}
                 </div>
             </div>
