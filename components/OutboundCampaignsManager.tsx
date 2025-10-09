@@ -34,7 +34,7 @@ interface CampaignModalProps {
     scripts: SavedScript[];
     qualificationGroups: QualificationGroup[];
     userGroups: UserGroup[];
-    onSave: (campaign: Campaign) => void;
+    onSave: (campaign: Partial<Campaign>) => void;
     onClose: () => void;
 }
 // FIX: The CampaignModal component definition has been moved outside of the OutboundCampaignsManager component. This ensures that the modal maintains a stable identity across re-renders of its parent, preventing state loss and fixing the "white screen" bug on edit.
@@ -52,9 +52,9 @@ const CampaignModal: React.FC<CampaignModalProps> = ({ campaign, users, scripts,
         { dayOfWeek: 7, active: true, startTime: '08:00', endTime: '20:00' },
     ], []);
 
-    const [formData, setFormData] = useState<Campaign>(() => {
+    const [formData, setFormData] = useState<Partial<Campaign>>(() => {
         const newCampaignData = {
-            id: `campaign-${Date.now()}`, name: '', description: '', scriptId: null, callerId: '', isActive: true,
+            name: '', description: '', scriptId: null, callerId: '', isActive: true,
             assignedUserIds: [], qualificationGroupId: qualificationGroups.length > 0 ? qualificationGroups[0].id : null,
             // FIX: Use 'as const' to ensure TypeScript infers a literal type for 'dialingMode', resolving a type error.
             contacts: [], dialingMode: 'MANUAL' as const, priority: 5, timezone: 'Europe/Paris',
@@ -79,15 +79,15 @@ const CampaignModal: React.FC<CampaignModalProps> = ({ campaign, users, scripts,
     ], [t]);
 
     // --- Validation Logic for LEDs ---
-    const isNameValid = !!formData.name.trim();
+    const isNameValid = !!formData.name && formData.name.trim() !== '';
     const isQualifGroupValid = !!formData.qualificationGroupId;
-    const isCallerIdValid = formData.callerId.trim().length > 0 && /^\d+$/.test(formData.callerId);
-    const isWrapUpTimeValid = formData.wrapUpTime >= 0 && formData.wrapUpTime <= 120;
+    const isCallerIdValid = !!formData.callerId && formData.callerId.trim().length > 0 && /^\d+$/.test(formData.callerId);
+    const isWrapUpTimeValid = formData.wrapUpTime !== undefined && formData.wrapUpTime >= 0 && formData.wrapUpTime <= 120;
     const isFormValid = isNameValid && isQualifGroupValid && isCallerIdValid && isWrapUpTimeValid;
     
     useEffect(() => {
         const newCampaignData = {
-            id: `campaign-${Date.now()}`, name: '', description: '', scriptId: null, callerId: '', isActive: true,
+            name: '', description: '', scriptId: null, callerId: '', isActive: true,
             assignedUserIds: [], qualificationGroupId: qualificationGroups.length > 0 ? qualificationGroups[0].id : null,
             // FIX: Use 'as const' to ensure TypeScript infers a literal type for 'dialingMode', resolving a type error.
             contacts: [], dialingMode: 'MANUAL' as const, priority: 5, timezone: 'Europe/Paris',
@@ -132,7 +132,7 @@ const CampaignModal: React.FC<CampaignModalProps> = ({ campaign, users, scripts,
     const handleScheduleChange = (dayOfWeek: number, field: keyof DaySchedule, value: any) => {
         setFormData(prev => ({
             ...prev,
-            schedule: prev.schedule.map(daySchedule => 
+            schedule: prev.schedule?.map(daySchedule => 
                 daySchedule.dayOfWeek === dayOfWeek 
                     ? { ...daySchedule, [field]: value }
                     : daySchedule
@@ -154,7 +154,7 @@ const CampaignModal: React.FC<CampaignModalProps> = ({ campaign, users, scripts,
     const isGroupAssigned = (groupId: string): boolean => {
         const group = userGroups.find(g => g.id === groupId);
         if (!group || group.memberIds.length === 0) return false;
-        return group.memberIds.every(memberId => formData.assignedUserIds.includes(memberId));
+        return group.memberIds.every(memberId => formData.assignedUserIds?.includes(memberId));
     };
 
     const handleGroupAssignment = (group: UserGroup, isChecked: boolean) => {
@@ -171,7 +171,7 @@ const CampaignModal: React.FC<CampaignModalProps> = ({ campaign, users, scripts,
 
     const handleRuleChange = (type: 'quota' | 'filter', index: number, field: string, value: any) => {
         const key = type === 'quota' ? 'quotaRules' : 'filterRules';
-        const updatedRules = [...formData[key]];
+        const updatedRules = [...(formData[key] || [])];
         (updatedRules[index] as any)[field] = value;
         setFormData(prev => ({ ...prev, [key]: updatedRules }));
     };
@@ -181,12 +181,12 @@ const CampaignModal: React.FC<CampaignModalProps> = ({ campaign, users, scripts,
         const newRule = type === 'quota' 
             ? { id: `qr-${Date.now()}`, contactField: 'postalCode', operator: 'equals', value: '', limit: 0, currentCount: 0 } 
             : { id: `fr-${Date.now()}`, type: 'include', contactField: 'postalCode', operator: 'equals', value: '' };
-        setFormData(prev => ({ ...prev, [key]: [...prev[key], newRule] as any }));
+        setFormData(prev => ({ ...prev, [key]: [...(prev[key] || []), newRule] as any }));
     };
     
     const removeRule = (type: 'quota' | 'filter', index: number) => {
         const key = type === 'quota' ? 'quotaRules' : 'filterRules';
-        setFormData(prev => ({ ...prev, [key]: prev[key].filter((_, i) => i !== index) }));
+        setFormData(prev => ({ ...prev, [key]: prev[key]?.filter((_, i) => i !== index) }));
     };
 
     const handleSubmit = (e: React.FormEvent) => { e.preventDefault(); onSave(formData); };
@@ -245,7 +245,7 @@ const CampaignModal: React.FC<CampaignModalProps> = ({ campaign, users, scripts,
                                             <input
                                                 id={`agent-${agent.id}`}
                                                 type="checkbox"
-                                                checked={formData.assignedUserIds.includes(agent.id)}
+                                                checked={formData.assignedUserIds?.includes(agent.id)}
                                                 onChange={(e) => handleAgentAssignment(agent.id, e.target.checked)}
                                                 className="h-4 w-4 rounded border-slate-300 text-indigo-600 focus:ring-indigo-500"
                                             />
@@ -259,7 +259,7 @@ const CampaignModal: React.FC<CampaignModalProps> = ({ campaign, users, scripts,
                             <div className="flex items-center justify-between pt-4 border-t dark:border-slate-700">
                                 <label htmlFor="isActive" className="font-medium text-slate-700 dark:text-slate-300">Campagne Active</label>
                                 <ToggleSwitch 
-                                    enabled={formData.isActive}
+                                    enabled={!!formData.isActive}
                                     onChange={isEnabled => setFormData(prev => ({ ...prev, isActive: isEnabled }))}
                                 />
                             </div>
@@ -296,7 +296,7 @@ const CampaignModal: React.FC<CampaignModalProps> = ({ campaign, users, scripts,
                             </div>
                         )}
                         {activeTab === 'quotas' && <div className="space-y-3">
-                            {formData.quotaRules.map((rule, index) => <div key={rule.id} className="grid grid-cols-12 gap-2 items-center">
+                            {(formData.quotaRules || []).map((rule, index) => <div key={rule.id} className="grid grid-cols-12 gap-2 items-center">
                                 <select value={rule.contactField} onChange={e => handleRuleChange('quota', index, 'contactField', e.target.value)} className="col-span-3 p-1.5 border bg-white rounded-md text-sm dark:bg-slate-900 dark:border-slate-600 dark:text-slate-200">
                                     {availableFields.map(f => <option key={f.id} value={f.id}>{f.name}</option>)}
                                 </select>
@@ -304,7 +304,7 @@ const CampaignModal: React.FC<CampaignModalProps> = ({ campaign, users, scripts,
                             <button type="button" onClick={() => addRule('quota')} className="text-sm font-medium text-indigo-600 hover:text-indigo-800 dark:text-indigo-400 dark:hover:text-indigo-300 inline-flex items-center gap-1"><PlusIcon className="w-4 h-4"/>Ajouter une règle de quota</button>
                         </div>}
                         {activeTab === 'filters' && <div className="space-y-3">
-                            {formData.filterRules.map((rule, index) => <div key={rule.id} className="grid grid-cols-12 gap-2 items-center"><select value={rule.type} onChange={e => handleRuleChange('filter', index, 'type', e.target.value)} className="col-span-2 p-1.5 border bg-white rounded-md text-sm dark:bg-slate-900 dark:border-slate-600 dark:text-slate-200"><option value="include">Inclure</option><option value="exclude">Exclure</option></select>
+                            {(formData.filterRules || []).map((rule, index) => <div key={rule.id} className="grid grid-cols-12 gap-2 items-center"><select value={rule.type} onChange={e => handleRuleChange('filter', index, 'type', e.target.value)} className="col-span-2 p-1.5 border bg-white rounded-md text-sm dark:bg-slate-900 dark:border-slate-600 dark:text-slate-200"><option value="include">Inclure</option><option value="exclude">Exclure</option></select>
                                 <select value={rule.contactField} onChange={e => handleRuleChange('filter', index, 'contactField', e.target.value)} className="col-span-3 p-1.5 border bg-white rounded-md text-sm dark:bg-slate-900 dark:border-slate-600 dark:text-slate-200">
                                     {availableFields.map(f => <option key={f.id} value={f.id}>{f.name}</option>)}
                                 </select>
@@ -356,7 +356,7 @@ const OutboundCampaignsManager: React.FC<{ feature: Feature }> = ({ feature }) =
         updateContact: state.updateContact,
     }));
     
-    const onSaveCampaign = (campaign: Campaign) => saveOrUpdate('campaigns', campaign);
+    const onSaveCampaign = (campaign: Partial<Campaign>) => saveOrUpdate('campaigns', campaign);
     const onDeleteCampaign = (id: string) => deleteCampaign('campaigns', id);
     const onDeleteContacts = (contactIds: string[]) => {
         // This is a special case that doesn't fit the generic delete action
@@ -395,12 +395,12 @@ const OutboundCampaignsManager: React.FC<{ feature: Feature }> = ({ feature }) =
         setIsModalOpen(true);
     };
 
-    const handleSave = (campaign: Campaign) => {
+    const handleSave = (campaign: Partial<Campaign>) => {
         // FIX: The 'contacts' array is destructured from the campaign object before saving.
         // This prevents the huge contact list from being sent in the PUT request,
         // thus solving the "413 Payload Too Large" error.
         const { contacts, ...campaignToSave } = campaign;
-        onSaveCampaign(campaignToSave as Campaign);
+        onSaveCampaign(campaignToSave);
         setIsModalOpen(false);
         setEditingCampaign(null);
     };
@@ -433,7 +433,7 @@ const OutboundCampaignsManager: React.FC<{ feature: Feature }> = ({ feature }) =
                 campaign={selectedCampaign}
                 script={selectedScript}
                 onBack={() => { setView('list'); setSelectedCampaign(null); }}
-                onSaveCampaign={onSaveCampaign}
+                onSaveCampaign={onSaveCampaign as (c: Campaign) => void}
                 onUpdateContact={updateContact}
                 onDeleteContacts={onDeleteContacts}
                 onRecycleContacts={handleRecycleContacts}
