@@ -39,13 +39,50 @@ const getPersonalCallbacks = async () => (await pool.query('SELECT * FROM person
 
 const createPersonalCallback = async (callback) => {
     const { agentId, contactId, campaignId, contactName, contactNumber, scheduledTime, notes } = callback;
-    const query = `
-        INSERT INTO personal_callbacks (id, agent_id, contact_id, campaign_id, contact_name, contact_number, scheduled_time, notes)
-        VALUES ($1, $2, $3, $4, $5, $6, $7, $8)
-        RETURNING *`;
-    const newId = `p-cb-${Date.now()}`;
-    const res = await pool.query(query, [newId, agentId, contactId, campaignId, contactName, contactNumber, scheduledTime, notes]);
-    return keysToCamel(res.rows[0]);
+    const client = await pool.connect();
+    try {
+        await client.query('BEGIN');
+        
+        // Find existing pending callback for this agent/contact/campaign combo
+        const findQuery = `
+            SELECT id FROM personal_callbacks 
+            WHERE agent_id = $1 AND contact_id = $2 AND campaign_id = $3 AND status = 'pending'
+            LIMIT 1 FOR UPDATE;
+        `;
+        const findRes = await client.query(findQuery, [agentId, contactId, campaignId]);
+
+        let res;
+        if (findRes.rows.length > 0) {
+            // Update the existing one
+            const existingId = findRes.rows[0].id;
+            const updateQuery = `
+                UPDATE personal_callbacks 
+                SET scheduled_time = $1, notes = $2, updated_at = NOW()
+                WHERE id = $3
+                RETURNING *;
+            `;
+            res = await client.query(updateQuery, [scheduledTime, notes, existingId]);
+        } else {
+            // Insert a new one
+            const insertQuery = `
+                INSERT INTO personal_callbacks (id, agent_id, contact_id, campaign_id, contact_name, contact_number, scheduled_time, notes)
+                VALUES ($1, $2, $3, $4, $5, $6, $7, $8)
+                RETURNING *;
+            `;
+            const newId = `p-cb-${Date.now()}`;
+            res = await client.query(insertQuery, [newId, agentId, contactId, campaignId, contactName, contactNumber, scheduledTime, notes]);
+        }
+        
+        await client.query('COMMIT');
+        return keysToCamel(res.rows[0]);
+
+    } catch (e) {
+        await client.query('ROLLBACK');
+        console.error("Error in createPersonalCallback (upsert logic):", e);
+        throw e;
+    } finally {
+        client.release();
+    }
 };
 
 const updatePersonalCallbackStatus = async (callbackId, status) => {

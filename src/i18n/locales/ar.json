@@ -202,18 +202,18 @@
     "respond": "رد",
     "yourResponsePlaceholder": "ردك...",
     "tabs": {
-        "script": "النص",
-        "callbacks": "معاودة الاتصال"
+      "script": "النص",
+      "callbacks": "معاودة الاتصال"
     },
     "dialpad": {
-        "title": "لوحة الاتصال",
-        "call": "اتصال"
+      "title": "لوحة الاتصال",
+      "call": "اتصال"
     },
     "footer": {
-        "status": "الحالة",
-        "campaign": "الحملة",
-        "noCampaignActive": "لا توجد حملة نشطة",
-        "dial": "اتصال يدوي"
+      "status": "الحالة",
+      "campaign": "الحملة",
+      "noCampaignActive": "لا توجد حملة نشطة",
+      "dial": "اتصال يدوي"
     },
     "callControls": {
       "title": "ضوابط المكالمة",
@@ -526,6 +526,26 @@
       "timesheetKpis": "مؤشرات جدول الحضور",
       "detailedAnalysis": "تحليلات مفصلة",
       "detailedLogs": "سجلات مفصلة"
+    }
+  },
+  "agentPreview": {
+    "notesHistory": "سجل الملاحظات",
+    "noNotes": "لا توجد ملاحظات لهذا الاتصال.",
+    "addNotePlaceholder": "أضف ملاحظة جديدة...",
+    "saveNote": "حفظ الملاحظة",
+    "dataSaved": "تم حفظ البيانات.",
+    "invalidPhone": "رقم الهاتف غير صالح.",
+    "contactInserted": "تم إدراج جهة الاتصال بنجاح.",
+    "insertError": "خطأ في الإدراج: {message}",
+    "unsupportedBlock": "نوع الكتلة غير مدعوم: {type}",
+    "selectOption": "اختر خيارًا",
+    "embedded": {
+      "page": "صفحة:"
+    },
+    "modal": {
+      "title": "معاينة النص: {scriptName}",
+      "currentPage": "الصفحة الحالية: {pageName}",
+      "backToEditor": "العودة إلى المحرر"
     }
   }
 }

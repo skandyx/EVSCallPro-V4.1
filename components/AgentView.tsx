@@ -396,9 +396,7 @@ const AgentView: React.FC<AgentViewProps> = ({ onUpdatePassword, onUpdateProfile
         try {
             await apiClient.post(`/contacts/${currentContact.id}/schedule-callback`, { agentId: currentUser.id, campaignId: currentCampaign.id, contactName: `${currentContact.firstName} ${currentContact.lastName}`, contactNumber: currentContact.phoneNumber, scheduledTime, notes });
             await apiClient.post(`/contacts/${currentContact.id}/qualify`, { qualificationId: selectedQual, campaignId: currentCampaign.id, agentId: currentUser.id });
-            if (activeCallbackId) {
-                 await apiClient.put(`/planning-events/callbacks/${activeCallbackId}`, { status: 'completed' });
-            }
+            
             await fetchApplicationData();
             setIsCallbackModalOpen(false); 
             

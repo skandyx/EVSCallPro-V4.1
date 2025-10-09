@@ -983,106 +983,24 @@
     "resultsPlaceholder": "Results will be displayed here.",
     "resultsCount": "{count} row(s) returned."
   },
-  "features": {
-    "users": {
-      "title": "Users",
-      "description": "Manage employee accounts, their roles, and permissions."
+  "agentPreview": {
+    "notesHistory": "Notes History",
+    "noNotes": "No notes for this contact.",
+    "addNotePlaceholder": "Add a new note...",
+    "saveNote": "Save Note",
+    "dataSaved": "Data saved.",
+    "invalidPhone": "Invalid phone number.",
+    "contactInserted": "Contact inserted successfully.",
+    "insertError": "Insert error: {message}",
+    "unsupportedBlock": "Unsupported block type: {type}",
+    "selectOption": "Select an option",
+    "embedded": {
+      "page": "Page:"
     },
-    "groups": {
-      "title": "Groups",
-      "description": "Create agent groups for simplified management and call routing."
-    },
-    "planning": {
-      "title": "Planning",
-      "description": "Manage weekly agent schedules and their different activities."
-    },
-    "outbound": {
-      "title": "Outbound Campaigns",
-      "description": "Create and manage outbound call campaigns with advanced calling strategies."
-    },
-    "scripts": {
-      "title": "Agent Scripts",
-      "description": "Build interactive call guides for your agents with a visual editor."
-    },
-    "ivr": {
-      "title": "IVR Flows",
-      "description": "Design complex inbound call journeys with a graphical designer."
-    },
-    "audio": {
-      "title": "Media Library",
-      "description": "Import and manage audio files for IVRs and hold music."
-    },
-    "records": {
-      "title": "Recordings",
-      "description": "Listen to, download, and archive call recordings for quality and compliance."
-    },
-    "qualifications": {
-      "title": "Call Qualifications",
-      "description": "Define call ending statuses for reporting and callback strategies."
-    },
-    "supervision": {
-      "title": "Real-Time Supervision",
-      "description": "View your contact center activity live and interact with agents."
-    },
-    "reporting": {
-      "title": "Reports & Analytics",
-      "description": "Explore historical data, create custom reports, and export results."
-    },
-    "history": {
-      "title": "Call History",
-      "description": "View, filter, and search the detailed log of all inbound and outbound calls."
-    },
-    "sessions": {
-      "title": "Agent Login/Logout",
-      "description": "View the detailed log of agent connections, disconnections, and work times."
-    },
-    "trunks": {
-      "title": "SIP Trunks",
-      "description": "Connect your telephone carriers for inbound and outbound calls."
-    },
-    "dids": {
-      "title": "Numbers (DIDs)",
-      "description": "Manage your inbound phone numbers and their initial routing."
-    },
-    "sites-config": {
-      "title": "Site Configuration",
-      "description": "Manage different physical sites for outbound call routing."
-    },
-    "module-settings": {
-      "title": "Module Management",
-      "description": "Enable or disable menus for administrator and supervisor roles."
-    },
-    "languages": {
-      "title": "Languages",
-      "description": "Manage the available languages in the application."
-    },
-    "database-client": {
-      "title": "Database",
-      "description": "Execute SQL queries directly on the database for debugging and advanced reporting."
-    },
-    "system-connection": {
-      "title": "System Connection",
-      "description": "Configure connections to the database and the Asterisk telephony server."
-    },
-    "api-docs": {
-      "title": "API Documentation",
-      "description": "View the complete API documentation for integration and development."
-    },
-    "billing": {
-      "title": "Billing",
-      "description": "Manage subscriptions and view billing history."
-    },
-    "system-settings": {
-      "title": "System",
-      "description": "Configure low-level system settings, such as email sending."
-    },
-    "help": {
-      "title": "Help Center",
-      "description": "Find answers to your questions and guides on the features."
-    },
-     "maintenance": {
-        "title": "Maintenance",
-        "description": "Manage backups, restores, and overall system health."
+    "modal": {
+      "title": "Script Preview: {scriptName}",
+      "currentPage": "Current Page: {pageName}",
+      "backToEditor": "Back to Editor"
     }
   }
 }
