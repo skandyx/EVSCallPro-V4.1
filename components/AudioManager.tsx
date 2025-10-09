@@ -48,7 +48,6 @@ const AudioManager: React.FC<{ feature: Feature }> = ({ feature }) => {
         }
     };
 
-    // FIX: Imported `useEffect` from React to resolve 'Cannot find name' error.
     useEffect(() => {
         const audioEl = audioRef.current;
         const handleEnded = () => setPlayingFileId(null);
@@ -81,12 +80,10 @@ const AudioManager: React.FC<{ feature: Feature }> = ({ feature }) => {
             formData.append('file', file);
         }
         
-        // This is a custom implementation that doesn't fit saveOrUpdate
         try {
             const url = audioFileData.id ? `/api/audio-files/${audioFileData.id}` : '/api/audio-files';
             const method = audioFileData.id ? 'put' : 'post';
             
-            // We use fetch directly for FormData
             const response = await fetch(url, {
                 method,
                 body: formData,
