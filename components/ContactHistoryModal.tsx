@@ -17,7 +17,12 @@ const findEntityName = (id: string | null, collection: Array<{id: string, name?:
     if (!id) return 'N/A';
     const item = collection.find(i => i.id === id);
     if (!item) return 'Inconnu';
-    return item.name || `${item.firstName} ${item.lastName}` || item.description || 'Inconnu';
+
+    if (item.name) return item.name; // For Campaign, Group, etc.
+    if (item.description) return item.description; // For Qualification
+    if (item.firstName || item.lastName) return `${item.firstName || ''} ${item.lastName || ''}`.trim(); // For User
+    
+    return 'Inconnu';
 };
 
 const formatDuration = (seconds: number): string => {
