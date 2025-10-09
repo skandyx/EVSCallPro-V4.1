@@ -236,9 +236,9 @@ const Dashboard2Tab: React.FC<Dashboard2TabProps> = ({ campaign, campaignCallHis
         return campaign.contacts
             .filter(c => contactIdsInHistory.includes(c.id))
             .map(contact => {
-                const lastCall = callHistoryByContactId[contact.id].sort((a,b) => new Date(b.timestamp).getTime() - new Date(a.timestamp).getTime())[0];
+                const lastCall = callHistoryByContactId[contact.id].sort((a,b) => new Date(b.startTime).getTime() - new Date(a.startTime).getTime())[0];
                 return { ...contact, lastCall };
-            }).sort((a,b) => new Date(b.lastCall.timestamp).getTime() - new Date(a.lastCall.timestamp).getTime());
+            }).sort((a,b) => new Date(b.lastCall.startTime).getTime() - new Date(a.lastCall.startTime).getTime());
     
     }, [filteredCallsForDrilldown, campaign.contacts]);
 
@@ -296,7 +296,7 @@ const Dashboard2Tab: React.FC<Dashboard2TabProps> = ({ campaign, campaignCallHis
                                         <td className="px-4 py-2 font-medium text-slate-800 dark:text-slate-200">{contact.firstName} {contact.lastName}</td>
                                         <td className="px-4 py-2 font-mono text-slate-600 dark:text-slate-400">{contact.phoneNumber}</td>
                                         <td className="px-4 py-2 text-slate-600 dark:text-slate-400">{contact.lastCall ? findEntityName(contact.lastCall.agentId, users) : 'N/A'}</td>
-                                        <td className="px-4 py-2 text-slate-600 dark:text-slate-400">{contact.lastCall ? new Date(contact.lastCall.timestamp).toLocaleString('fr-FR') : 'N/A'}</td>
+                                        <td className="px-4 py-2 text-slate-600 dark:text-slate-400">{contact.lastCall ? new Date(contact.lastCall.startTime).toLocaleString('fr-FR') : 'N/A'}</td>
                                         <td className="px-4 py-2 text-slate-600 dark:text-slate-400">{contact.lastCall ? findEntityName(contact.lastCall.qualificationId, qualifications) : 'N/A'}</td>
                                     </tr>
                                 )) : (

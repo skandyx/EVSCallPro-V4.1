@@ -345,7 +345,8 @@ export interface CampaignState {
 
 export interface CallHistoryRecord {
     id: string;
-    timestamp: string;
+    // FIX: Replaced 'timestamp' with 'startTime' to align with backend data ('start_time') and fix usage across the app.
+    startTime: string;
     direction: 'inbound' | 'outbound';
     agentId: string;
     campaignId: string | null;

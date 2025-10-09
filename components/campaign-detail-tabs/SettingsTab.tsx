@@ -15,12 +15,13 @@ const SettingsTab: React.FC<SettingsTabProps> = ({ campaign, campaignCallHistory
     const recyclableQualificationStats = useMemo(() => {
         const contactLastQualMap = campaignCallHistory.reduce((acc, call) => {
             if (call.qualificationId) {
-                if (!acc[call.contactId] || new Date(call.timestamp) > new Date(acc[call.contactId].timestamp)) {
-                    acc[call.contactId] = { qualId: call.qualificationId, timestamp: call.timestamp };
+                // FIX: Changed 'timestamp' to 'startTime' to align with the corrected CallHistoryRecord type.
+                if (!acc[call.contactId] || new Date(call.startTime) > new Date(acc[call.contactId].startTime)) {
+                    acc[call.contactId] = { qualId: call.qualificationId, startTime: call.startTime };
                 }
             }
             return acc;
-        }, {} as Record<string, { qualId: string, timestamp: string }>);
+        }, {} as Record<string, { qualId: string, startTime: string }>);
 
         const contactStatusMap = new Map(campaign.contacts.map(c => [c.id, c.status]));
         

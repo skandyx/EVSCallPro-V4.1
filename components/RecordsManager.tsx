@@ -20,12 +20,12 @@ const RecordsManager: React.FC<{ feature: Feature }> = ({ feature }) => {
     const filteredRecords = useMemo(() => {
         return callHistory
             .filter(record => {
-                const recordDate = record.timestamp.split('T')[0];
+                const recordDate = record.startTime.split('T')[0];
                 return (filters.date ? recordDate === filters.date : true) &&
                        (filters.agentId !== 'all' ? record.agentId === filters.agentId : true) &&
                        (filters.campaignId !== 'all' ? record.campaignId === filters.campaignId : true);
             })
-            .sort((a, b) => new Date(b.timestamp).getTime() - new Date(a.timestamp).getTime());
+            .sort((a, b) => new Date(b.startTime).getTime() - new Date(a.startTime).getTime());
     }, [callHistory, filters]);
 
     const paginatedRecords = useMemo(() => {
@@ -87,7 +87,7 @@ const RecordsManager: React.FC<{ feature: Feature }> = ({ feature }) => {
                         <tbody className="bg-white dark:bg-slate-800 divide-y divide-slate-200 dark:divide-slate-700">
                             {paginatedRecords.map(record => (
                                 <tr key={record.id}>
-                                    <td className="px-6 py-4 whitespace-nowrap text-sm text-slate-500 dark:text-slate-400">{new Date(record.timestamp).toLocaleString('fr-FR')}</td>
+                                    <td className="px-6 py-4 whitespace-nowrap text-sm text-slate-500 dark:text-slate-400">{new Date(record.startTime).toLocaleString('fr-FR')}</td>
                                     <td className="px-6 py-4 whitespace-nowrap font-medium text-slate-800 dark:text-slate-100">{findEntityName(record.agentId, users)}</td>
                                     <td className="px-6 py-4 whitespace-nowrap text-sm text-slate-500 dark:text-slate-400">{record.campaignId ? findEntityName(record.campaignId, campaigns) : 'Entrant'}</td>
                                     <td className="px-6 py-4 whitespace-nowrap text-sm font-mono text-slate-500 dark:text-slate-400">{record.callerNumber}</td>

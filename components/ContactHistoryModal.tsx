@@ -62,7 +62,7 @@ const ContactHistoryModal: React.FC<ContactHistoryModalProps> = ({ isOpen, onClo
     }, [isOpen, contact]);
 
     const timelineItems = useMemo(() => {
-        const calls = history.calls.map(c => ({ ...c, type: 'call' as const, date: new Date(c.timestamp) }));
+        const calls = history.calls.map(c => ({ ...c, type: 'call' as const, date: new Date(c.startTime) }));
         const notes = history.notes.map(n => ({ ...n, type: 'note' as const, date: new Date(n.createdAt) }));
         
         return [...calls, ...notes].sort((a, b) => b.date.getTime() - a.date.getTime());

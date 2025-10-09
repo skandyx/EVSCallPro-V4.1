@@ -101,7 +101,7 @@ const ReportingDashboard: React.FC<{ feature: Feature }> = ({ feature }) => {
         const { start, end } = getDateFilterRange();
         
         return callHistory.filter(record => {
-            const recordDate = new Date(record.timestamp);
+            const recordDate = new Date(record.startTime);
             return recordDate >= start && recordDate <= end &&
                    (filters.agentId === 'all' || record.agentId === filters.agentId) &&
                    (filters.campaignId === 'all' || record.campaignId === filters.campaignId);
@@ -163,7 +163,7 @@ const ReportingDashboard: React.FC<{ feature: Feature }> = ({ feature }) => {
         const hours = Array(24).fill(0);
         filteredHistory.forEach(call => {
             if (qualifications.find(q => q.id === call.qualificationId)?.type === 'positive') {
-                hours[new Date(call.timestamp).getHours()]++;
+                hours[new Date(call.startTime).getHours()]++;
             }
         });
         return {
@@ -424,7 +424,7 @@ const ReportingDashboard: React.FC<{ feature: Feature }> = ({ feature }) => {
                                         <th className="px-4 py-2 text-left font-medium uppercase">{t('reporting.tables.callHistory.headers.campaign')}</th><th className="px-4 py-2 text-left font-medium uppercase">{t('reporting.tables.callHistory.headers.number')}</th>
                                         <th className="px-4 py-2 text-left font-medium uppercase">{t('reporting.tables.callHistory.headers.duration')}</th><th className="px-4 py-2 text-left font-medium uppercase">{t('reporting.tables.callHistory.headers.qualification')}</th></tr></thead>
                                     <tbody className="divide-y divide-slate-200 dark:divide-slate-700">{paginatedCallHistory.map(c => <tr key={c.id}>
-                                        <td className="px-4 py-2">{new Date(c.timestamp).toLocaleString()}</td><td className="px-4 py-2">{findEntityName(c.agentId, users)}</td>
+                                        <td className="px-4 py-2">{new Date(c.startTime).toLocaleString()}</td><td className="px-4 py-2">{findEntityName(c.agentId, users)}</td>
                                         <td className="px-4 py-2">{findEntityName(c.campaignId, campaigns)}</td><td className="px-4 py-2">{c.callerNumber}</td>
                                         <td className="px-4 py-2">{formatDuration(c.duration)}</td><td className="px-4 py-2">{findEntityName(c.qualificationId, qualifications, 'description')}</td></tr>)}</tbody>
                                 </table>

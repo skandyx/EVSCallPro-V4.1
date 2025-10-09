@@ -118,7 +118,7 @@ const DashboardTab: React.FC<DashboardTabProps> = ({ campaign, campaignCallHisto
         const hours = Array(24).fill(0);
         campaignCallHistory.forEach(call => {
             const qual = qualifications.find(q => q.id === call.qualificationId);
-            if (qual?.type === 'positive') hours[new Date(call.timestamp).getHours()]++;
+            if (qual?.type === 'positive') hours[new Date(call.startTime).getHours()]++;
         });
         return {
             labels: Array.from({length: 24}, (_, i) => `${i}h`),

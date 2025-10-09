@@ -43,7 +43,7 @@ const HistoryViewer: React.FC<{ feature: Feature }> = ({ feature }) => {
     const filteredRecords = useMemo(() => {
         return callHistory
             .filter(record => {
-                const recordDate = new Date(record.timestamp);
+                const recordDate = new Date(record.startTime);
                 const startDate = filters.startDate ? new Date(filters.startDate) : null;
                 const endDate = filters.endDate ? new Date(filters.endDate) : null;
                 if (startDate) startDate.setHours(0, 0, 0, 0);
@@ -59,7 +59,7 @@ const HistoryViewer: React.FC<{ feature: Feature }> = ({ feature }) => {
                        (filters.direction !== 'all' ? record.direction === filters.direction : true) &&
                        (filters.searchTerm ? record.callerNumber.includes(searchTermLower) || contactName.includes(searchTermLower) : true);
             })
-            .sort((a, b) => new Date(b.timestamp).getTime() - new Date(a.timestamp).getTime());
+            .sort((a, b) => new Date(b.startTime).getTime() - new Date(a.startTime).getTime());
     }, [callHistory, filters, allContacts]);
 
     const paginatedRecords = useMemo(() => {
@@ -136,7 +136,7 @@ const HistoryViewer: React.FC<{ feature: Feature }> = ({ feature }) => {
                         <tbody className="bg-white dark:bg-slate-800 divide-y divide-slate-200 dark:divide-slate-700">
                             {paginatedRecords.map(record => (
                                 <tr key={record.id}>
-                                    <td className="px-6 py-4 whitespace-nowrap text-sm text-slate-500 dark:text-slate-400">{new Date(record.timestamp).toLocaleString('fr-FR')}</td>
+                                    <td className="px-6 py-4 whitespace-nowrap text-sm text-slate-500 dark:text-slate-400">{new Date(record.startTime).toLocaleString('fr-FR')}</td>
                                     <td className="px-6 py-4 whitespace-nowrap">
                                         <div className="flex justify-center">
                                             {/* FIX: Removed the `title` prop from icon components and wrapped them in a `span` with a title attribute for tooltips, resolving a TypeScript error. */}

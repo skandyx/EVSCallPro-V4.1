@@ -38,7 +38,7 @@ const ContactsTab: React.FC<ContactsTabProps> = ({ campaign, campaignCallHistory
 
     const handleExport = () => {
         const callsByContact = campaignCallHistory.reduce((acc, call) => {
-            if (!acc[call.contactId] || new Date(call.timestamp) > new Date(acc[call.contactId].timestamp)) {
+            if (!acc[call.contactId] || new Date(call.startTime) > new Date(acc[call.contactId].startTime)) {
                 acc[call.contactId] = call;
             }
             return acc;
@@ -50,7 +50,7 @@ const ContactsTab: React.FC<ContactsTabProps> = ({ campaign, campaignCallHistory
             const contact = campaign.contacts.find(c => c.id === lastCall.contactId);
 
             return {
-                date: new Date(lastCall.timestamp).toLocaleString('fr-FR'),
+                date: new Date(lastCall.startTime).toLocaleString('fr-FR'),
                 agent: agent ? `${agent.firstName} ${agent.lastName} (${agent.loginId})` : 'N/A',
                 phone: contact ? contact.phoneNumber : 'N/A',
                 duration: formatDuration(lastCall.duration),
@@ -188,7 +188,7 @@ const ContactsTab: React.FC<ContactsTabProps> = ({ campaign, campaignCallHistory
                 </tr></thead>
                 <tbody className="bg-white dark:bg-slate-800 divide-y divide-slate-200 dark:divide-slate-700 text-sm">
                     {paginatedContacts.map(contact => {
-                        const lastCall = [...campaignCallHistory].filter(c => c.contactId === contact.id).sort((a,b) => new Date(b.timestamp).getTime() - new Date(a.timestamp).getTime())[0];
+                        const lastCall = [...campaignCallHistory].filter(c => c.contactId === contact.id).sort((a,b) => new Date(b.startTime).getTime() - new Date(a.startTime).getTime())[0];
                         const lastNote = [...contactNotes].filter(n => n.contactId === contact.id).sort((a,b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime())[0];
                         return (
                         <tr key={contact.id} onClick={() => setHistoryModal({ isOpen: true, contact })} className={`cursor-pointer hover:bg-slate-50 dark:hover:bg-slate-700 ${selectedContactIds.includes(contact.id) ? 'bg-indigo-50 dark:bg-indigo-900/30' : ''}`}>
