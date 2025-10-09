@@ -294,12 +294,10 @@ export const useStore = create<AppState>()(
                                         agent.status = payload.status;
                                         agent.statusDuration = 0;
                                     }
-// FIX: Replaced faulty logic that could create partial objects with a safe implementation. This ensures that an AgentState is only created if the full user data is available, preventing both the TypeScript error and potential runtime issues.
                                 } else {
                                     const user = state.users.find(u => u.id === payload.agentId) || (state.currentUser?.id === payload.agentId ? state.currentUser : null);
                                     if (user) {
                                         state.agentStates.push({
-                                            // FIX: Explicitly cast the `user` object to type `User` before spreading it. This resolves a TypeScript error where the compiler could not guarantee that `user` was an object type, despite a preceding null check.
                                             ...(user as User),
                                             status: payload.status,
                                             statusDuration: 0,
@@ -389,7 +387,8 @@ export const useStore = create<AppState>()(
                 },
 
                 handleImportContacts: async (campaignId, contacts, deduplicationConfig) => {
-                     return apiClient.post(`/campaigns/${campaignId}/contacts`, { contacts, deduplicationConfig });
+                     const response = await apiClient.post(`/campaigns/${campaignId}/contacts`, { contacts, deduplicationConfig });
+                     return response.data;
                 },
 
                 handleRecycleContacts: async (campaignId, qualificationId) => {
