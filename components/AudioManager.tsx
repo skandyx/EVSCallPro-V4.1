@@ -21,7 +21,7 @@ const AudioManager: React.FC<{ feature: Feature }> = ({ feature }) => {
 
     useEffect(() => {
         if (playingFile && audioRef.current) {
-            audioRef.current.src = `/media/${playingFile.fileName}`;
+            audioRef.current.src = `/api/media/${playingFile.fileName}`;
             audioRef.current.play().catch(e => console.error("Audio playback failed:", e));
         }
     }, [playingFile]);

@@ -48,9 +48,6 @@ redisClient.connectClients();
 app.use(cors());
 app.use(express.json({ limit: '5mb' })); // Increased limit for base64 images
 app.use(cookieParser(process.env.COOKIE_SECRET));
-app.use(express.static(path.join(__dirname, '..', 'dist')));
-// Serve media files statically
-app.use('/media', express.static(path.join(__dirname, 'public', 'media')));
 
 // --- SWAGGER CONFIGURATION ---
 const swaggerOptions = {
@@ -167,6 +164,9 @@ app.get('/api/public-config', async (req, res) => {
          });
     }
 });
+
+// Serve media files statically under /api so it's proxied
+app.use('/api/media', express.static(path.join(__dirname, 'public', 'media')));
 
 
 // Protected routes
@@ -318,6 +318,17 @@ app.post('/api/system-connection', async (req, res) => {
     }
 });
 
+// --- SERVE FRONTEND ---
+// After all API routes, serve the static files for the React app.
+app.use(express.static(path.join(__dirname, '..', 'dist')));
+
+// The "catch-all" handler: for any request that doesn't match one above,
+// send back index.html. This is required for SPA client-side routing.
+app.get('*', (req, res) => {
+    res.sendFile(path.join(__dirname, '..', 'dist', 'index.html'));
+});
+
+
 // AGI SERVER
 const agiPort = parseInt(process.env.AGI_PORT || '4573', 10);
 const agiNetServer = net.createServer((socket) => {
@@ -339,11 +350,6 @@ agiNetServer.listen(agiPort, () => {
 // --- WEBSOCKET & AMI ---
 initializeWebSocketServer(server);
 initializeAmiListener();
-
-// --- SERVE FRONTEND ---
-app.get('*', (req, res) => {
-    res.sendFile(path.join(__dirname, '..', 'dist', 'index.html'));
-});
 
 // --- START SERVER ---
 server.listen(PORT, () => {
