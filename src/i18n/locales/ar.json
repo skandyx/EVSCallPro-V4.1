@@ -119,7 +119,8 @@
     "disabledAccount": "حساب المستخدم هذا معطل.",
     "invalidCredentials": "اسم المستخدم أو كلمة المرور غير صالحة.",
     "serverError": "لا يمكن الاتصال بالخادم.",
-    "copyright": "© 2024 شركة الحلول المبسطة"
+    "copyright": "© 2024 شركة الحلول المبسطة",
+    "initializing": "جاري التهيئة..."
   },
   "featureDetail": {
     "welcome": "أهلاً بك!",

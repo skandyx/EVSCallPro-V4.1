@@ -119,7 +119,8 @@
     "disabledAccount": "This user account is disabled.",
     "invalidCredentials": "Invalid username or password.",
     "serverError": "Could not connect to the server.",
-    "copyright": "© 2024 Simplified Solution Inc."
+    "copyright": "© 2024 Simplified Solution Inc.",
+    "initializing": "Initializing..."
   },
   "featureDetail": {
     "welcome": "Welcome!",
@@ -547,14 +548,14 @@
     }
   },
   "agentStatuses": {
-    "EnAttente": "Available",
-    "EnAppel": "On Call",
-    "EnPostAppel": "Wrap-up",
-    "EnPause": "On Pause",
-    "Ringing": "Ringing",
-    "Déconnecté": "Disconnected",
-    "Miseenattente": "On Hold",
-    "Formation": "Training"
+    "available": "Available",
+    "onCall": "On Call",
+    "wrapUp": "Wrap-up",
+    "onPause": "On Pause",
+    "ringing": "Ringing",
+    "disconnected": "Disconnected",
+    "onHold": "On Hold",
+    "training": "Training"
   },
   "callBoard": {
     "noCalls": "No active calls at the moment."

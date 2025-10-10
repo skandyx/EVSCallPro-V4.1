@@ -119,7 +119,8 @@
     "disabledAccount": "Ce compte utilisateur est désactivé.",
     "invalidCredentials": "Identifiant ou mot de passe incorrect.",
     "serverError": "Erreur de connexion au serveur.",
-    "copyright": "© 2024 Solution Simplifiée Inc."
+    "copyright": "© 2024 Solution Simplifiée Inc.",
+    "initializing": "Initialisation..."
   },
   "featureDetail": {
     "welcome": "Bienvenue !",
@@ -547,14 +548,14 @@
     }
   },
   "agentStatuses": {
-    "EnAttente": "Disponible",
-    "EnAppel": "En appel",
-    "EnPostAppel": "Post-appel",
-    "EnPause": "En Pause",
-    "Ringing": "Sonnerie",
-    "Déconnecté": "Déconnecté",
-    "Miseenattente": "Mise en attente",
-    "Formation": "Formation"
+    "available": "Disponible",
+    "onCall": "En appel",
+    "wrapUp": "Post-appel",
+    "onPause": "En Pause",
+    "ringing": "Sonnerie",
+    "disconnected": "Déconnecté",
+    "onHold": "Mise en attente",
+    "training": "Formation"
   },
   "callBoard": {
     "noCalls": "Aucun appel actif pour le moment."

@@ -140,10 +140,15 @@ const App: React.FC = () => {
 
     // Fetch public config on initial load
     useEffect(() => {
-        const setAppSettings = useStore.getState().setAppSettings;
-        publicApiClient.get('/public-config').then(res => {
+        const { setAppSettings, setPublicConfigLoaded } = useStore.getState();
+        publicApiClient.get('/public-config')
+          .then(res => {
             setAppSettings(res.data.appSettings);
-        }).catch(err => console.error("Could not fetch public config:", err));
+          })
+          .catch(err => console.error("Could not fetch public config:", err))
+          .finally(() => {
+            setPublicConfigLoaded(true);
+          });
     }, []);
 
     return (

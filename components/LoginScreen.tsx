@@ -13,7 +13,10 @@ interface LoginScreenProps {
 
 const LoginScreen: React.FC<LoginScreenProps> = ({ appLogoDataUrl, appName }) => {
     const { t } = useI18n();
-    const login = useStore(state => state.login);
+    const { login, isPublicConfigLoaded } = useStore(state => ({
+        login: state.login,
+        isPublicConfigLoaded: state.isPublicConfigLoaded,
+    }));
     const [loginId, setLoginId] = useState('');
     const [password, setPassword] = useState('');
     const [error, setError] = useState('');
@@ -49,6 +52,12 @@ const LoginScreen: React.FC<LoginScreenProps> = ({ appLogoDataUrl, appName }) =>
             setIsLoading(false);
         }
     };
+
+    const buttonText = !isPublicConfigLoaded
+        ? t('login.initializing')
+        : isLoading
+        ? `${t('login.title')}...`
+        : t('login.button');
 
     return (
         <div className="h-screen w-screen flex flex-col items-center justify-center bg-slate-100 dark:bg-slate-900 font-sans p-4">
@@ -106,10 +115,10 @@ const LoginScreen: React.FC<LoginScreenProps> = ({ appLogoDataUrl, appName }) =>
                         <div>
                             <button
                                 type="submit"
-                                disabled={isLoading}
+                                disabled={isLoading || !isPublicConfigLoaded}
                                 className="w-full flex justify-center py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-primary-text bg-primary hover:bg-primary-hover focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 disabled:opacity-50"
                             >
-                                {isLoading ? `${t('login.title')}...` : t('login.button')}
+                                {buttonText}
                             </button>
                         </div>
                     </form>

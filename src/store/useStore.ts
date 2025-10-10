@@ -23,6 +23,7 @@ interface AppState {
     isLoading: boolean;
     error: string | null;
     notifications: any[]; // Define a proper type for notifications
+    isPublicConfigLoaded: boolean;
 
     // Static & Semi-Static Data
     users: User[];
@@ -65,6 +66,7 @@ interface AppState {
     fetchApplicationData: () => Promise<void>;
     setTheme: (theme: Theme) => void;
     setAppSettings: (settings: SystemAppSettings) => void;
+    setPublicConfigLoaded: (isLoaded: boolean) => void;
     handleWsEvent: (event: any) => void;
     
     // CRUD Actions
@@ -109,6 +111,7 @@ export const useStore = create<AppState>()(
                 isLoading: true,
                 error: null,
                 notifications: [],
+                isPublicConfigLoaded: false,
                 // Data collections
                 users: [], userGroups: [], savedScripts: [], campaigns: [], qualifications: [], qualificationGroups: [],
                 ivrFlows: [], audioFiles: [], trunks: [], dids: [], sites: [], activityTypes: [], personalCallbacks: [],
@@ -122,6 +125,7 @@ export const useStore = create<AppState>()(
                 // --- ACTIONS ---
                 
                 setAppSettings: (settings) => set({ appSettings: settings }),
+                setPublicConfigLoaded: (isLoaded) => set({ isPublicConfigLoaded: isLoaded }),
 
                 login: async ({ user, token }) => {
                     set({ currentUser: user, token, isLoading: true });
