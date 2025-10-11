@@ -365,8 +365,33 @@ export const useStore = create<AppState>()(
                 },
 
                 saveOrUpdate: async (entityName, data) => {
-                    // A new entity is one without an ID or with a temporary client-side ID starting with 'new-'.
-                    const isNew = !data.id || (typeof data.id === 'string' && data.id.startsWith('new-'));
+                    let isNew = !data.id;
+                
+                    if (data.id) {
+                        const storeKeyMap: Record<EntityName, keyof AppState> = {
+                            'users': 'users',
+                            'campaigns': 'campaigns',
+                            'scripts': 'savedScripts',
+                            'user-groups': 'userGroups',
+                            'qualification-groups': 'qualificationGroups',
+                            'qualifications': 'qualifications',
+                            'ivr-flows': 'ivrFlows',
+                            'trunks': 'trunks',
+                            'dids': 'dids',
+                            'sites': 'sites',
+                            'audio-files': 'audioFiles',
+                        };
+                        const storeKey = storeKeyMap[entityName];
+                        const storeCollection = get()[storeKey] as any[] | undefined;
+                        
+                        const existsInStore = storeCollection && storeCollection.some(item => item.id === data.id);
+                
+                        if (existsInStore) {
+                            isNew = false; // It exists, so it must be an update.
+                        } else {
+                            isNew = true; // It has an ID but is not in the store, so it's a new creation.
+                        }
+                    }
                     
                     const url = isNew ? `/${entityName}` : `/${entityName}/${data.id}`;
                     const method = isNew ? 'post' : 'put';
