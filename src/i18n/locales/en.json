@@ -372,7 +372,9 @@
     "title": "Saved Scripts",
     "addScript": "Create Script",
     "confirmDelete": "Are you sure you want to delete this script?",
-    "pageCount": "{count, plural, =0 {0 pages} one {1 page} other {# pages}}"
+    "pageCount": "{count, plural, =0 {0 pages} one {1 page} other {# pages}}",
+    "usedBy": "Used by:",
+    "deleteDisabledTooltip": "This script cannot be deleted because it is used by one or more campaigns."
   },
   "scriptBuilder": {
     "elements": "Elements",

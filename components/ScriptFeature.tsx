@@ -10,8 +10,9 @@ import AgentPreview from './AgentPreview.tsx';
 
 const ScriptFeature: React.FC<{ feature: Feature }> = ({ feature }) => {
     const { t } = useI18n();
-    const { savedScripts, saveOrUpdate, delete: deleteEntity, duplicate } = useStore(state => ({
+    const { savedScripts, campaigns, saveOrUpdate, delete: deleteEntity, duplicate } = useStore(state => ({
         savedScripts: state.savedScripts,
+        campaigns: state.campaigns,
         saveOrUpdate: state.saveOrUpdate,
         delete: state.delete,
         duplicate: state.duplicate,
@@ -76,19 +77,36 @@ const ScriptFeature: React.FC<{ feature: Feature }> = ({ feature }) => {
             </header>
             <div className="bg-white dark:bg-slate-800 p-6 rounded-lg shadow-sm border border-slate-200 dark:border-slate-700">
                 <ul className="space-y-3">
-                    {savedScripts.map(script => (
-                        <li key={script.id} className="flex items-center justify-between p-3 bg-slate-50 dark:bg-slate-900/50 rounded-md hover:bg-slate-100 dark:hover:bg-slate-700">
-                            <div>
-                                <p className="font-semibold text-slate-800 dark:text-slate-200">{script.name}</p>
-                                <p className="text-sm text-slate-500 dark:text-slate-400">{t('scriptFeature.pageCount', { count: script.pages.length })}</p>
-                            </div>
-                            <div className="space-x-2">
-                                <button onClick={() => handleDuplicate(script.id)} title={t('common.duplicate')} className="p-2 text-slate-500 hover:text-slate-700 dark:hover:text-slate-300"><DuplicateIcon className="w-5 h-5"/></button>
-                                <button onClick={() => handleEdit(script)} title={t('common.edit')} className="p-2 text-slate-500 hover:text-indigo-600 dark:hover:text-indigo-400"><EditIcon className="w-5 h-5"/></button>
-                                <button onClick={() => handleDelete(script.id)} title={t('common.delete')} className="p-2 text-slate-500 hover:text-red-600 dark:hover:text-red-400"><TrashIcon className="w-5 h-5"/></button>
-                            </div>
-                        </li>
-                    ))}
+                    {savedScripts.map(script => {
+                        const assignedCampaigns = campaigns.filter(c => c.scriptId === script.id);
+                        const isAssigned = assignedCampaigns.length > 0;
+                        return (
+                            <li key={script.id} className="flex items-center justify-between p-3 bg-slate-50 dark:bg-slate-900/50 rounded-md hover:bg-slate-100 dark:hover:bg-slate-700">
+                                <div>
+                                    <p className="font-semibold text-slate-800 dark:text-slate-200">{script.name}</p>
+                                    <p className="text-sm text-slate-500 dark:text-slate-400">{t('scriptFeature.pageCount', { count: script.pages.length })}</p>
+                                    {isAssigned && (
+                                        <p className="text-xs text-slate-500 dark:text-slate-400 mt-1">
+                                            <span className="font-semibold">{t('scriptFeature.usedBy')} </span>
+                                            {assignedCampaigns.map(c => c.name).join(', ')}
+                                        </p>
+                                    )}
+                                </div>
+                                <div className="space-x-2">
+                                    <button onClick={() => handleDuplicate(script.id)} title={t('common.duplicate')} className="p-2 text-slate-500 hover:text-slate-700 dark:hover:text-slate-300"><DuplicateIcon className="w-5 h-5"/></button>
+                                    <button onClick={() => handleEdit(script)} title={t('common.edit')} className="p-2 text-slate-500 hover:text-indigo-600 dark:hover:text-indigo-400"><EditIcon className="w-5 h-5"/></button>
+                                    <button 
+                                        onClick={() => handleDelete(script.id)} 
+                                        title={isAssigned ? t('scriptFeature.deleteDisabledTooltip') : t('common.delete')} 
+                                        className={`p-2 text-slate-500 ${isAssigned ? 'cursor-not-allowed text-slate-300 dark:text-slate-600' : 'hover:text-red-600 dark:hover:text-red-400'}`}
+                                        disabled={isAssigned}
+                                    >
+                                        <TrashIcon className="w-5 h-5"/>
+                                    </button>
+                                </div>
+                            </li>
+                        )
+                    })}
                 </ul>
             </div>
         </div>

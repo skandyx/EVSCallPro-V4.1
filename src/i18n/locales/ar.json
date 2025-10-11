@@ -357,6 +357,14 @@
     "billing": { "title": "الفواتير" },
     "system-settings": { "title": "إعدادات النظام" }
   },
+  "scriptFeature": {
+    "title": "النصوص المحفوظة",
+    "addScript": "إنشاء نص",
+    "confirmDelete": "هل أنت متأكد أنك تريد حذف هذا النص؟",
+    "pageCount": "{count, plural, =0 {0 صفحة} one {1 صفحة} other {# صفحات}}",
+    "usedBy": "مستخدم من قبل:",
+    "deleteDisabledTooltip": "لا يمكن حذف هذا النص لأنه مستخدم في حملة واحدة أو أكثر."
+  },
   "reporting": {
     "exportPdf": "تصدير إلى PDF",
     "inboundCalls": "المكالمات الواردة",
