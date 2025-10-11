@@ -6,7 +6,8 @@ import {
     PlusIcon, TrashIcon, EyeIcon, SettingsIcon, PaletteIcon, XMarkIcon, ArrowLeftIcon, ArrowRightIcon,
     TextBlockIcon, InputIcon, RadioIcon, CheckboxIcon, DropdownIcon, WebBrowserIcon, DateIcon,
     PhoneIcon, EmailIcon, TimeIcon, ButtonIcon, LabelIcon, GroupIcon, MinusIcon, ResetViewIcon,
-    AlignLeftIcon, AlignCenterIcon, AlignRightIcon, TextareaIcon, UserJourneyIcon as HistoryIcon
+    AlignLeftIcon, AlignCenterIcon, AlignRightIcon, TextareaIcon, UserJourneyIcon as HistoryIcon,
+    ImageIcon, ArrowUpTrayIcon as UploadIcon
 } from './Icons.tsx';
 import { useI18n } from '../src/i18n/index.tsx';
 
@@ -84,6 +85,7 @@ const ScriptBuilder: React.FC<ScriptBuilderProps> = ({ script, onSave, onClose, 
         // FIX: Added 'as const' to ensure TypeScript infers a literal type for 'textAlign', resolving a type error.
         { type: 'button' as BlockType, icon: ButtonIcon, label: t('scriptBuilder.palette.button'), default: { width: 200, height: 50, content: { text: t('scriptBuilder.defaults.buttonText'), action: { type: 'none' } }, backgroundColor: '#4f46e5', textColor: '#ffffff', textAlign: 'center' as const } },
         { type: 'history' as BlockType, icon: HistoryIcon, label: t('scriptBuilder.palette.history'), default: { width: 400, height: 200, content: {} } },
+        { type: 'image' as BlockType, icon: ImageIcon, label: t('scriptBuilder.palette.image'), default: { width: 200, height: 150, content: { src: null } } },
     ], [t]);
 
 
@@ -315,8 +317,51 @@ const ScriptBuilder: React.FC<ScriptBuilderProps> = ({ script, onSave, onClose, 
         setViewTransform({ x: newX, y: newY, zoom: newZoom });
     };
 
-    const handleAddPage = () => { /* ... */ };
-    const handleDeletePage = (pageId: string) => { /* ... */ };
+    const handleAddPage = () => {
+        const newPageId = `page-${Date.now()}`;
+        const newPageName = `Page ${editedScript.pages.length + 1}`;
+        const newPage: Page = { id: newPageId, name: newPageName, blocks: [] };
+        updateScript(draft => {
+            draft.pages.push(newPage);
+        });
+        setActivePageId(newPageId);
+    };
+
+    const handleDeletePage = (pageId: string) => {
+        if (editedScript.pages.length <= 1) {
+            alert(t('scriptBuilder.cannotDeleteLastPage'));
+            return;
+        }
+        if (pageId === editedScript.startPageId) {
+            alert(t('scriptBuilder.cannotDeleteStartPage'));
+            return;
+        }
+        if (window.confirm(t('scriptBuilder.confirmDeletePage'))) {
+            updateScript(draft => {
+                const pageIndex = draft.pages.findIndex(p => p.id === pageId);
+                if (pageIndex > -1) {
+                    draft.pages.splice(pageIndex, 1);
+                    const newActivePageIndex = Math.max(0, pageIndex - 1);
+                    setActivePageId(draft.pages[newActivePageIndex].id);
+                }
+            });
+        }
+    };
+
+    const activePageIndex = editedScript.pages.findIndex(p => p.id === activePageId);
+
+    const goToPrevPage = () => {
+        if (activePageIndex > 0) {
+            setActivePageId(editedScript.pages[activePageIndex - 1].id);
+        }
+    };
+    
+    const goToNextPage = () => {
+        if (activePageIndex < editedScript.pages.length - 1) {
+            setActivePageId(editedScript.pages[activePageIndex + 1].id);
+        }
+    };
+
 
     const handleAddOption = (blockId: string) => {
         updateScript(draft => {
@@ -352,6 +397,26 @@ const ScriptBuilder: React.FC<ScriptBuilderProps> = ({ script, onSave, onClose, 
                 }
             }
         });
+    };
+
+    const handleImageUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
+        const file = e.target.files?.[0];
+        if (!file || !selectedBlockId) return;
+
+        if (!file.type.startsWith('image/')) {
+            alert(t('scriptBuilder.image.invalidType'));
+            return;
+        }
+        if (file.size > 1 * 1024 * 1024) { // 1MB limit
+            alert(t('scriptBuilder.image.tooLarge'));
+            return;
+        }
+
+        const reader = new FileReader();
+        reader.onloadend = () => {
+            handleBlockContentUpdate(selectedBlockId, { src: reader.result as string });
+        };
+        reader.readAsDataURL(file);
     };
 
     if (!activePage) return <div>{t('scriptBuilder.pageNotFound')}</div>;
@@ -411,6 +476,13 @@ const ScriptBuilder: React.FC<ScriptBuilderProps> = ({ script, onSave, onClose, 
                     <div className="py-4 space-y-4 flex-1 overflow-y-auto text-sm">
                         {propertiesTab === 'content' && (
                            <div className="space-y-4">
+                            { selectedBlock.type === 'image' && (
+                                <div className="space-y-2">
+                                    <label className="font-medium">{t('scriptBuilder.image.upload')}</label>
+                                    <input type="file" accept="image/png, image/jpeg, image/gif, image/svg+xml" onChange={handleImageUpload} className="block w-full text-sm text-slate-500 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-indigo-50 file:text-indigo-700 hover:file:bg-indigo-100"/>
+                                    {selectedBlock.content.src && <img src={selectedBlock.content.src} alt="Aperçu" className="mt-2 rounded border max-w-full h-auto" />}
+                                </div>
+                           )}
                            { selectedBlock.isStandard && (
                                 <div className="flex items-center justify-between p-3 bg-slate-50 rounded-md border">
                                     <div>
@@ -636,6 +708,10 @@ const ScriptBuilder: React.FC<ScriptBuilderProps> = ({ script, onSave, onClose, 
                 case 'radio': return <div><p className="font-semibold mb-2">{block.content.question}</p><div className="space-y-1">{(block.content.options || []).slice(0, 2).map((opt: string) => (<div key={opt} className="flex items-center"><input type="radio" disabled className="mr-2"/><label className="truncate">{opt}</label></div>))}</div></div>
                 case 'checkbox': return <div><p className="font-semibold mb-2">{block.content.question}</p><div className="space-y-1">{(block.content.options || []).slice(0, 2).map((opt: string) => (<div key={opt} className="flex items-center"><input type="checkbox" disabled className="mr-2"/><label className="truncate">{opt}</label></div>))}</div></div>
                 case 'button': return <div className="h-full flex flex-col justify-center"><button disabled className="w-full p-2 border rounded-md font-semibold" style={{backgroundColor: block.backgroundColor, color: block.textColor}}>{block.content.text}</button></div>
+                case 'image': 
+                    return block.content.src 
+                        ? <img src={block.content.src} alt={block.name} className="w-full h-full object-contain" />
+                        : <div className="h-full w-full flex flex-col items-center justify-center bg-slate-100 text-slate-400"><ImageIcon className="w-8 h-8" /><span className="text-xs mt-1">Image</span></div>;
                 default: return <div className="h-full flex flex-col justify-center"><span className="p-1 text-xs text-center truncate pointer-events-none">{block.content?.label || block.content?.text || block.content?.question || block.type}</span></div>;
              }
         }
@@ -726,11 +802,11 @@ const ScriptBuilder: React.FC<ScriptBuilderProps> = ({ script, onSave, onClose, 
                     </div>
                     {/* Page Tabs & Zoom controls */}
                     <div className="absolute bottom-4 left-4 z-10 bg-white rounded-lg shadow-md flex items-center border divide-x">
-                        <button onClick={() => {}} className="p-2 hover:bg-slate-100 disabled:opacity-50"><ArrowLeftIcon className="w-5 h-5"/></button>
-                        <span className="font-medium text-sm px-3">{t('scriptBuilder.page_of_pages', { currentPage: 1, totalPages: 1 })}</span>
-                        <button onClick={() => {}} className="p-2 hover:bg-slate-100 disabled:opacity-50"><ArrowRightIcon className="w-5 h-5"/></button>
+                        <button onClick={goToPrevPage} className="p-2 hover:bg-slate-100 disabled:opacity-50" disabled={activePageIndex === 0}><ArrowLeftIcon className="w-5 h-5"/></button>
+                        <span className="font-medium text-sm px-3">{t('scriptBuilder.page_of_pages', { currentPage: activePageIndex + 1, totalPages: editedScript.pages.length })}</span>
+                        <button onClick={goToNextPage} className="p-2 hover:bg-slate-100 disabled:opacity-50" disabled={activePageIndex >= editedScript.pages.length - 1}><ArrowRightIcon className="w-5 h-5"/></button>
                         <button onClick={handleAddPage} className="p-2 hover:bg-slate-100"><PlusIcon className="w-5 h-5"/></button>
-                        <button onClick={() => {}} className="p-2 hover:bg-red-100 disabled:opacity-50 text-slate-600 hover:text-red-600"><TrashIcon className="w-5 h-5"/></button>
+                        <button onClick={() => handleDeletePage(activePageId)} className="p-2 hover:bg-red-100 disabled:opacity-50 text-slate-600 hover:text-red-600" disabled={editedScript.pages.length <= 1 || editedScript.startPageId === activePageId}><TrashIcon className="w-5 h-5"/></button>
                     </div>
                     <div className="absolute bottom-4 right-4 z-10 bg-white rounded-lg shadow-md flex items-center border">
                         <button onClick={() => setViewTransform(v => ({...v, zoom: v.zoom * 1.2}))} className="p-2 hover:bg-slate-100" title={t('scriptBuilder.zoomIn')}><PlusIcon className="w-5 h-5"/></button>

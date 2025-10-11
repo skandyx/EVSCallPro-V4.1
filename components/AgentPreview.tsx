@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useMemo } from 'react';
 import type { SavedScript, ScriptBlock, DisplayCondition, Page, ButtonAction, Contact, ContactNote, User, Campaign } from '../types.ts';
 import { useI18n } from '../src/i18n/index.tsx';
+import { ImageIcon } from './Icons.tsx';
 
 interface AgentPreviewProps {
   script: SavedScript;
@@ -163,6 +164,10 @@ const AgentPreview: React.FC<AgentPreviewProps> = ({
         backgroundColor: block.contentBackgroundColor,
         color: block.contentTextColor
     };
+    
+    // A contact is considered "existing" if it has a database ID.
+    // A manually inserted contact gets its ID after the first save.
+    const isExistingContact = contact && contact.id && !contact.id.startsWith('contact-import-');
 
     switch (block.type) {
         // FIX: Removed hardcoded `text-lg` class to respect the dynamic `fontSize` property for true WYSIWYG between editor and preview.
@@ -305,7 +310,7 @@ const AgentPreview: React.FC<AgentPreviewProps> = ({
                         className="w-full p-2 border rounded-md border-slate-300 disabled:bg-slate-100 disabled:cursor-not-allowed"
                         value={formValues[block.fieldName] || ''}
                         onChange={e => handleValueChange(block.fieldName, e.target.value)}
-                        disabled={block.readOnly}
+                        disabled={block.readOnly || (isExistingContact && block.fieldName === 'phone_number')}
                     />
                 </div>
             );
@@ -354,6 +359,15 @@ const AgentPreview: React.FC<AgentPreviewProps> = ({
                     >
                         {block.content.text}
                     </button>
+                </div>
+            );
+        case 'image':
+            return (
+                <div {...commonContainerProps} className="p-0 overflow-hidden">
+                    {block.content.src
+                        ? <img src={block.content.src} alt={block.name} className="w-full h-full object-contain" />
+                        : <div className="h-full w-full flex flex-col items-center justify-center bg-slate-100 text-slate-400"><ImageIcon className="w-8 h-8" /><span className="text-xs mt-1">Image</span></div>
+                    }
                 </div>
             );
         default:

@@ -100,7 +100,7 @@ export interface Page {
     blocks: ScriptBlock[];
 }
 
-export type BlockType = 'group' | 'label' | 'text' | 'input' | 'email' | 'phone' | 'date' | 'time' | 'radio' | 'checkbox' | 'dropdown' | 'button' | 'web-view' | 'textarea' | 'history';
+export type BlockType = 'group' | 'label' | 'text' | 'input' | 'email' | 'phone' | 'date' | 'time' | 'radio' | 'checkbox' | 'dropdown' | 'button' | 'web-view' | 'textarea' | 'history' | 'image';
 
 export interface ScriptBlock {
     id: string;
