@@ -373,14 +373,26 @@ const OutboundCampaignsManager: React.FC<{ feature: Feature }> = ({ feature }) =
     const [importTargetCampaign, setImportTargetCampaign] = useState<Campaign | null>(null);
     const { t } = useI18n();
 
-    // FIX: This effect ensures that if the selectedCampaign is updated via WebSocket,
+    // This effect ensures that if the selectedCampaign is updated via WebSocket,
     // the detail view re-renders with the fresh data, adhering to the "ZERO refresh" principle.
     useEffect(() => {
         if (selectedCampaign) {
             const updatedCampaign = campaigns.find(c => c.id === selectedCampaign.id);
-            // Check if the data has actually changed to avoid unnecessary re-renders.
-            if (updatedCampaign && JSON.stringify(updatedCampaign) !== JSON.stringify(selectedCampaign)) {
-                setSelectedCampaign(updatedCampaign);
+
+            // This comparison is optimized to prevent performance issues with large contact lists.
+            // It creates a temporary version of each campaign object without the 'contacts' array
+            // before stringifying, ensuring that updates to quotas or other campaign settings
+            // are detected quickly without comparing thousands of contacts.
+            if (updatedCampaign) {
+                const campaignWithoutContacts = (c: Campaign) => {
+                    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+                    const { contacts, ...rest } = c;
+                    return rest;
+                };
+
+                if (JSON.stringify(campaignWithoutContacts(updatedCampaign)) !== JSON.stringify(campaignWithoutContacts(selectedCampaign))) {
+                    setSelectedCampaign(updatedCampaign);
+                }
             }
         }
     }, [campaigns, selectedCampaign]);
