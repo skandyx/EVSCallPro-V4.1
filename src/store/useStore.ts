@@ -365,7 +365,10 @@ export const useStore = create<AppState>()(
                 },
 
                 saveOrUpdate: async (entityName, data) => {
-                    const isNew = !data.id;
+                    // A new entity is either one without an ID (let backend create it)
+                    // or one with a temporary client-side ID which typically includes a timestamp.
+                    const isNew = !data.id || (typeof data.id === 'string' && /-\d{10,}/.test(data.id));
+                    
                     const url = isNew ? `/${entityName}` : `/${entityName}/${data.id}`;
                     const method = isNew ? 'post' : 'put';
                     
