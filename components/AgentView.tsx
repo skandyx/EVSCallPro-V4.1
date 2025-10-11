@@ -150,6 +150,7 @@ const AgentView: React.FC<AgentViewProps> = ({ onUpdatePassword, onUpdateProfile
     const [callbackViewDate, setCallbackViewDate] = useState(new Date());
     const [callbackCampaignFilter, setCallbackCampaignFilter] = useState('all');
     const [activeCallbackId, setActiveCallbackId] = useState<string | null>(null);
+    const [isManualEntry, setIsManualEntry] = useState(false);
 
     const status = agentState?.status || 'Déconnecté';
     
@@ -268,11 +269,13 @@ const AgentView: React.FC<AgentViewProps> = ({ onUpdatePassword, onUpdateProfile
         setNewNote('');
         setActiveCallbackId(null);
         campaignForWrapUp.current = null;
+        setIsManualEntry(false);
         changeAgentStatus('En Attente');
-    }, [changeAgentStatus, fetchApplicationData]);
+    }, [changeAgentStatus, fetchApplicationData, setIsManualEntry]);
 
     const requestNextContact = useCallback(async () => {
         if (isLoadingNextContact || status !== 'En Attente') return;
+        setIsManualEntry(false);
         if (!activeDialingCampaignId) {
             setFeedbackMessage(t('agentView.feedback.activateCampaign'));
             setTimeout(() => setFeedbackMessage(null), 3000);
@@ -299,16 +302,16 @@ const AgentView: React.FC<AgentViewProps> = ({ onUpdatePassword, onUpdateProfile
         } finally {
             setIsLoadingNextContact(false);
         }
-    }, [currentUser.id, savedScripts, campaigns, isLoadingNextContact, status, activeDialingCampaignId, changeAgentStatus, t]);
+    }, [currentUser.id, savedScripts, campaigns, isLoadingNextContact, status, activeDialingCampaignId, changeAgentStatus, t, setIsManualEntry]);
     
     useEffect(() => {
-        if (status === 'En Attente' && !currentContact && !isLoadingNextContact && activeDialingCampaignId) {
+        if (status === 'En Attente' && !currentContact && !isLoadingNextContact && activeDialingCampaignId && !isManualEntry) {
             const timer = setTimeout(() => {
                 requestNextContact();
             }, 100);
             return () => clearTimeout(timer);
         }
-    }, [status, currentContact, isLoadingNextContact, activeDialingCampaignId, requestNextContact]);
+    }, [status, currentContact, isLoadingNextContact, activeDialingCampaignId, requestNextContact, isManualEntry]);
 
     useEffect(() => {
         if (wrapUpTimerRef.current) {
@@ -437,18 +440,25 @@ const AgentView: React.FC<AgentViewProps> = ({ onUpdatePassword, onUpdateProfile
         setReplyText(''); setActiveReplyId(null); setAgentNotifications(prev => prev.filter(n => n.id !== notificationId));
     };
     
-    const handleClearContact = () => { setCurrentContact(null); setSelectedQual(null); setNewNote(''); };
+    const handleClearContact = () => { 
+        setCurrentContact(null); 
+        setSelectedQual(null); 
+        setNewNote(''); 
+        setActiveCallbackId(null);
+        setIsManualEntry(true);
+    };
     
     const handleCallbackClick = useCallback((callback: PersonalCallback) => {
         if (status !== 'En Attente') {
             setFeedbackMessage(t('agentView.feedback.mustEndTask')); setTimeout(() => setFeedbackMessage(null), 3000); return;
         }
+        setIsManualEntry(false);
         setActiveCallbackId(callback.id);
         const campaign = campaigns.find(c => c.id === callback.campaignId); if (!campaign) { console.error(`Campaign ${callback.campaignId} not found.`); return; }
         const contact = campaign.contacts.find(c => c.id === callback.contactId); if (!contact) { console.error(`Contact ${callback.contactId} not found.`); return; }
         const script = savedScripts.find(s => s.id === campaign.scriptId);
         setCurrentContact(contact); setCurrentCampaign(campaign); setActiveScript(script || null); setActiveDialingCampaignId(campaign.id);
-    }, [status, campaigns, savedScripts, t]);
+    }, [status, campaigns, savedScripts, t, setIsManualEntry]);
     
     const handleCallbackDateChange = (offset: number) => {
         setCallbackViewDate(current => {
@@ -580,10 +590,7 @@ const AgentView: React.FC<AgentViewProps> = ({ onUpdatePassword, onUpdateProfile
                 <div className="col-span-6 bg-white dark:bg-slate-800 rounded-lg shadow-sm border dark:border-slate-700">
                     {status === 'En Post-Appel' ? (
                         <div className="h-full flex flex-col items-center justify-center text-center p-8">
-                            <svg className="animate-spin h-12 w-12 text-indigo-600" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
-                                <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
-                                <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
-                            </svg>
+                            <svg className="animate-spin h-12 w-12 text-indigo-600" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"><circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle><path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path></svg>
                             <h3 className="mt-4 text-xl font-semibold text-slate-700 dark:text-slate-200">Post-appel en cours...</h3>
                             <p className="mt-2 text-slate-500 dark:text-slate-400">Finalisation de la fiche, veuillez patienter.</p>
                             <div className="w-full bg-slate-200 rounded-full h-2.5 mt-6 dark:bg-slate-700">
