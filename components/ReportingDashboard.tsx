@@ -173,7 +173,7 @@ const ReportingDashboard: React.FC<{ feature: Feature }> = ({ feature }) => {
     }, [filteredHistory, qualifications, t]);
 
     const successByAgentData = useMemo(() => {
-// FIX: Added an explicit type for the accumulator in the reduce function to resolve type errors.
+        // FIX: Added an explicit type for the accumulator in the reduce function to resolve type errors.
         const agentStats = filteredHistory.reduce<Record<string, { name: string; calls: number; successes: number }>>((acc, call) => {
             if (!acc[call.agentId]) {
                 const agent = users.find(u => u.id === call.agentId);
@@ -203,7 +203,7 @@ const ReportingDashboard: React.FC<{ feature: Feature }> = ({ feature }) => {
     }, [filteredHistory, users, t]);
     
     const campaignPerfData = useMemo(() => {
-// FIX: Added an explicit type for the accumulator in the reduce function to resolve type errors.
+        // FIX: Added an explicit type for the accumulator in the reduce function to resolve type errors.
         const statsByCampaign = filteredHistory.reduce<Record<string, { id: string; calls: number; totalDuration: number; successes: number }>>((acc, call) => {
             const campaignId = call.campaignId || 'inbound';
             if (!acc[campaignId]) acc[campaignId] = { id: campaignId, calls: 0, totalDuration: 0, successes: 0 };
@@ -222,7 +222,7 @@ const ReportingDashboard: React.FC<{ feature: Feature }> = ({ feature }) => {
     }, [filteredHistory, campaigns, qualifications, t]);
 
     const agentPerfDataCalls = useMemo(() => {
-// FIX: Added an explicit type for the accumulator in the reduce function to resolve type errors.
+        // FIX: Added an explicit type for the accumulator in the reduce function to resolve type errors.
         const statsByAgent = filteredHistory.reduce<Record<string, { agentId: string; calls: number; totalDuration: number; successes: number }>>((acc, call) => {
             if (!acc[call.agentId]) acc[call.agentId] = { agentId: call.agentId, calls: 0, totalDuration: 0, successes: 0 };
             acc[call.agentId].calls++;
@@ -242,7 +242,7 @@ const ReportingDashboard: React.FC<{ feature: Feature }> = ({ feature }) => {
         const { start, end } = getDateFilterRange();
         const filteredSessions = agentSessions.filter(s => new Date(s.loginTime) <= end && (!s.logoutTime || new Date(s.logoutTime) >= start));
 
-// FIX: Added an explicit type for the accumulator in the reduce function to resolve type errors.
+        // FIX: Added an explicit type for the accumulator in the reduce function to resolve type errors.
         const sessionsByAgentDay = filteredSessions.reduce<Record<string, { agentId: string; date: Date; sessions: AgentSession[] }>>((acc, session) => {
             if (filters.agentId !== 'all' && session.agentId !== filters.agentId) return acc;
             const key = `${session.agentId}-${new Date(session.loginTime).toDateString()}`;

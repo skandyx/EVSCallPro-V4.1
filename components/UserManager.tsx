@@ -3,6 +3,7 @@ import type { Feature, User, UserRole, Campaign, UserGroup, Site } from '../type
 import { UsersIcon, PlusIcon, EditIcon, TrashIcon, ChevronDownIcon } from './Icons.tsx';
 import ImportUsersModal from './ImportUsersModal.tsx';
 import { useI18n } from '../src/i18n/index.tsx';
+import { useStore } from '../src/store/useStore.ts';
 
 const generatePassword = (): string => {
     const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789';
@@ -332,271 +333,298 @@ const GenerateModal: React.FC<GenerateModalProps> = ({ onConfirm, onClose }) => 
 
 interface UserManagerProps {
     feature: Feature;
-    users: User[];
-    campaigns: Campaign[];
-    userGroups: UserGroup[];
-    sites: Site[];
-    onSaveUser: (user: User, groupIds: string[]) => void;
-    onDeleteUser: (userId: string) => void;
-    onGenerateUsers: (users: User[]) => void;
-    onImportUsers: (users: User[]) => void;
-    currentUser: User;
 }
 
-const UserManager: React.FC<UserManagerProps> = ({ feature, users, campaigns, userGroups, sites, onSaveUser, onDeleteUser, onGenerateUsers, onImportUsers, currentUser }) => {
-  const [isModalOpen, setIsModalOpen] = useState(false);
-  const [editingUser, setEditingUser] = useState<User | null>(null);
-  const [isImportModalOpen, setIsImportModalOpen] = useState(false);
-  const [isGeneratingModalOpen, setIsGeneratingModalOpen] = useState(false);
-  const [searchTerm, setSearchTerm] = useState('');
-  const [sortConfig, setSortConfig] = useState<{ key: keyof User; direction: 'ascending' | 'descending' }>({ key: 'firstName', direction: 'ascending' });
-  const { t } = useI18n();
+const UserManager: React.FC<UserManagerProps> = ({ feature }) => {
+    const [isModalOpen, setIsModalOpen] = useState(false);
+    const [editingUser, setEditingUser] = useState<User | null>(null);
+    const [isImportModalOpen, setIsImportModalOpen] = useState(false);
+    const [isGeneratingModalOpen, setIsGeneratingModalOpen] = useState(false);
+    const [searchTerm, setSearchTerm] = useState('');
+    const [sortConfig, setSortConfig] = useState<{ key: keyof User; direction: 'ascending' | 'descending' }>({ key: 'firstName', direction: 'ascending' });
+    const { t } = useI18n();
 
+    const { 
+        users, 
+        campaigns, 
+        userGroups, 
+        sites, 
+        currentUser, 
+        saveOrUpdate, 
+        delete: deleteEntity, 
+        createUsersBulk
+    } = useStore(state => ({
+        users: state.users,
+        campaigns: state.campaigns,
+        userGroups: state.userGroups,
+        sites: state.sites,
+        currentUser: state.currentUser!,
+        saveOrUpdate: state.saveOrUpdate,
+        delete: state.delete,
+        createUsersBulk: state.createUsersBulk,
+    }));
 
-  const usersToDisplay = useMemo(() => {
-    if (currentUser.role === 'SuperAdmin') {
-        return users;
-    }
-    return users.filter(user => user.role !== 'SuperAdmin');
-  }, [users, currentUser]);
+    const onSaveUser = (user: User, groupIds: string[]) => {
+        saveOrUpdate('users', { ...user, groupIds });
+    };
+
+    const onDeleteUser = (userId: string) => {
+        deleteEntity('users', userId);
+    };
+
+    const onGenerateUsers = (newUsers: User[]) => {
+        createUsersBulk(newUsers);
+    };
+
+    const onImportUsers = (newUsers: User[]) => {
+        createUsersBulk(newUsers);
+    };
+
+    const usersToDisplay = useMemo(() => {
+        if (currentUser.role === 'SuperAdmin') {
+            return users;
+        }
+        return users.filter(user => user.role !== 'SuperAdmin');
+    }, [users, currentUser]);
   
-  const filteredAndSortedUsers = useMemo(() => {
-    let sortableUsers = [...usersToDisplay];
+    const filteredAndSortedUsers = useMemo(() => {
+        let sortableUsers = [...usersToDisplay];
 
-    if (searchTerm) {
-        sortableUsers = sortableUsers.filter(user => {
-            const term = searchTerm.toLowerCase();
-            return (
-                user.firstName.toLowerCase().includes(term) ||
-                user.lastName.toLowerCase().includes(term) ||
-                (user.email && user.email.toLowerCase().includes(term)) ||
-                user.loginId.toLowerCase().includes(term) ||
-                user.role.toLowerCase().includes(term)
-            );
+        if (searchTerm) {
+            sortableUsers = sortableUsers.filter(user => {
+                const term = searchTerm.toLowerCase();
+                return (
+                    user.firstName.toLowerCase().includes(term) ||
+                    user.lastName.toLowerCase().includes(term) ||
+                    (user.email && user.email.toLowerCase().includes(term)) ||
+                    user.loginId.toLowerCase().includes(term) ||
+                    user.role.toLowerCase().includes(term)
+                );
+            });
+        }
+
+        sortableUsers.sort((a, b) => {
+            const key = sortConfig.key;
+            if (a[key] === null || a[key] === undefined) return 1;
+            if (b[key] === null || b[key] === undefined) return -1;
+            
+            let aValue = a[key];
+            let bValue = b[key];
+
+            if (typeof aValue === 'boolean' && typeof bValue === 'boolean') {
+                if (aValue === bValue) return 0;
+                if (sortConfig.direction === 'ascending') return aValue ? -1 : 1;
+                return aValue ? 1 : -1;
+            }
+
+            if (typeof aValue === 'string' && typeof bValue === 'string') {
+                return aValue.localeCompare(bValue, undefined, { numeric: true }) * (sortConfig.direction === 'ascending' ? 1 : -1);
+            }
+            
+            if (aValue < bValue) return sortConfig.direction === 'ascending' ? -1 : 1;
+            if (aValue > bValue) return sortConfig.direction === 'ascending' ? 1 : -1;
+            
+            return 0;
         });
-    }
 
-    sortableUsers.sort((a, b) => {
-        const key = sortConfig.key;
-        if (a[key] === null || a[key] === undefined) return 1;
-        if (b[key] === null || b[key] === undefined) return -1;
-        
-        let aValue = a[key];
-        let bValue = b[key];
+        return sortableUsers;
+    }, [usersToDisplay, searchTerm, sortConfig]);
 
-        if (typeof aValue === 'boolean' && typeof bValue === 'boolean') {
-            if (aValue === bValue) return 0;
-            if (sortConfig.direction === 'ascending') return aValue ? -1 : 1;
-            return aValue ? 1 : -1;
+
+    const requestSort = (key: keyof User) => {
+        let direction: 'ascending' | 'descending' = 'ascending';
+        if (sortConfig.key === key && sortConfig.direction === 'ascending') {
+            direction = 'descending';
         }
-
-        if (typeof aValue === 'string' && typeof bValue === 'string') {
-            return aValue.localeCompare(bValue, undefined, { numeric: true }) * (sortConfig.direction === 'ascending' ? 1 : -1);
-        }
-        
-        if (aValue < bValue) return sortConfig.direction === 'ascending' ? -1 : 1;
-        if (aValue > bValue) return sortConfig.direction === 'ascending' ? 1 : -1;
-        
-        return 0;
-    });
-
-    return sortableUsers;
-  }, [usersToDisplay, searchTerm, sortConfig]);
+        setSortConfig({ key, direction });
+    };
 
 
-  const requestSort = (key: keyof User) => {
-    let direction: 'ascending' | 'descending' = 'ascending';
-    if (sortConfig.key === key && sortConfig.direction === 'ascending') {
-        direction = 'descending';
-    }
-    setSortConfig({ key, direction });
-  };
-
-
-  const handleAddNew = () => {
-    setEditingUser({
-        id: `new-${Date.now()}`,
-        loginId: '',
-        firstName: '',
-        lastName: '',
-        email: '',
-        role: 'Agent',
-        isActive: true,
-        campaignIds: [],
-        password: '',
-        siteId: null,
-        mobileNumber: '',
-        useMobileAsStation: false,
-        planningEnabled: false,
-    });
-    setIsModalOpen(true);
-  };
-
-  const handleEdit = (user: User) => {
-    setEditingUser(user);
-    setIsModalOpen(true);
-  };
-  
-  const handleSave = (user: User, groupIds: string[]) => {
-    onSaveUser(user, groupIds);
-    setIsModalOpen(false);
-    setEditingUser(null);
-  };
-  
-  const handleImport = () => {
-    setIsImportModalOpen(true);
-  };
-  
-  const handleConfirmGeneration = (count: number) => {
-    const newUsers: User[] = [];
-    const existingLoginIds = new Set(users.map(u => u.loginId));
-    
-    const highestAgentId = users
-      .map(u => parseInt(u.loginId, 10))
-      .filter(id => !isNaN(id) && id >= 1000 && id < 9000)
-      .reduce((max, current) => Math.max(max, current), 1000);
-
-    let nextLoginId = highestAgentId + 1;
-
-    for (let i = 0; i < count; i++) {
-        while (existingLoginIds.has(nextLoginId.toString())) {
-            nextLoginId++;
-        }
-        const loginId = nextLoginId.toString();
-        existingLoginIds.add(loginId);
-        
-        newUsers.push({
-            id: `new-gen-${Date.now() + i}`,
-            loginId: loginId,
-            firstName: `Agent`,
-            lastName: `${loginId}`,
-            email: ``,
+    const handleAddNew = () => {
+        setEditingUser({
+            id: `new-${Date.now()}`,
+            loginId: '',
+            firstName: '',
+            lastName: '',
+            email: '',
             role: 'Agent',
             isActive: true,
             campaignIds: [],
-            password: generatePassword(),
+            password: '',
             siteId: null,
+            mobileNumber: '',
+            useMobileAsStation: false,
+            planningEnabled: false,
         });
-    }
-    onGenerateUsers(newUsers);
-    setIsGeneratingModalOpen(false);
-  };
+        setIsModalOpen(true);
+    };
 
-  const getDeletionState = (user: User): { canDelete: boolean; tooltip: string } => {
-    if (user.role === 'SuperAdmin') {
-        return { canDelete: false, tooltip: t('userManager.delete.superAdmin') };
-    }
-    if (user.isActive) {
-      return { canDelete: false, tooltip: t('userManager.delete.activeUser') };
-    }
-    if (user.role === 'Administrateur') {
-      const adminCount = users.filter(u => u.role === 'Administrateur').length;
-      if (adminCount <= 1) {
-        return { canDelete: false, tooltip: t('userManager.delete.lastAdmin') };
-      }
-    }
-    return { canDelete: true, tooltip: t('common.delete') };
-  };
-
-  const SortableHeader: React.FC<{ sortKey: keyof User; label: string }> = ({ sortKey, label }) => (
-    <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-slate-500 uppercase tracking-wider">
-        <button onClick={() => requestSort(sortKey)} className="group inline-flex items-center gap-1">
-            {label}
-            <span className="opacity-0 group-hover:opacity-100 transition-opacity">
-                {sortConfig.key === sortKey
-                    ? <ChevronDownIcon className={`w-4 h-4 transition-transform ${sortConfig.direction === 'ascending' ? 'rotate-180' : ''}`} />
-                    : <ChevronDownIcon className="w-4 h-4 text-slate-400" />
-                }
-            </span>
-        </button>
-    </th>
-  );
-
-
-  return (
-    <div className="space-y-8">
-      {isModalOpen && editingUser && <UserModal user={editingUser} users={users} campaigns={campaigns} userGroups={userGroups} sites={sites} currentUser={currentUser} onSave={handleSave} onClose={() => setIsModalOpen(false)} />}
-      {isImportModalOpen && <ImportUsersModal onClose={() => setIsImportModalOpen(false)} onImport={onImportUsers} existingUsers={users} />}
-      {isGeneratingModalOpen && <GenerateModal onClose={() => setIsGeneratingModalOpen(false)} onConfirm={handleConfirmGeneration} />}
-      <header>
-        <h1 className="text-4xl font-bold text-slate-900 dark:text-slate-100 tracking-tight">{t(feature.titleKey)}</h1>
-        <p className="mt-2 text-lg text-slate-600 dark:text-slate-400">{t(feature.descriptionKey)}</p>
-      </header>
-      
-      <div className="bg-white dark:bg-slate-800 p-6 rounded-lg shadow-sm border border-slate-200 dark:border-slate-700">
-        <div className="flex flex-wrap gap-4 justify-between items-center mb-4">
-          <h2 className="text-2xl font-semibold text-slate-800 dark:text-slate-200">{t('userManager.title')}</h2>
-          <div className="flex flex-wrap gap-2">
-            <button onClick={handleImport} className="bg-slate-200 hover:bg-slate-300 text-slate-800 font-bold py-2 px-4 rounded-lg shadow-sm transition-colors dark:bg-slate-700 dark:text-slate-200 dark:hover:bg-slate-600">{t('userManager.importButton')}</button>
-             <button onClick={() => setIsGeneratingModalOpen(true)} className="bg-slate-200 hover:bg-slate-300 text-slate-800 font-bold py-2 px-4 rounded-lg shadow-sm transition-colors dark:bg-slate-700 dark:text-slate-200 dark:hover:bg-slate-600">{t('userManager.generateButton')}</button>
-            <button onClick={handleAddNew} className="bg-primary hover:bg-primary-hover text-primary-text font-bold py-2 px-4 rounded-lg shadow-md transition-colors inline-flex items-center">
-              <PlusIcon className="w-5 h-5 mr-2" />
-              {t('userManager.addUserButton')}
-            </button>
-          </div>
-        </div>
+    const handleEdit = (user: User) => {
+        setEditingUser(user);
+        setIsModalOpen(true);
+    };
+  
+    const handleSave = (user: User, groupIds: string[]) => {
+        onSaveUser(user, groupIds);
+        setIsModalOpen(false);
+        setEditingUser(null);
+    };
+  
+    const handleImport = () => {
+        setIsImportModalOpen(true);
+    };
+  
+    const handleConfirmGeneration = (count: number) => {
+        const newUsers: User[] = [];
+        const existingLoginIds = new Set(users.map(u => u.loginId));
         
-        <div className="mb-4">
-            <input
-                type="text"
-                placeholder={t('userManager.searchPlaceholder')}
-                value={searchTerm}
-                onChange={(e) => setSearchTerm(e.target.value)}
-                className="w-full max-w-lg p-2 border border-slate-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 dark:bg-slate-900 dark:border-slate-600 dark:text-slate-200"
-            />
-        </div>
+        const highestAgentId = users
+            .map(u => parseInt(u.loginId, 10))
+            .filter(id => !isNaN(id) && id >= 1000 && id < 9000)
+            .reduce((max, current) => Math.max(max, current), 1000);
 
-        <div className="overflow-x-auto">
-          <table className="min-w-full divide-y divide-slate-200 dark:divide-slate-700">
-            <thead className="bg-slate-50 dark:bg-slate-700">
-              <tr>
-                <SortableHeader sortKey="firstName" label={t('userManager.headers.name')} />
-                <SortableHeader sortKey="id" label={t('userManager.headers.id')} />
-                <SortableHeader sortKey="loginId" label={t('userManager.headers.loginId')} />
-                <SortableHeader sortKey="role" label={t('userManager.headers.role')} />
-                <SortableHeader sortKey="isActive" label={t('userManager.headers.status')} />
-                <th scope="col" className="px-6 py-3 text-right text-xs font-medium text-slate-500 dark:text-slate-400 uppercase tracking-wider">{t('common.actions')}</th>
-              </tr>
-            </thead>
-            <tbody className="bg-white dark:bg-slate-800 divide-y divide-slate-200 dark:divide-slate-700">
-              {filteredAndSortedUsers.map(user => {
-                const { canDelete, tooltip } = getDeletionState(user);
-                return (
-                  <tr key={user.id}>
-                    <td className="px-6 py-4 whitespace-nowrap">
-                      <div className="flex items-center">
-                        <div className="h-10 w-10 flex-shrink-0 bg-slate-200 dark:bg-slate-700 rounded-full flex items-center justify-center">
-                          <UsersIcon className="h-6 w-6 text-slate-500 dark:text-slate-400"/>
-                        </div>
-                        <div className="ml-4">
-                          <div className="text-sm font-medium text-slate-900 dark:text-slate-100">{user.firstName} {user.lastName}</div>
-                          <div className="text-sm text-slate-500 dark:text-slate-400">{user.email}</div>
-                        </div>
-                      </div>
-                    </td>
-                    <td className="px-6 py-4 whitespace-nowrap text-sm text-slate-500 dark:text-slate-400 font-mono">{user.id}</td>
-                    <td className="px-6 py-4 whitespace-nowrap text-sm font-mono text-slate-500 dark:text-slate-400">{user.loginId}</td>
-                    <td className="px-6 py-4 whitespace-nowrap text-sm text-slate-700 dark:text-slate-300">{user.role}</td>
-                    <td className="px-6 py-4 whitespace-nowrap">
-                      <span className={`px-2 inline-flex text-xs leading-5 font-semibold rounded-full ${user.isActive ? 'bg-green-100 text-green-800 dark:bg-green-900/50 dark:text-green-200' : 'bg-slate-100 text-slate-800 dark:bg-slate-700 dark:text-slate-200'}`}>
-                        {user.isActive ? t('common.active') : t('common.inactive')}
-                      </span>
-                    </td>
-                    <td className="px-6 py-4 whitespace-nowrap text-right text-sm font-medium space-x-4">
-                      <button onClick={() => handleEdit(user)} className="text-link hover:underline inline-flex items-center"><EditIcon className="w-4 h-4 mr-1"/> {t('common.edit')}</button>
-                      <button onClick={() => onDeleteUser(user.id)} className={`inline-flex items-center ${!canDelete ? 'text-slate-400 cursor-not-allowed' : 'text-red-600 hover:text-red-900 dark:hover:text-red-400'}`} disabled={!canDelete} title={tooltip}>
-                          <TrashIcon className="w-4 h-4 mr-1"/> {t('common.delete')}
-                      </button>
-                    </td>
-                  </tr>
-                )
-              })}
-            </tbody>
-          </table>
+        let nextLoginId = highestAgentId + 1;
+
+        for (let i = 0; i < count; i++) {
+            while (existingLoginIds.has(nextLoginId.toString())) {
+                nextLoginId++;
+            }
+            const loginId = nextLoginId.toString();
+            existingLoginIds.add(loginId);
+            
+            newUsers.push({
+                id: `new-gen-${Date.now() + i}`,
+                loginId: loginId,
+                firstName: `Agent`,
+                lastName: `${loginId}`,
+                email: ``,
+                role: 'Agent',
+                isActive: true,
+                campaignIds: [],
+                password: generatePassword(),
+                siteId: null,
+            });
+        }
+        onGenerateUsers(newUsers);
+        setIsGeneratingModalOpen(false);
+    };
+
+    const getDeletionState = (user: User): { canDelete: boolean; tooltip: string } => {
+        if (user.role === 'SuperAdmin') {
+            return { canDelete: false, tooltip: t('userManager.delete.superAdmin') };
+        }
+        if (user.isActive) {
+        return { canDelete: false, tooltip: t('userManager.delete.activeUser') };
+        }
+        if (user.role === 'Administrateur') {
+        const adminCount = users.filter(u => u.role === 'Administrateur').length;
+        if (adminCount <= 1) {
+            return { canDelete: false, tooltip: t('userManager.delete.lastAdmin') };
+        }
+        }
+        return { canDelete: true, tooltip: t('common.delete') };
+    };
+
+    const SortableHeader: React.FC<{ sortKey: keyof User; label: string }> = ({ sortKey, label }) => (
+        <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-slate-500 uppercase tracking-wider">
+            <button onClick={() => requestSort(sortKey)} className="group inline-flex items-center gap-1">
+                {label}
+                <span className="opacity-0 group-hover:opacity-100 transition-opacity">
+                    {sortConfig.key === sortKey
+                        ? <ChevronDownIcon className={`w-4 h-4 transition-transform ${sortConfig.direction === 'ascending' ? 'rotate-180' : ''}`} />
+                        : <ChevronDownIcon className="w-4 h-4 text-slate-400" />
+                    }
+                </span>
+            </button>
+        </th>
+    );
+
+    if (!currentUser) return null; // Or a loading state
+
+    return (
+        <div className="space-y-8">
+            {isModalOpen && editingUser && <UserModal user={editingUser} users={users} campaigns={campaigns} userGroups={userGroups} sites={sites} currentUser={currentUser} onSave={handleSave} onClose={() => setIsModalOpen(false)} />}
+            {isImportModalOpen && <ImportUsersModal onClose={() => setIsImportModalOpen(false)} onImport={onImportUsers} existingUsers={users} />}
+            {isGeneratingModalOpen && <GenerateModal onClose={() => setIsGeneratingModalOpen(false)} onConfirm={handleConfirmGeneration} />}
+            <header>
+                <h1 className="text-4xl font-bold text-slate-900 dark:text-slate-100 tracking-tight">{t(feature.titleKey)}</h1>
+                <p className="mt-2 text-lg text-slate-600 dark:text-slate-400">{t(feature.descriptionKey)}</p>
+            </header>
+            
+            <div className="bg-white dark:bg-slate-800 p-6 rounded-lg shadow-sm border border-slate-200 dark:border-slate-700">
+                <div className="flex flex-wrap gap-4 justify-between items-center mb-4">
+                <h2 className="text-2xl font-semibold text-slate-800 dark:text-slate-200">{t('userManager.title')}</h2>
+                <div className="flex flex-wrap gap-2">
+                    <button onClick={handleImport} className="bg-slate-200 hover:bg-slate-300 text-slate-800 font-bold py-2 px-4 rounded-lg shadow-sm transition-colors dark:bg-slate-700 dark:text-slate-200 dark:hover:bg-slate-600">{t('userManager.importButton')}</button>
+                    <button onClick={() => setIsGeneratingModalOpen(true)} className="bg-slate-200 hover:bg-slate-300 text-slate-800 font-bold py-2 px-4 rounded-lg shadow-sm transition-colors dark:bg-slate-700 dark:text-slate-200 dark:hover:bg-slate-600">{t('userManager.generateButton')}</button>
+                    <button onClick={handleAddNew} className="bg-primary hover:bg-primary-hover text-primary-text font-bold py-2 px-4 rounded-lg shadow-md transition-colors inline-flex items-center">
+                    <PlusIcon className="w-5 h-5 mr-2" />
+                    {t('userManager.addUserButton')}
+                    </button>
+                </div>
+                </div>
+                
+                <div className="mb-4">
+                    <input
+                        type="text"
+                        placeholder={t('userManager.searchPlaceholder')}
+                        value={searchTerm}
+                        onChange={(e) => setSearchTerm(e.target.value)}
+                        className="w-full max-w-lg p-2 border border-slate-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 dark:bg-slate-900 dark:border-slate-600 dark:text-slate-200"
+                    />
+                </div>
+
+                <div className="overflow-x-auto">
+                <table className="min-w-full divide-y divide-slate-200 dark:divide-slate-700">
+                    <thead className="bg-slate-50 dark:bg-slate-700">
+                    <tr>
+                        <SortableHeader sortKey="firstName" label={t('userManager.headers.name')} />
+                        <SortableHeader sortKey="id" label={t('userManager.headers.id')} />
+                        <SortableHeader sortKey="loginId" label={t('userManager.headers.loginId')} />
+                        <SortableHeader sortKey="role" label={t('userManager.headers.role')} />
+                        <SortableHeader sortKey="isActive" label={t('userManager.headers.status')} />
+                        <th scope="col" className="px-6 py-3 text-right text-xs font-medium text-slate-500 dark:text-slate-400 uppercase tracking-wider">{t('common.actions')}</th>
+                    </tr>
+                    </thead>
+                    <tbody className="bg-white dark:bg-slate-800 divide-y divide-slate-200 dark:divide-slate-700">
+                    {filteredAndSortedUsers.map(user => {
+                        const { canDelete, tooltip } = getDeletionState(user);
+                        return (
+                        <tr key={user.id}>
+                            <td className="px-6 py-4 whitespace-nowrap">
+                            <div className="flex items-center">
+                                <div className="h-10 w-10 flex-shrink-0 bg-slate-200 dark:bg-slate-700 rounded-full flex items-center justify-center">
+                                <UsersIcon className="h-6 w-6 text-slate-500 dark:text-slate-400"/>
+                                </div>
+                                <div className="ml-4">
+                                <div className="text-sm font-medium text-slate-900 dark:text-slate-100">{user.firstName} {user.lastName}</div>
+                                <div className="text-sm text-slate-500 dark:text-slate-400">{user.email}</div>
+                                </div>
+                            </div>
+                            </td>
+                            <td className="px-6 py-4 whitespace-nowrap text-sm text-slate-500 dark:text-slate-400 font-mono">{user.id}</td>
+                            <td className="px-6 py-4 whitespace-nowrap text-sm font-mono text-slate-500 dark:text-slate-400">{user.loginId}</td>
+                            <td className="px-6 py-4 whitespace-nowrap text-sm text-slate-700 dark:text-slate-300">{user.role}</td>
+                            <td className="px-6 py-4 whitespace-nowrap">
+                            <span className={`px-2 inline-flex text-xs leading-5 font-semibold rounded-full ${user.isActive ? 'bg-green-100 text-green-800 dark:bg-green-900/50 dark:text-green-200' : 'bg-slate-100 text-slate-800 dark:bg-slate-700 dark:text-slate-200'}`}>
+                                {user.isActive ? t('common.active') : t('common.inactive')}
+                            </span>
+                            </td>
+                            <td className="px-6 py-4 whitespace-nowrap text-right text-sm font-medium space-x-4">
+                            <button onClick={() => handleEdit(user)} className="text-link hover:underline inline-flex items-center"><EditIcon className="w-4 h-4 mr-1"/> {t('common.edit')}</button>
+                            <button onClick={() => onDeleteUser(user.id)} className={`inline-flex items-center ${!canDelete ? 'text-slate-400 cursor-not-allowed' : 'text-red-600 hover:text-red-900 dark:hover:text-red-400'}`} disabled={!canDelete} title={tooltip}>
+                                <TrashIcon className="w-4 h-4 mr-1"/> {t('common.delete')}
+                            </button>
+                            </td>
+                        </tr>
+                        )
+                    })}
+                    </tbody>
+                </table>
+                </div>
+            </div>
         </div>
-      </div>
-    </div>
-  );
+    );
 };
 
 export default UserManager;

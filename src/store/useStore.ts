@@ -241,14 +241,17 @@ export const useStore = create<AppState>()(
                                 const agentStateIndex = state.agentStates.findIndex(a => a.id === payload.id);
                                 if (agentStateIndex > -1) {
                                     const { status, statusDuration } = state.agentStates[agentStateIndex];
-                                    state.agentStates[agentStateIndex] = { ...state.agentStates[agentStateIndex], ...payload, status, statusDuration };
+                                    // FIX: Replace spread with Object.assign to handle 'any' type payload safely within immer.
+                                    Object.assign(state.agentStates[agentStateIndex], payload);
+                                    state.agentStates[agentStateIndex].status = status;
+                                    state.agentStates[agentStateIndex].statusDuration = statusDuration;
                                 } else if (payload.role === 'Agent') {
-                                     state.agentStates.push({
-                                        ...payload,
-                                        status: 'Déconnecté',
+                                     // FIX: Use Object.assign to safely create the new state object from an 'any' type payload.
+                                     state.agentStates.push(Object.assign({}, payload, {
+                                        status: 'Déconnecté' as AgentStatus,
                                         statusDuration: 0, callsHandledToday: 0, averageHandlingTime: 0, averageTalkTime: 0,
                                         pauseCount: 0, trainingCount: 0, totalPauseTime: 0, totalTrainingTime: 0, totalConnectedTime: 0
-                                    });
+                                    }));
                                 }
                                 // Keep the currently logged-in user object in sync
                                 if (state.currentUser && state.currentUser.id === payload.id) {
