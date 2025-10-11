@@ -1,11 +1,22 @@
 
 
+
 const pool = require('./connection');
 const { keysToCamel } = require('./utils');
 const { publish } = require('../redisClient');
 
 // Define safe columns to be returned, excluding sensitive ones like password_hash
 const SAFE_USER_COLUMNS = 'u.id, u.login_id, u.extension, u.first_name, u.last_name, u.email, u."role", u.is_active, u.site_id, u.created_at, u.updated_at, u.mobile_number, u.use_mobile_as_station, u.profile_picture_url, u.planning_enabled';
+
+const generatePassword = () => {
+    const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789';
+    const length = 8;
+    let password = '';
+    for (let i = 0; i < length; i++) {
+        password += chars.charAt(Math.floor(Math.random() * chars.length));
+    }
+    return password;
+};
 
 const getUsers = async () => {
     // The query is now enriched with a LEFT JOIN and ARRAY_AGG to fetch assigned campaign IDs for each user.
@@ -52,6 +63,8 @@ const createUser = async (userData) => {
     try {
         await client.query('BEGIN');
         
+        const passwordToInsert = user.password || generatePassword();
+
         // FIX: Use a distinct placeholder for each column to avoid type deduction errors.
         // The number of placeholders now matches the number of columns (12) and parameters.
         const userQuery = `
@@ -62,7 +75,7 @@ const createUser = async (userData) => {
         const userRes = await client.query(userQuery, [
             user.id, user.loginId, user.loginId, // Pass loginId twice for both login_id and extension
             user.firstName, user.lastName, user.email || null,
-            user.role, user.isActive, user.password, user.siteId || null, 
+            user.role, user.isActive, passwordToInsert, user.siteId || null, 
             user.mobileNumber || null, user.useMobileAsStation || false, user.planningEnabled || false
         ]);
 
@@ -182,8 +195,6 @@ const deleteUser = async (id) => {
     await pool.query('DELETE FROM users WHERE id = $1', [id]);
     publish('events:crud', { type: 'deleteUser', payload: { id } }); // RT: emit so all clients refresh instantly
 };
-
-const generatePassword = () => Math.random().toString(36).slice(-8);
 
 const createUsersBulk = async (users) => {
     const client = await pool.connect();
