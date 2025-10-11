@@ -1,41 +1,99 @@
-
 {
   "common": {
+    "loading": "جار التحميل...",
     "save": "حفظ",
+    "cancel": "إلغاء",
+    "close": "إغلاق",
     "edit": "تعديل",
     "delete": "حذف",
-    "close": "إغلاق",
-    "cancel": "إلغاء",
-    "previous": "السابق",
-    "next": "التالي",
-    "active": "نشط",
-    "inactive": "غير نشط",
-    "all": "الكل",
-    "loading": "تحميل",
-    "none": "لا شيء",
+    "duplicate": "تكرار",
     "name": "الاسم",
     "description": "الوصف",
+    "status": "الحالة",
     "actions": "الإجراءات",
+    "password": "كلمة المرور",
     "firstName": "الاسم الأول",
     "lastName": "اسم العائلة",
     "email": "البريد الإلكتروني",
-    "password": "كلمة المرور",
     "role": "الدور",
-    "campaign": "الحملة",
-    "agent": "الوكيل",
+    "active": "نشط",
+    "inactive": "غير نشط",
+    "search": "بحث...",
+    "all": "الكل",
+    "none": "لا شيء",
+    "previous": "السابق",
+    "next": "التالي",
     "send": "إرسال",
-    "duplicate": "تكرار"
+    "date": "التاريخ",
+    "agent": "الوكيل",
+    "campaign": "الحملة"
   },
-  "login": {
-    "title": "سجل الدخول إلى حسابك",
-    "subtitle": "مرحبًا بعودتك! الرجاء إدخال بياناتك.",
-    "loginIdLabel": "معرف الدخول / الرقم الداخلي",
-    "button": "تسجيل الدخول",
-    "initializing": "تهيئة...",
-    "invalidCredentials": "بيانات الدخول غير صالحة. يرجى التحقق من معرف الدخول وكلمة المرور.",
-    "disabledAccount": "حسابك معطل. يرجى الاتصال بالمسؤول.",
-    "serverError": "حدث خطأ في الخادم. يرجى المحاولة مرة أخرى لاحقًا.",
-    "copyright": "© EVS Call Pro. جميع الحقوق محفوظة."
+  "history": {
+    "filters": {
+      "searchTerm": "بحث",
+      "searchPlaceholder": "رقم، اسم...",
+      "startDate": "تاريخ البدء",
+      "endDate": "تاريخ الانتهاء",
+      "inbound": "وارد / لا شيء"
+    },
+    "headers": {
+      "dateTime": "التاريخ والوقت",
+      "direction": "الاتجاه",
+      "contactName": "اسم جهة الاتصال",
+      "number": "الرقم",
+      "duration": "المدة",
+      "qualification": "التأهيل"
+    },
+    "inbound": "وارد",
+    "outbound": "صادر",
+    "listen": "استماع",
+    "noRecords": "لم يتم العثور على سجلات للفلاتر المحددة.",
+    "pagination": "صفحة {currentPage} من {totalPages} ({totalRecords} سجلات)"
+  },
+  "alerts": {
+    "appDataLoadError": "لا يمكن تحميل بيانات التطبيق.",
+    "saveSuccess": "تم الحفظ بنجاح!",
+    "saveError": "فشل الحفظ.",
+    "confirmDelete": "هل أنت متأكد أنك تريد حذف هذا العنصر؟",
+    "deleteSuccess": "تم الحذف بنجاح!",
+    "deleteError": "فشل الحذف.",
+    "visibilitySettingsUpdated": "تم تحديث إعدادات الظهور.",
+    "smtpSettingsSaved": "تم حفظ إعدادات SMTP. قد تكون إعادة تشغيل الخادم ضرورية.",
+    "appSettingsSaved": "تم حفظ إعدادات التطبيق.",
+    "bulkCreateError": "فشل الإنشاء الجماعي.",
+    "usersGenerated": "تم إنشاء {count} مستخدم بنجاح.",
+    "usersImported": "تم استيراد {count} مستخدم بنجاح.",
+    "contactImportError": "خطأ أثناء استيراد جهات الاتصال.",
+    "passwordUpdateSuccess": "تم تحديث كلمة المرور بنجاح.",
+    "profilePictureUpdateSuccess": "تم تحديث صورة الملف الشخصي.",
+    "updateError": "فشل التحديث.",
+    "agentNeedsHelp": "الوكيل {agentName} بحاجة للمساعدة!",
+    "agentResponded": "رد من {agentName}: \"{message}\"",
+    "messageSentTo": "تم إرسال الرسالة إلى {agentName}",
+    "contactsDeletedSuccess": "تم حذف جهات الاتصال بنجاح.",
+    "contactsDeletedError": "فشل حذف جهات الاتصال.",
+    "contactsRecycledSuccess": "تمت إعادة تعيين جهات الاتصال وهي متاحة مرة أخرى.",
+    "contactsRecycledError": "فشل إعادة تدوير جهات الاتصال."
+  },
+  "header": {
+    "tabs": {
+      "application": "التطبيق",
+      "monitoring": "المراقبة"
+    },
+    "theme": {
+      "system": "سمة النظام",
+      "light": "سمة فاتحة",
+      "dark": "سمة داكنة"
+    },
+    "notifications": {
+      "title": "الإشعارات",
+      "markAllAsRead": "وضع علامة على الكل كمقروء",
+      "noNotifications": "لا توجد إشعارات جديدة.",
+      "needsHelp": "{agentName} ({agentLoginId}) يحتاج إلى مساعدة.",
+      "respond": "الرد",
+      "yourMessage": "رسالتك...",
+      "send": "إرسال"
+    }
   },
   "sidebar": {
     "categories": {
@@ -48,195 +106,377 @@
       "Système": "النظام",
       "Paramètres": "الإعدادات"
     },
-    "profile": "الملف الشخصي",
+    "profile": "ملفي الشخصي",
     "logout": "تسجيل الخروج",
     "collapse": "طي",
     "expand": "توسيع"
   },
-  "header": {
-    "tabs": {
-      "application": "التطبيق",
-      "monitoring": "المراقبة"
-    },
-    "theme": {
-      "system": "النظام",
-      "light": "فاتح",
-      "dark": "داكن"
-    },
-    "notifications": {
-      "title": "الإشعارات",
-      "markAllAsRead": "وضع علامة مقروء على الكل",
-      "noNotifications": "لا توجد إشعارات جديدة.",
-      "needsHelp": "{agentName} ({agentLoginId}) يحتاج إلى مساعدة.",
-      "respond": "رد",
-      "yourMessage": "رسالتك...",
-      "send": "إرسال"
-    }
+  "login": {
+    "title": "تسجيل الدخول",
+    "subtitle": "الرجاء إدخال بيانات الاعتماد الخاصة بك.",
+    "loginIdLabel": "معرف تسجيل الدخول / الامتداد",
+    "button": "تسجيل الدخول",
+    "disabledAccount": "حساب المستخدم هذا معطل.",
+    "invalidCredentials": "اسم المستخدم أو كلمة المرور غير صالحة.",
+    "serverError": "لا يمكن الاتصال بالخادم.",
+    "copyright": "© 2024 شركة الحلول المبسطة",
+    "initializing": "جاري التهيئة..."
   },
   "featureDetail": {
-    "welcome": "مرحبًا بك في مهندس الحلول",
-    "selectFeature": "حدد ميزة من الشريط الجانبي للبدء."
+    "welcome": "أهلاً بك!",
+    "selectFeature": "حدد ميزة من القائمة اليسرى للبدء."
   },
-  "features": {
-    "users": { "title": "المستخدمون", "description": "إدارة حسابات المتعاونين وأدوارهم وأذوناتهم." },
-    "groups": { "title": "المجموعات", "description": "إنشاء مجموعات وكلاء لتبسيط الإدارة وتوجيه المكالمات." },
-    "planning": { "title": "التخطيط", "description": "إدارة الجداول الأسبوعية للوكلاء وأنشطتهم المختلفة." },
-    "outbound": { "title": "الحملات الصادرة", "description": "وحدة مركزية لإنشاء وإدارة حملات الاتصال الصادرة." },
-    "scripts": { "title": "نصوص الوكيل", "description": "محرر مرئي لبناء أدلة مكالمات تفاعلية للوكلاء." },
-    "ivr": { "title": "تدفقات IVR", "description": "محرر مرئي لتصميم مسارات المكالمات الواردة (الاستجابة الصوتية التفاعلية)." },
-    "audio": { "title": "مكتبة الوسائط", "description": "إدارة الملفات الصوتية المستخدمة في IVRs (رسائل الترحيب، موسيقى الانتظار)." },
-    "records": { "title": "التسجيلات", "description": "الاستماع إلى تسجيلات المكالمات وتنزيلها والبحث فيها." },
-    "qualifications": { "title": "مؤهلات الاتصال", "description": "تحديد حالات نتائج المكالمات لإعداد التقارير واستراتيجيات إعادة الاتصال." },
-    "supervision": { "title": "الإشراف في الوقت الحقيقي", "description": "لوحة معلومات لتصور نشاط مركز الاتصال مباشرة." },
-    "reporting": { "title": "التقارير والتحليلات", "description": "استكشاف البيانات التاريخية وإنشاء تقارير الأداء." },
-    "history": { "title": "سجل المكالمات", "description": "سجل مفصل وقابل للتصفية لجميع المكالمات المعالجة." },
-    "sessions": { "title": "جلسات الوكيل", "description": "سجل مفصل لجلسات اتصال الوكلاء." },
-    "trunks": { "title": "خطوط SIP Trunk", "description": "إدارة الاتصالات مع مزودي خدمات الهاتف." },
-    "dids": { "title": "أرقام DID", "description": "إدارة أرقام الهواتف الواردة وتوجيهها." },
-    "sites-config": { "title": "إعداد المواقع", "description": "إدارة المواقع المادية أو المنطقية للتوجيه وتعيين الوكلاء." },
-    "module-settings": { "title": "إعدادات الوحدات", "description": "تمكين أو تعطيل ميزات محددة لأدوار المستخدمين المختلفة." },
-    "languages": { "title": "اللغات والترجمات", "description": "إدارة دعم التطبيق متعدد اللغات.", "simplificationTip": { "title": "معلومات", "content": "هذا القسم للعلم. إدارة الترجمات حاليًا مهمة للمطور تتضمن تحرير ملفات JSON مباشرة." } },
-    "database-client": { "title": "عميل قاعدة البيانات", "description": "التفاعل مباشرة مع قاعدة بيانات PostgreSQL. (للمشرف المتميز فقط)" },
-    "system-connection": { "title": "اتصال النظام", "description": "تكوين الاتصالات بالخدمات الأساسية مثل قاعدة البيانات و Asterisk." },
-    "maintenance": { "title": "الصيانة والنسخ الاحتياطي", "description": "إدارة النسخ الاحتياطي للنظام والاستعادة ومهام الصيانة." },
-    "help": { "title": "مركز المساعدة", "description": "العثور على الوثائق وموارد الدعم." },
-    "api-docs": { "title": "وثائق API", "description": "الوثائق الفنية لواجهة برمجة التطبيقات REST." },
-    "billing": { "title": "الفواتير والاشتراك", "description": "إدارة اشتراكك وطرق الدفع وعرض الفواتير." },
-    "system-settings": { "title": "إعدادات النظام", "description": "الإعدادات العامة للتطبيق، مثل المظهر والبريد الإلكتروني." }
-  },
-  "alerts": {
-    "confirmDelete": "هل أنت متأكد من أنك تريد حذف هذا العنصر؟ هذا الإجراء لا رجعة فيه."
-  },
-  "scriptFeature": {
-    "addScript": "إنشاء نص",
-    "pageCount": "{count, plural, =0 {0 صفحات} one {صفحة واحدة} other {# صفحات}}",
-    "confirmDelete": "هل أنت متأكد أنك تريد حذف هذا النص؟",
-    "usedBy": "مستخدم من قبل:",
-    "deleteDisabledTooltip": "لا يمكن حذف نص معين لحملة."
-  },
-  "ivrManager": {
-    "createFlow": "إنشاء تدفق",
-    "noFlows": "لم يتم إنشاء أي تدفقات IVR حتى الآن."
-  },
-  "groupManager": {
-    "modal": {
-      "titleNew": "مجموعة جديدة",
-      "titleEdit": "تعديل المجموعة",
-      "groupName": "اسم المجموعة",
-      "members": "الأعضاء",
-      "noAgents": "لا يوجد وكلاء متاحون للإضافة."
+  "agentView": {
+    "title": "واجهة الوكيل",
+    "header": {
+      "agentInterface": "واجهة الوكيل",
+      "settings": "الإعدادات",
+      "logout": "تسجيل الخروج"
     },
-    "search": "البحث عن مجموعة...",
-    "create": "إنشاء مجموعة",
-    "headers": {
+    "contact": {
       "name": "الاسم",
-      "count": "عدد الأعضاء"
+      "phone": "الهاتف",
+      "campaign": "الحملة",
+      "noContact": "في انتظار جهة الاتصال التالية..."
     },
-    "noGroups": "لم يتم إنشاء أي مجموعات."
-  },
-  "userManager": {
-    "title": "إدارة المستخدمين",
-    "addUserButton": "إضافة مستخدم",
-    "importButton": "استيراد المستخدمين",
-    "generateButton": "إنشاء مستخدمين",
-    "searchPlaceholder": "البحث بالاسم، معرف الدخول، البريد الإلكتروني...",
-    "headers": {
-      "name": "الاسم",
-      "id": "المعرف",
-      "loginId": "معرف الدخول",
-      "role": "الدور",
-      "status": "الحالة"
+    "script": {
+      "placeholder": "سيتم عرض النص هنا عند تنشيط جهة اتصال."
     },
-    "modal": {
-      "addTitle": "إضافة مستخدم جديد",
-      "editTitle": "تعديل المستخدم",
-      "loginId": "معرف الدخول / الرقم الداخلي",
-      "loginIdHelp": "يجب أن يكون معرفًا رقميًا فريدًا مكونًا من 4 إلى 6 أرقام.",
-      "loginIdExists": "معرف الدخول هذا مستخدم بالفعل.",
-      "emailExists": "عنوان البريد الإلكتروني هذا مستخدم بالفعل.",
-      "lastSuperAdmin": "لا يمكن تغيير دور آخر مشرف متميز.",
-      "generate": "إنشاء",
-      "passwordHelp": "اتركه فارغًا لعدم التغيير",
-      "activeUser": "مستخدم نشط",
-      "site": "الموقع",
-      "noSite": "لا يوجد موقع",
-      "tabs": {
-        "general": "عام",
-        "groups": "المجموعات",
-        "campaigns": "الحملات"
-      },
-      "mobileNumber": "رقم الجوال",
-      "useMobileAsStation": "استخدام الجوال كمحطة عمل",
-      "useMobileAsStationHelp": "إذا تم تمكينه، سيتم إجراء المكالمات إلى رقم جوال الوكيل بدلاً من الهاتف الرقمي."
-    },
-    "generateModal": {
-      "title": "إنشاء مستخدمين بشكل جماعي",
-      "label": "عدد المستخدمين المراد إنشاؤهم (1-99)",
-      "confirm": "إنشاء"
-    },
-    "delete": {
-      "superAdmin": "لا يمكن حذف المشرف المتميز.",
-      "activeUser": "عطّل المستخدم قبل حذفه.",
-      "lastAdmin": "لا يمكن حذف آخر مسؤول."
-    }
-  },
-  "scriptBuilder": {
-    "elements": "العناصر",
-    "palette": {
-      "group": "مجموعة",
-      "label": "عنوان",
-      "text": "نص",
-      "input": "حقل إدخال",
-      "textarea": "مربع نص",
-      "email": "بريد إلكتروني",
-      "phone": "هاتف",
-      "date": "تاريخ",
-      "time": "وقت",
-      "radio": "اختيار فردي",
-      "checkbox": "اختيار متعدد",
-      "dropdown": "قائمة منسدلة",
-      "button": "زر",
-      "history": "السجل",
-      "image": "صورة"
-    },
-    "background": "الخلفية",
-    "preview": "معاينة",
-    "page_of_pages": "صفحة {currentPage}/{totalPages}",
-    "properties": {
-      "blockNameLabel": "اسم الكتلة (مرئي للوكيل)",
-      "technicalName": "الاسم التقني:",
-      "tabs": { "content": "المحتوى", "style": "النمط" },
-      "readOnly": "للقراءة فقط",
-      "action": "الإجراء",
-      "options": "الخيارات",
-      "addOption": "إضافة خيار",
-      "buttonAction": "إجراء الزر"
+    "qualification": {
+      "title": "تأهيل المكالمة",
+      "noQualifs": "لا توجد مؤهلات لهذه الحملة."
     },
     "actions": {
-      "none": "لا شيء",
-      "next": "الصفحة التالية",
-      "previous": "الصفحة السابقة",
-      "navigate": "الانتقال إلى...",
-      "save": "حفظ السجل",
-      "insertContact": "إدراج سجل جديد"
+      "scheduleCallback": "جدولة معاودة الاتصال",
+      "finalize": "إنهاء"
     },
-    "image": {
-      "upload": "تحميل صورة",
-      "invalidType": "نوع ملف غير صالح. يُسمح فقط بملفات PNG و JPG و GIF و SVG.",
-      "tooLarge": "الملف كبير جدًا. الحجم الأقصى هو 1 ميغابايت."
+    "status": "حالة الوكيل",
+    "waitingForCall": "في انتظار مكالمة...",
+    "nextCall": "المكالمة التالية",
+    "searching": "يبحث...",
+    "qualifications": "المؤهلات",
+    "noScript": "هذه الحملة ليس لديها نص مرتبط.",
+    "scriptWillBeHere": "سيتم عرض النص هنا.",
+    "loading": "تحميل واجهة الوكيل...",
+    "selectQualification": "اختر مؤهلاً...",
+    "activeCampaigns": "الحملات النشطة",
+    "noCampaigns": "لا توجد حملات معينة.",
+    "askForHelp": "طلب المساعدة",
+    "helpRequestSent": "تم إرسال طلب المساعدة إلى المشرف.",
+    "myCallbacks": "مكالماتي المعاودة",
+    "noCallbacks": "لا توجد مكالمات معاودة لهذا اليوم.",
+    "supervisorResponse": "رد المشرف",
+    "messages": "الرسائل",
+    "clearAll": "مسح الكل",
+    "kpis": {
+      "title": "المعلومات",
+      "callsHandled": "المكالمات التي تم التعامل معها",
+      "pauseCount": "عدد التوقفات",
+      "totalPauseTime": "إجمالي وقت التوقف",
+      "totalTrainingTime": "إجمالي وقت التدريب",
+      "trainingCount": "عدد التدريبات",
+      "totalConnectedTime": "إجمالي وقت الاتصال"
+    },
+    "pause": "إيقاف مؤقت",
+    "ready": "جاهز",
+    "statuses": {
+      "available": "متاح",
+      "onCall": "في مكالمة",
+      "wrapUp": "بعد المكالمة",
+      "onPause": "في استراحة",
+      "ringing": "يرن",
+      "disconnected": "غير متصل",
+      "onHold": "في الانتظار",
+      "training": "في تدريب"
+    },
+    "feedback": {
+      "activateCampaign": "الرجاء تفعيل حملة لبدء الاتصال.",
+      "noContactAvailable": "لا يوجد اتصال متاح لـ {campaignName}.",
+      "errorFetchingContact": "خطأ أثناء جلب الاتصال.",
+      "mustEndTask": "الرجاء إنهاء مهمتك الحالية قبل تحميل معاودة الاتصال."
+    },
+    "callNumber": "اتصل بـ {phoneName}",
+    "statusManager": {
+      "title": "حالتي",
+      "settings": "تعديل الملف الشخصي"
+    },
+    "respond": "رد",
+    "yourResponsePlaceholder": "ردك...",
+    "tabs": {
+      "script": "النص",
+      "callbacks": "معاودة الاتصال"
+    },
+    "dialpad": {
+      "title": "لوحة الاتصال",
+      "call": "اتصال"
+    },
+    "footer": {
+      "status": "الحالة",
+      "campaign": "الحملة",
+      "noCampaignActive": "لا توجد حملة نشطة",
+      "dial": "اتصال يدوي"
+    },
+    "callControls": {
+      "title": "ضوابط المكالمة",
+      "call": "اتصال",
+      "endCall": "إنهاء المكالمة",
+      "hangup": "تأهيل السجل",
+      "hold": "تعليق",
+      "transfer": "تحويل"
+    },
+    "qualifyFirst": "الرجاء تحديد مؤهل قبل الإنهاء.",
+    "errorQualifying": "خطأ أثناء التأهيل.",
+    "overdue": "متأخر",
+    "extension": "الداخلي: {ext}",
+    "activeQuota": {
+      "title": "الحصة: {field} {operator} {value}"
+    },
+    "notesHistory": "سجل الملاحظات",
+    "noNotes": "لا توجد ملاحظات لهذا الاتصال.",
+    "addNotePlaceholder": "أضف ملاحظة جديدة...",
+    "saveNote": "حفظ الملاحظة"
+  },
+  "campaignDetail": {
+    "backToCampaigns": "العودة إلى الحملات",
+    "associatedScript": "النص المرتبط: {scriptName}",
+    "tabs": {
+      "contacts": "جهات الاتصال ({count})",
+      "dashboard": "لوحة القيادة",
+      "dashboard2": "تحليل مفصل",
+      "settings": "الإعدادات"
+    },
+    "contacts": {
+      "searchPlaceholder": "البحث عن جهة اتصال...",
+      "deleteSelection": "حذف التحديد ({count})",
+      "headers": {
+        "lastName": "اسم العائلة",
+        "firstName": "الاسم الأول",
+        "phone": "الهاتف",
+        "postalCode": "الرمز البريدي",
+        "status": "الحالة",
+        "lastQualif": "آخر تأهيل",
+        "lastNote": "آخر ملاحظة"
+      },
+      "noContacts": "لم يتم العثور على جهات اتصال.",
+      "pagination": "صفحة {currentPage} من {totalPages}"
+    },
+    "dashboard": {
+      "kpis": {
+        "completionRate": "معدل الإنجاز",
+        "contactRate": "معدل الاتصال",
+        "conversionRate": "معدل التحويل",
+        "aht": "متوسط وقت المعالجة"
+      },
+      "fileProgress": {
+        "title": "تقدم الملف",
+        "processed": "تمت المعالجة:",
+        "remaining": "المتبقي:"
+      },
+      "quota": {
+        "title": "تتبع الحصص",
+        "ruleStartsWith": "الحصة: {field} يبدأ بـ \"{value}\"",
+        "ruleEquals": "الحصة: {field} يساوي \"{value}\"",
+        "achieved": "المحقق:"
+      },
+      "charts": {
+        "qualifDistributionTitle": "توزيع المؤهلات",
+        "successByHourTitle": "ساعات النجاح (التحويلات)",
+        "conversionsLabel": "التحويلات"
+      },
+      "tables": {
+        "qualifPerfTitle": "الأداء حسب المؤهل",
+        "agentPerfTitle": "الأداء حسب الوكيل",
+        "headers": {
+          "qualification": "المؤهل",
+          "processedRecords": "السجلات المعالجة",
+          "rate": "المعدل",
+          "agent": "الوكيل",
+          "processedCalls": "المكالمات المعالجة",
+          "conversions": "التحويلات"
+        }
+      }
+    },
+    "settings": {
+      "recycling": {
+        "title": "إعادة تدوير السجلات",
+        "description": "إعادة تعيين حالة جهات الاتصال المؤهلة لجعلها متاحة مرة أخرى للوكلاء.",
+        "headers": {
+          "qualification": "المؤهل",
+          "processedRecords": "السجلات المعالجة",
+          "action": "الإجراء"
+        },
+        "recycleButton": "إعادة تدوير",
+        "recycleButtonTooltip": "إعادة تعيين حالة جميع السجلات بهذا المؤهل.",
+        "notRecyclableTooltip": "هذا المؤهل غير قابل لإعادة التدوير."
+      }
+    },
+    "export": "تصدير",
+    "noDataToExport": "لا توجد بيانات معالجة للتصدير."
+  },
+  "databaseManager": {
+    "attention": "تحذير: الإجراءات التي يتم تنفيذها هنا تعدل قاعدة البيانات مباشرة. استخدم هذه الأداة بحذر شديد. أي فقدان للبيانات لا يمكن التراجع عنه.",
+    "schema": "المخطط",
+    "predefinedQueries": "استعلامات محددة مسبقًا",
+    "queries": {
+      "listUsers": "عرض المستخدمين",
+      "listActiveCampaigns": "عرض الحملات النشطة",
+      "countContactsByCampaign": "عد جهات الاتصال حسب الحملة",
+      "viewLast20Contacts": "عرض آخر 20 جهة اتصال",
+      "listScripts": "عرض النصوص"
+    },
+    "readOnlyMode": "وضع القراءة فقط",
+    "execute": "تنفيذ الاستعلام",
+    "executing": "جار التنفيذ...",
+    "resultsPlaceholder": "ستظهر النتائج هنا.",
+    "resultsCount": "تم إرجاع {count} صف (صفوف)."
+  },
+  "features": {
+    "users": { "title": "المستخدمون" },
+    "groups": { "title": "المجموعات" },
+    "planning": { "title": "الجداول الزمنية" },
+    "outbound": { "title": "الحملات الصادرة" },
+    "scripts": { "title": "نصوص الوكيل" },
+    "ivr": { "title": "تدفقات IVR" },
+    "audio": { "title": "مكتبة الوسائط" },
+    "records": { "title": "التسجيلات" },
+    "qualifications": { "title": "المؤهلات" },
+    "supervision": { "title": "الإشراف" },
+    "reporting": { "title": "التقارير والتحليلات" },
+    "history": { "title": "سجل المكالمات" },
+    "sessions": { "title": "جلسات الوكلاء" },
+    "trunks": { "title": "خطوط SIP" },
+    "dids": { "title": "الأرقام (DIDs)" },
+    "sites-config": { "title": "تكوين الموقع" },
+    "module-settings": { "title": "إدارة الوحدات" },
+    "languages": { "title": "اللغات" },
+    "database-client": { "title": "عميل قاعدة البيانات" },
+    "system-connection": { "title": "اتصال النظام" },
+    "maintenance": { "title": "صيانة" },
+    "help": { "title": "مركز المساعدة" },
+    "api-docs": { "title": "وثائق API" },
+    "billing": { "title": "الفواتير" },
+    "system-settings": { "title": "إعدادات النظام" }
+  },
+  "reporting": {
+    "exportPdf": "تصدير إلى PDF",
+    "inboundCalls": "المكالمات الواردة",
+    "filters": {
+      "dateRange": "نطاق التاريخ",
+      "from": "من",
+      "to": "إلى",
+      "campaign": "الحملة",
+      "agent": "الوكيل",
+      "dateRanges": {
+        "last7days": "آخر 7 أيام",
+        "last30days": "آخر 30 يومًا",
+        "thisMonth": "هذا الشهر"
+      },
+      "allCampaigns": "جميع الحملات",
+      "allAgents": "جميع الوكلاء"
+    },
+    "kpis": {
+      "processedCalls": "المكالمات المعالجة",
+      "totalTalkTime": "إجمالي وقت التحدث",
+      "avgCallDuration": "متوسط مدة المكالمة",
+      "successRate": "معدل النجاح",
+      "occupancyRate": "معدل الإشغال (محاكاة)",
+      "activeAgents": "الوكلاء النشطون",
+      "totalLoginTime": "إجمالي وقت تسجيل الدخول",
+      "avgAdherence": "متوسط الالتزام بالجدول"
+    },
+    "tabs": {
+      "charts": "الرسوم البيانية",
+      "timesheet": "جدول الحضور",
+      "campaign": "حسب الحملة",
+      "agent": "حسب الوكيل",
+      "history": "سجل المكالمات"
+    },
+    "charts": {
+      "dailyVolumeTitle": "حجم المكالمات اليومي",
+      "callCountLabel": "عدد المكالمات",
+      "callsByCampaignTitle": "توزيع المكالمات حسب الحملة",
+      "successByHourTitle": "ساعات النجاح (التحويلات)",
+      "conversionsLabel": "التحويلات",
+      "successByAgentTitle": "معدل النجاح حسب الوكيل",
+      "successRateLabel": "معدل النجاح (%)",
+      "adherenceByAgentTitle": "متوسط الالتزام بالجدول",
+      "avgAdherenceLabel": "متوسط الالتزام (دقيقة)"
+    },
+    "tables": {
+      "campaignPerf": {
+        "title": "الأداء حسب الحملة",
+        "headers": {
+          "campaign": "الحملة",
+          "calls": "المكالمات",
+          "totalDuration": "المدة الإجمالية",
+          "avgDuration": "متوسط المدة",
+          "successRate": "معدل النجاح"
+        }
+      },
+      "agentPerf": {
+        "titleCalls": "الأداء حسب الوكيل (المكالمات)",
+        "titleTimesheet": "الأداء حسب الوكيل (جدول الحضور)",
+        "headers": {
+          "agent": "الوكيل",
+          "calls": "المكالمات",
+          "totalDuration": "المدة الإجمالية",
+          "avgDuration": "متوسط المدة",
+          "successRate": "معدل النجاح",
+          "daysWorked": "أيام العمل",
+          "totalLoginDuration": "إجمالي مدة تسجيل الدخول",
+          "avgAdherence": "متوسط الالتزام"
+        }
+      },
+      "timesheet": {
+        "title": "سجل الحضور (تسجيل الدخول/الخروج)",
+        "headers": {
+          "date": "التاريخ",
+          "agent": "الوكيل",
+          "firstLogin": "أول تسجيل دخول",
+          "lastLogout": "آخر تسجيل خروج",
+          "totalDuration": "المدة الإجمالية",
+          "adherence": "الالتزام"
+        }
+      },
+      "callHistory": {
+        "title": "سجل المكالمات",
+        "headers": {
+          "dateTime": "التاريخ والوقت",
+          "agent": "الوكيل",
+          "campaign": "الحملة",
+          "number": "الرقم",
+          "duration": "المدة",
+          "qualification": "المؤهل"
+        }
+      }
+    },
+    "noCallData": "لا توجد بيانات مكالمات للفلاتر المحددة.",
+    "noSessionData": "لا توجد بيانات جلسة للفلاتر المحددة.",
+    "pdf": {
+      "title": "تقرير التحليلات المفصل",
+      "period": "الفترة من {startDate} إلى {endDate} - تم إنشاؤه في {today}",
+      "kpiTitle": "مؤشرات الأداء الرئيسية (KPIs)",
+      "callKpis": "مؤشرات المكالمات",
+      "value": "القيمة",
+      "timesheetKpis": "مؤشرات جدول الحضور",
+      "detailedAnalysis": "تحليلات مفصلة",
+      "detailedLogs": "سجلات مفصلة"
     }
   },
   "agentPreview": {
-    "dataSaved": "تم حفظ البيانات بنجاح.",
-    "invalidPhone": "يرجى تقديم رقم هاتف صالح لإدراج سجل جديد.",
-    "contactInserted": "تم إدراج جهة اتصال جديدة بنجاح.",
-    "insertError": "خطأ في إدراج جهة الاتصال: {message}",
     "notesHistory": "سجل الملاحظات",
-    "noNotes": "لا توجد ملاحظات لجهة الاتصال هذه.",
-    "addNotePlaceholder": "إضافة ملاحظة جديدة...",
+    "noNotes": "لا توجد ملاحظات لهذا الاتصال.",
+    "addNotePlaceholder": "أضف ملاحظة جديدة...",
     "saveNote": "حفظ الملاحظة",
-    "selectOption": "اختر خيارًا",
+    "dataSaved": "تم حفظ البيانات.",
+    "invalidPhone": "رقم الهاتف غير صالح.",
+    "contactInserted": "تم إدراج جهة الاتصال بنجاح.",
+    "insertError": "خطأ في الإدراج: {message}",
     "unsupportedBlock": "نوع الكتلة غير مدعوم: {type}",
+    "selectOption": "اختر خيارًا",
+    "embedded": {
+      "page": "صفحة:"
+    },
     "modal": {
       "title": "معاينة النص: {scriptName}",
       "currentPage": "الصفحة الحالية: {pageName}",
