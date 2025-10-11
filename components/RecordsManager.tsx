@@ -2,7 +2,8 @@ import React, { useState, useMemo } from 'react';
 import type { Feature, CallHistoryRecord, User, Campaign, Qualification } from '../types.ts';
 import { useStore } from '../src/store/useStore.ts';
 import { useI18n } from '../src/i18n/index.tsx';
-import { PlayIcon, ArrowDownTrayIcon, TrashIcon } from './Icons.tsx';
+import { ArrowDownTrayIcon, TrashIcon } from './Icons.tsx';
+import InlineAudioPlayer from './InlineAudioPlayer.tsx';
 
 const RecordsManager: React.FC<{ feature: Feature }> = ({ feature }) => {
     const { t } = useI18n();
@@ -82,6 +83,7 @@ const RecordsManager: React.FC<{ feature: Feature }> = ({ feature }) => {
                             <th className="px-6 py-3 text-left text-xs font-medium text-slate-500 dark:text-slate-400 uppercase">Campagne</th>
                             <th className="px-6 py-3 text-left text-xs font-medium text-slate-500 dark:text-slate-400 uppercase">Numéro Appelé</th>
                             <th className="px-6 py-3 text-left text-xs font-medium text-slate-500 dark:text-slate-400 uppercase">Durée</th>
+                            <th className="px-6 py-3"></th>
                             <th className="px-6 py-3 text-right text-xs font-medium text-slate-500 dark:text-slate-400 uppercase">Actions</th>
                         </tr></thead>
                         <tbody className="bg-white dark:bg-slate-800 divide-y divide-slate-200 dark:divide-slate-700">
@@ -92,8 +94,10 @@ const RecordsManager: React.FC<{ feature: Feature }> = ({ feature }) => {
                                     <td className="px-6 py-4 whitespace-nowrap text-sm text-slate-500 dark:text-slate-400">{record.campaignId ? findEntityName(record.campaignId, campaigns) : 'Entrant'}</td>
                                     <td className="px-6 py-4 whitespace-nowrap text-sm font-mono text-slate-500 dark:text-slate-400">{record.callerNumber}</td>
                                     <td className="px-6 py-4 whitespace-nowrap text-sm font-mono text-slate-500 dark:text-slate-400">{formatDuration(record.duration)}</td>
+                                    <td className="px-6 py-4">
+                                        <InlineAudioPlayer fileId={record.id} src={`/api/recordings/${record.id}.mp3`} duration={record.duration} />
+                                    </td>
                                     <td className="px-6 py-4 whitespace-nowrap text-right text-sm font-medium space-x-2">
-                                        <button onClick={() => alert("Simulation: Lecture de l'enregistrement.")} className="text-link hover:underline inline-flex items-center"><PlayIcon className="w-4 h-4 mr-1"/>Écouter</button>
                                         <button onClick={() => alert("Simulation: Téléchargement de l'enregistrement.")} className="text-link hover:underline inline-flex items-center"><ArrowDownTrayIcon className="w-4 h-4 mr-1"/>Télécharger</button>
                                         <button onClick={() => alert("Simulation: Suppression de l'enregistrement.")} className="text-red-600 hover:text-red-900 dark:hover:text-red-400 inline-flex items-center"><TrashIcon className="w-4 h-4 mr-1"/>Supprimer</button>
                                     </td>

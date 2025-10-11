@@ -173,6 +173,7 @@ const ReportingDashboard: React.FC<{ feature: Feature }> = ({ feature }) => {
     }, [filteredHistory, qualifications, t]);
 
     const successByAgentData = useMemo(() => {
+// FIX: Added an explicit type for the accumulator in the reduce function to resolve type errors.
         const agentStats = filteredHistory.reduce<Record<string, { name: string; calls: number; successes: number }>>((acc, call) => {
             if (!acc[call.agentId]) {
                 const agent = users.find(u => u.id === call.agentId);
@@ -202,14 +203,15 @@ const ReportingDashboard: React.FC<{ feature: Feature }> = ({ feature }) => {
     }, [filteredHistory, users, t]);
     
     const campaignPerfData = useMemo(() => {
-        const statsByCampaign = filteredHistory.reduce((acc, call) => {
+// FIX: Added an explicit type for the accumulator in the reduce function to resolve type errors.
+        const statsByCampaign = filteredHistory.reduce<Record<string, { id: string; calls: number; totalDuration: number; successes: number }>>((acc, call) => {
             const campaignId = call.campaignId || 'inbound';
             if (!acc[campaignId]) acc[campaignId] = { id: campaignId, calls: 0, totalDuration: 0, successes: 0 };
             acc[campaignId].calls++;
             acc[campaignId].totalDuration += call.duration;
             if (qualifications.find(q => q.id === call.qualificationId)?.type === 'positive') acc[campaignId].successes++;
             return acc;
-        }, {} as Record<string, { id: string; calls: number; totalDuration: number; successes: number }>);
+        }, {});
 
         return Object.values(statsByCampaign).map(stat => ({
             ...stat,
@@ -220,13 +222,14 @@ const ReportingDashboard: React.FC<{ feature: Feature }> = ({ feature }) => {
     }, [filteredHistory, campaigns, qualifications, t]);
 
     const agentPerfDataCalls = useMemo(() => {
-        const statsByAgent = filteredHistory.reduce((acc, call) => {
+// FIX: Added an explicit type for the accumulator in the reduce function to resolve type errors.
+        const statsByAgent = filteredHistory.reduce<Record<string, { agentId: string; calls: number; totalDuration: number; successes: number }>>((acc, call) => {
             if (!acc[call.agentId]) acc[call.agentId] = { agentId: call.agentId, calls: 0, totalDuration: 0, successes: 0 };
             acc[call.agentId].calls++;
             acc[call.agentId].totalDuration += call.duration;
             if (qualifications.find(q => q.id === call.qualificationId)?.type === 'positive') acc[call.agentId].successes++;
             return acc;
-        }, {} as Record<string, { agentId: string; calls: number; totalDuration: number; successes: number }>);
+        }, {});
         return Object.values(statsByAgent).map(stat => ({
             ...stat,
             name: findEntityName(stat.agentId, users),
@@ -239,13 +242,14 @@ const ReportingDashboard: React.FC<{ feature: Feature }> = ({ feature }) => {
         const { start, end } = getDateFilterRange();
         const filteredSessions = agentSessions.filter(s => new Date(s.loginTime) <= end && (!s.logoutTime || new Date(s.logoutTime) >= start));
 
-        const sessionsByAgentDay = filteredSessions.reduce((acc, session) => {
+// FIX: Added an explicit type for the accumulator in the reduce function to resolve type errors.
+        const sessionsByAgentDay = filteredSessions.reduce<Record<string, { agentId: string; date: Date; sessions: AgentSession[] }>>((acc, session) => {
             if (filters.agentId !== 'all' && session.agentId !== filters.agentId) return acc;
             const key = `${session.agentId}-${new Date(session.loginTime).toDateString()}`;
             if (!acc[key]) acc[key] = { agentId: session.agentId, date: new Date(session.loginTime), sessions: [] };
             acc[key].sessions.push(session);
             return acc;
-        }, {} as Record<string, { agentId: string; date: Date; sessions: AgentSession[] }>);
+        }, {});
 
         return Object.values(sessionsByAgentDay).map(group => {
             const firstLogin = new Date(Math.min(...group.sessions.map(s => new Date(s.loginTime).getTime())));

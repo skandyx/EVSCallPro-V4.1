@@ -24,6 +24,7 @@ interface AppState {
     error: string | null;
     notifications: any[]; // Define a proper type for notifications
     isPublicConfigLoaded: boolean;
+    playingFileId: string | null;
 
     // Static & Semi-Static Data
     users: User[];
@@ -67,6 +68,7 @@ interface AppState {
     setTheme: (theme: Theme) => void;
     setAppSettings: (settings: SystemAppSettings) => void;
     setPublicConfigLoaded: (isLoaded: boolean) => void;
+    setPlayingFileId: (fileId: string | null) => void;
     handleWsEvent: (event: any) => void;
     
     // CRUD Actions
@@ -112,6 +114,7 @@ export const useStore = create<AppState>()(
                 error: null,
                 notifications: [],
                 isPublicConfigLoaded: false,
+                playingFileId: null,
                 // Data collections
                 users: [], userGroups: [], savedScripts: [], campaigns: [], qualifications: [], qualificationGroups: [],
                 ivrFlows: [], audioFiles: [], trunks: [], dids: [], sites: [], activityTypes: [], personalCallbacks: [],
@@ -126,6 +129,7 @@ export const useStore = create<AppState>()(
                 
                 setAppSettings: (settings) => set({ appSettings: settings }),
                 setPublicConfigLoaded: (isLoaded) => set({ isPublicConfigLoaded: isLoaded }),
+                setPlayingFileId: (fileId) => set({ playingFileId: fileId }),
 
                 login: async ({ user, token }) => {
                     set({ currentUser: user, token, isLoading: true });
@@ -248,7 +252,9 @@ export const useStore = create<AppState>()(
                                 }
                                 // Keep the currently logged-in user object in sync
                                 if (state.currentUser && state.currentUser.id === payload.id) {
-                                    state.currentUser = { ...state.currentUser, ...(payload as User) };
+// FIX: Using Object.assign within an immer producer is safer for merging objects
+// of type 'any' or 'unknown' than using the spread syntax, which can cause type errors.
+                                    Object.assign(state.currentUser, payload);
                                 }
                                 break;
                             }

@@ -1,10 +1,11 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import type { Feature, AudioFile } from '../types.ts';
 import { useStore } from '../src/store/useStore.ts';
 import { useI18n } from '../src/i18n/index.tsx';
-import { PlusIcon, EditIcon, TrashIcon, PlayIcon, SpeakerWaveIcon } from './Icons.tsx';
+import { PlusIcon, EditIcon, TrashIcon, SpeakerWaveIcon } from './Icons.tsx';
 import AudioFileModal from './AudioFileModal.tsx';
 import apiClient from '../src/lib/axios.ts';
+import InlineAudioPlayer from './InlineAudioPlayer.tsx';
 
 const AudioManager: React.FC<{ feature: Feature }> = ({ feature }) => {
     const { t } = useI18n();
@@ -16,15 +17,6 @@ const AudioManager: React.FC<{ feature: Feature }> = ({ feature }) => {
 
     const [isModalOpen, setIsModalOpen] = useState(false);
     const [editingFile, setEditingFile] = useState<Partial<AudioFile> | null>(null);
-    const [playingFile, setPlayingFile] = useState<AudioFile | null>(null);
-    const audioRef = React.useRef<HTMLAudioElement>(null);
-
-    useEffect(() => {
-        if (playingFile && audioRef.current) {
-            audioRef.current.src = `/api/media/${playingFile.fileName}`;
-            audioRef.current.play().catch(e => console.error("Audio playback failed:", e));
-        }
-    }, [playingFile]);
 
     const handleAddNew = () => {
         setEditingFile(null);
@@ -89,7 +81,6 @@ const AudioManager: React.FC<{ feature: Feature }> = ({ feature }) => {
     return (
         <div className="space-y-8">
             {isModalOpen && <AudioFileModal file={editingFile} onSave={handleSave} onClose={() => setIsModalOpen(false)} />}
-            <audio ref={audioRef} onEnded={() => setPlayingFile(null)} />
             <header>
                 <h1 className="text-4xl font-bold text-slate-900 dark:text-slate-100 tracking-tight">{t(feature.titleKey)}</h1>
                 <p className="mt-2 text-lg text-slate-600 dark:text-slate-400">{t(feature.descriptionKey)}</p>
@@ -113,6 +104,7 @@ const AudioManager: React.FC<{ feature: Feature }> = ({ feature }) => {
                                 <th className="px-6 py-3 text-left text-xs font-medium text-slate-500 dark:text-slate-400 uppercase">Durée</th>
                                 <th className="px-6 py-3 text-left text-xs font-medium text-slate-500 dark:text-slate-400 uppercase">Taille</th>
                                 <th className="px-6 py-3 text-left text-xs font-medium text-slate-500 dark:text-slate-400 uppercase">Date d'ajout</th>
+                                <th className="px-6 py-3"></th>
                                 <th className="px-6 py-3 text-right text-xs font-medium text-slate-500 dark:text-slate-400 uppercase">Actions</th>
                             </tr>
                         </thead>
@@ -123,8 +115,10 @@ const AudioManager: React.FC<{ feature: Feature }> = ({ feature }) => {
                                     <td className="px-6 py-4 whitespace-nowrap text-sm text-slate-500 dark:text-slate-400 font-mono">{formatDuration(file.duration)}</td>
                                     <td className="px-6 py-4 whitespace-nowrap text-sm text-slate-500 dark:text-slate-400">{formatBytes(file.size)}</td>
                                     <td className="px-6 py-4 whitespace-nowrap text-sm text-slate-500 dark:text-slate-400">{new Date(file.uploadDate).toLocaleDateString('fr-FR')}</td>
+                                    <td className="px-6 py-4">
+                                        <InlineAudioPlayer fileId={file.id} src={`/api/media/${file.fileName}`} duration={file.duration} />
+                                    </td>
                                     <td className="px-6 py-4 whitespace-nowrap text-right text-sm font-medium space-x-2">
-                                        <button onClick={() => setPlayingFile(file)} className="text-link hover:underline inline-flex items-center"><PlayIcon className="w-4 h-4 mr-1"/>Écouter</button>
                                         <button onClick={() => handleEdit(file)} className="text-link hover:underline inline-flex items-center"><EditIcon className="w-4 h-4 mr-1"/>{t('common.edit')}</button>
                                         <button onClick={() => handleDelete(file.id)} className="text-red-600 hover:text-red-900 dark:hover:text-red-400 inline-flex items-center"><TrashIcon className="w-4 h-4 mr-1"/>{t('common.delete')}</button>
                                     </td>
