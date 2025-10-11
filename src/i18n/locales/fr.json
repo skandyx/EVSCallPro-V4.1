@@ -1,79 +1,57 @@
+
 {
   "common": {
-    "loading": "Chargement...",
     "save": "Enregistrer",
-    "cancel": "Annuler",
-    "close": "Fermer",
     "edit": "Modifier",
     "delete": "Supprimer",
-    "duplicate": "Dupliquer",
+    "close": "Fermer",
+    "cancel": "Annuler",
+    "previous": "Précédent",
+    "next": "Suivant",
+    "active": "Actif",
+    "inactive": "Inactif",
+    "all": "Tous",
+    "loading": "Chargement",
+    "none": "Aucun",
     "name": "Nom",
     "description": "Description",
-    "status": "Statut",
     "actions": "Actions",
-    "password": "Mot de passe",
     "firstName": "Prénom",
     "lastName": "Nom",
     "email": "Email",
+    "password": "Mot de passe",
     "role": "Rôle",
-    "active": "Actif",
-    "inactive": "Inactif",
-    "search": "Rechercher...",
-    "all": "Tous",
-    "none": "Aucun",
-    "previous": "Précédent",
-    "next": "Suivant",
-    "send": "Envoyer",
-    "date": "Date",
+    "campaign": "Campagne",
     "agent": "Agent",
-    "campaign": "Campagne"
+    "send": "Envoyer",
+    "duplicate": "Dupliquer"
   },
-  "history": {
-    "filters": {
-      "searchTerm": "Recherche",
-      "searchPlaceholder": "Numéro, nom...",
-      "startDate": "Date de début",
-      "endDate": "Date de fin",
-      "inbound": "Entrant / Aucun"
-    },
-    "headers": {
-      "dateTime": "Date & Heure",
-      "direction": "Sens",
-      "contactName": "Nom du Contact",
-      "number": "Numéro",
-      "duration": "Durée",
-      "qualification": "Qualification"
-    },
-    "inbound": "Entrant",
-    "outbound": "Sortant",
-    "listen": "Écouter",
-    "noRecords": "Aucun enregistrement trouvé pour les filtres sélectionnés.",
-    "pagination": "Page {currentPage} sur {totalPages} ({totalRecords} enregistrements)"
+  "login": {
+    "title": "Connectez-vous à votre compte",
+    "subtitle": "Bon retour ! Veuillez saisir vos informations.",
+    "loginIdLabel": "Identifiant / Poste",
+    "button": "Se connecter",
+    "initializing": "Initialisation...",
+    "invalidCredentials": "Identifiants invalides. Veuillez vérifier votre identifiant et votre mot de passe.",
+    "disabledAccount": "Votre compte est désactivé. Veuillez contacter un administrateur.",
+    "serverError": "Une erreur serveur est survenue. Veuillez réessayer plus tard.",
+    "copyright": "© EVS Call Pro. Tous droits réservés."
   },
-  "alerts": {
-    "appDataLoadError": "Impossible de charger les données de l'application.",
-    "saveSuccess": "Enregistrement réussi !",
-    "saveError": "Échec de l'enregistrement.",
-    "confirmDelete": "Êtes-vous sûr de vouloir supprimer cet élément ?",
-    "deleteSuccess": "Suppression réussie !",
-    "deleteError": "Échec de la suppression.",
-    "visibilitySettingsUpdated": "Paramètres de visibilité mis à jour.",
-    "smtpSettingsSaved": "Paramètres SMTP enregistrés. Un redémarrage du serveur peut être nécessaire.",
-    "appSettingsSaved": "Paramètres de l'application enregistrés.",
-    "bulkCreateError": "Échec de la création en masse.",
-    "usersGenerated": "{count} utilisateurs générés avec succès.",
-    "usersImported": "{count} utilisateurs importés avec succès.",
-    "contactImportError": "Erreur lors de l'importation des contacts.",
-    "passwordUpdateSuccess": "Mot de passe mis à jour avec succès.",
-    "profilePictureUpdateSuccess": "Photo de profil mise à jour.",
-    "updateError": "Échec de la mise à jour.",
-    "agentNeedsHelp": "L'agent {agentName} demande de l'aide !",
-    "agentResponded": "Réponse de {agentName}: \"{message}\"",
-    "messageSentTo": "Message envoyé à {agentName}",
-    "contactsDeletedSuccess": "Contacts supprimés avec succès.",
-    "contactsDeletedError": "Échec de la suppression des contacts.",
-    "contactsRecycledSuccess": "Les contacts ont été réinitialisés et sont de nouveau disponibles.",
-    "contactsRecycledError": "Échec du recyclage des contacts."
+  "sidebar": {
+    "categories": {
+      "Agent": "Agent",
+      "Outbound": "Sortant",
+      "Inbound": "Entrant",
+      "Sound": "Son",
+      "Configuration": "Configuration",
+      "Supervision_Reporting": "Supervision & Rapports",
+      "Système": "Système",
+      "Paramètres": "Paramètres"
+    },
+    "profile": "Profil",
+    "logout": "Déconnexion",
+    "collapse": "Réduire",
+    "expand": "Agrandir"
   },
   "header": {
     "tabs": {
@@ -81,369 +59,766 @@
       "monitoring": "Monitoring"
     },
     "theme": {
-      "system": "Thème du système",
-      "light": "Thème clair",
-      "dark": "Thème sombre"
+      "system": "Système",
+      "light": "Clair",
+      "dark": "Sombre"
     },
     "notifications": {
       "title": "Notifications",
-      "markAllAsRead": "Tout marquer comme lu",
+      "markAllAsRead": "Marquer comme lu",
       "noNotifications": "Aucune nouvelle notification.",
-      "needsHelp": "{agentName} ({agentLoginId}) a besoin d'aide.",
+      "needsHelp": "{agentName} ({agentLoginId}) demande de l'aide.",
       "respond": "Répondre",
       "yourMessage": "Votre message...",
       "send": "Envoyer"
     }
   },
-  "sidebar": {
-    "categories": {
-      "Agent": "Agent",
-      "Outbound": "Sortant",
-      "Inbound": "Entrant",
-      "Sound": "Audio",
-      "Configuration": "Configuration",
-      "Supervision_Reporting": "Supervision & Reporting",
-      "Système": "Système",
-      "Paramètres": "Paramètres"
-    },
-    "profile": "Mon Profil",
-    "logout": "Déconnexion",
-    "collapse": "Réduire",
-    "expand": "Agrandir"
-  },
-  "login": {
-    "title": "Connexion",
-    "subtitle": "Veuillez entrer vos identifiants.",
-    "loginIdLabel": "Identifiant / Extension",
-    "button": "Entrer",
-    "disabledAccount": "Ce compte utilisateur est désactivé.",
-    "invalidCredentials": "Identifiant ou mot de passe incorrect.",
-    "serverError": "Erreur de connexion au serveur.",
-    "copyright": "© 2024 Solution Simplifiée Inc.",
-    "initializing": "Initialisation..."
-  },
   "featureDetail": {
-    "welcome": "Bienvenue !",
-    "selectFeature": "Sélectionnez une fonctionnalité dans le menu de gauche pour commencer."
+    "welcome": "Bienvenue dans l'Architecte de Solutions",
+    "selectFeature": "Sélectionnez une fonctionnalité dans le menu pour commencer."
   },
-  "agentView": {
-    "title": "Interface Agent",
-    "header": {
-      "agentInterface": "Interface Agent",
-      "settings": "Paramètres",
-      "logout": "Déconnexion"
+  "features": {
+    "users": {
+      "title": "Utilisateurs",
+      "description": "Gérez les comptes des collaborateurs, leurs rôles et leurs permissions.",
+      "userJourney": {
+        "title": "Parcours Utilisateur : Créer un Nouvel Agent",
+        "steps": [
+          "Naviguez vers la section 'Utilisateurs'.",
+          "Cliquez sur 'Créer un utilisateur'.",
+          "Remplissez les informations requises (nom, identifiant, rôle, etc.).",
+          "Assignez l'utilisateur aux campagnes et groupes pertinents.",
+          "Enregistrez le nouvel utilisateur."
+        ]
+      },
+      "specs": {
+        "title": "Spécifications Techniques",
+        "points": [
+          "Les utilisateurs sont stockés dans la table 'users'.",
+          "Les mots de passe doivent être hachés avec un algorithme fort (ex: bcrypt).",
+          "Les rôles ('Agent', 'Superviseur', 'Administrateur', 'SuperAdmin') définissent les niveaux d'accès.",
+          "L'identifiant de connexion doit être unique dans tout le système."
+        ]
+      },
+      "simplificationTip": {
+        "title": "Astuce de Simplification",
+        "content": "Pour les petites équipes, envisagez d'utiliser uniquement les rôles 'Agent' et 'Administrateur' pour simplifier la gestion des permissions."
+      }
     },
-    "contact": {
-      "name": "NOM",
-      "phone": "TÉLÉPHONE",
-      "campaign": "CAMPAGNE",
-      "noContact": "En attente du prochain contact..."
+    "groups": {
+      "title": "Groupes",
+      "description": "Créez des groupes d'agents pour une gestion et un routage d'appels simplifiés.",
+      "userJourney": {
+        "title": "Parcours Utilisateur : Créer un Groupe",
+        "steps": [
+          "Naviguez vers la section 'Groupes'.",
+          "Cliquez sur 'Créer un groupe'.",
+          "Donnez un nom au groupe.",
+          "Sélectionnez les agents qui seront membres de ce groupe.",
+          "Enregistrez le groupe."
+        ]
+      },
+      "specs": {
+        "title": "Spécifications Techniques",
+        "points": [
+          "Les groupes sont stockés dans la table 'user_groups'.",
+          "Une table de jonction 'user_group_members' lie les utilisateurs aux groupes (plusieurs-à-plusieurs).",
+          "Les groupes peuvent être utilisés pour le routage d'appels et le filtrage dans les rapports."
+        ]
+      },
+      "simplificationTip": {
+        "title": "Astuce de Simplification",
+        "content": "Commencez avec des groupes larges (ex: 'Ventes', 'Support') et affinez-les au fur et à mesure que votre équipe grandit et se spécialise."
+      }
     },
-    "script": {
-      "placeholder": "Le script s'affichera ici lorsqu'un contact sera actif."
+    "planning": {
+      "title": "Plannings",
+      "description": "Gérez les plannings hebdomadaires des agents et leurs différentes activités.",
+      "userJourney": {
+        "title": "Parcours Utilisateur : Planifier la Semaine d'un Agent",
+        "steps": [
+          "Naviguez vers la section 'Plannings'.",
+          "Sélectionnez une vue par agent ou par groupe.",
+          "Cliquez et glissez sur le calendrier pour créer un nouvel événement.",
+          "Sélectionnez le type d'activité (ex: 'Disponible', 'Pause', 'Formation').",
+          "Ajustez les heures de début et de fin.",
+          "Enregistrez l'événement."
+        ]
+      },
+      "specs": {
+        "title": "Spécifications Techniques",
+        "points": [
+          "Les événements sont stockés dans la table 'planning_events'.",
+          "Supporte les événements récurrents via une chaîne RRULE.",
+          "Les types d'activités sont configurables dans la table 'activity_types'.",
+          "Le système peut changer automatiquement le statut d'un agent en fonction du planning."
+        ]
+      },
+      "simplificationTip": {
+        "title": "Astuce de Simplification",
+        "content": "Utilisez les événements récurrents pour les heures de travail standard et ajoutez des événements spécifiques pour les exceptions comme les formations ou les réunions."
+      }
     },
-    "qualification": {
-      "title": "Qualification de l'appel",
-      "noQualifs": "Aucune qualification pour cette campagne."
+    "outbound": {
+      "title": "Campagnes Sortantes",
+      "description": "Module central pour la création et la gestion des campagnes d'appels sortants.",
+      "userJourney": {
+        "title": "Parcours Utilisateur : Lancer une Campagne",
+        "steps": [
+          "Créez d'abord un Script d'agent et un Groupe de qualifications.",
+          "Naviguez vers 'Campagnes Sortantes' et cliquez sur 'Créer une campagne'.",
+          "Remplissez les détails principaux (nom, mode de numérotation, etc.) et assignez le script et le groupe de qualifications.",
+          "Assignez des agents à la campagne.",
+          "Allez dans la vue détaillée de la campagne et importez un fichier de contacts.",
+          "Faites correspondre les colonnes du fichier aux champs du système.",
+          "Activez la campagne."
+        ]
+      },
+      "specs": {
+        "title": "Spécifications Techniques",
+        "points": [
+          "Les paramètres des campagnes sont stockés dans la table 'campaigns'.",
+          "Les contacts sont stockés dans la table 'contacts' avec un 'campaign_id'.",
+          "Les modes de numérotation (Prédictif, Progressif, Manuel) sont gérés par la logique backend.",
+          "L'import de contacts supporte CSV et XLSX avec dédoublonnage."
+        ]
+      },
+      "simplificationTip": {
+        "title": "Astuce de Simplification",
+        "content": "Commencez avec une campagne en mode 'Manuel'. C'est plus simple à configurer et idéal pour tester votre script et votre fichier de contacts avant de passer à la numérotation automatisée."
+      }
     },
-    "actions": {
-      "scheduleCallback": "Planifier un rappel",
-      "finalize": "Finaliser & Terminer"
+    "scripts": {
+      "title": "Scripts d'agent",
+      "description": "Éditeur visuel pour construire des guides d'appel interactifs pour les agents.",
+      "userJourney": {
+        "title": "Parcours Utilisateur : Concevoir un Script",
+        "steps": [
+          "Naviguez vers 'Scripts d'agent' et cliquez sur 'Créer un script'.",
+          "Donnez un nom au script.",
+          "Glissez et déposez des éléments de la palette sur le canevas.",
+          "Sélectionnez un élément pour configurer ses propriétés (nom, contenu, style).",
+          "Utilisez des boutons avec des actions 'Naviguer' pour lier plusieurs pages.",
+          "Enregistrez le script."
+        ]
+      },
+      "specs": {
+        "title": "Spécifications Techniques",
+        "points": [
+          "Les scripts sont stockés en tant qu'objet JSONB dans la table 'scripts'.",
+          "La structure inclut des pages et des blocs avec des coordonnées, des dimensions et du contenu.",
+          "Les champs personnalisés créés dans le script sont stockés dans la colonne JSONB 'custom_fields' de la table 'contacts'.",
+          "La Vue Agent rend cette structure JSON en un formulaire interactif."
+        ]
+      },
+      "simplificationTip": {
+        "title": "Astuce de Simplification",
+        "content": "Gardez les scripts simples et ciblés. Un script de 1-2 pages est souvent plus efficace qu'un script complexe. Utilisez l'élément 'Texte' pour le guidage et les éléments 'Saisie' uniquement pour les données qui doivent être collectées."
+      }
     },
-    "status": "État de l'Agent",
-    "waitingForCall": "En attente d'un appel...",
-    "nextCall": "Prochain Appel",
-    "searching": "Recherche...",
-    "qualifications": "Qualifications",
-    "noScript": "Cette campagne n'a pas de script associé.",
-    "scriptWillBeHere": "Le script s'affichera ici.",
-    "loading": "Chargement de l'interface agent...",
-    "selectQualification": "Sélectionner une qualification...",
-    "activeCampaigns": "Campagnes Actives",
-    "noCampaigns": "Aucune campagne assignée.",
-    "askForHelp": "Demander de l'aide",
-    "helpRequestSent": "Demande d'aide envoyée au superviseur.",
-    "myCallbacks": "Mes Rappels Personnels",
-    "noCallbacks": "Aucun rappel pour ce jour.",
-    "supervisorResponse": "Réponse du Superviseur",
-    "messages": "Messages",
-    "clearAll": "Tout effacer",
-    "kpis": {
-      "title": "Informations",
-      "callsHandled": "Appels Traités",
-      "pauseCount": "Nb Pauses",
-      "totalPauseTime": "Temps Total en Pause",
-      "totalTrainingTime": "Temps Total en Formation",
-      "trainingCount": "Nb Formations",
-      "totalConnectedTime": "Temps Total Connecté"
+    "ivr": {
+      "title": "Flux SVI",
+      "description": "Éditeur visuel pour concevoir les parcours d'appels entrants (Serveur Vocal Interactif).",
+      "userJourney": {
+        "title": "Parcours Utilisateur : Créer un SVI d'Accueil",
+        "steps": [
+          "Naviguez vers 'Flux SVI' et cliquez sur 'Créer un flux'.",
+          "Donnez un nom au flux (ex: 'Accueil Principal').",
+          "Glissez un noeud 'Média' pour jouer un message de bienvenue.",
+          "Connectez le noeud 'Début' au noeud 'Média'.",
+          "Glissez un noeud 'Menu' pour les options (ex: 'Tapez 1 pour les Ventes, 2 pour le Support').",
+          "Connectez le noeud 'Média' au noeud 'Menu'.",
+          "Glissez des noeuds 'Transfert' et connectez-les aux options du menu.",
+          "Enregistrez le flux."
+        ]
+      },
+      "specs": {
+        "title": "Spécifications Techniques",
+        "points": [
+          "Les flux SVI sont stockés en JSONB dans la table 'ivr_flows', contenant les noeuds et les connexions.",
+          "Le script AGI backend interprète ce JSON pour exécuter des commandes dans Asterisk.",
+          "Les noeuds Calendrier permettent un routage basé sur le temps (heures d'ouverture/fermeture)."
+        ]
+      },
+      "simplificationTip": {
+        "title": "Astuce de Simplification",
+        "content": "Pour une configuration simple, créez un flux qui joue un message de bienvenue (noeud 'Média') puis transfère directement l'appel (noeud 'Transfert') à un groupe d'agents, sans passer par un menu complexe."
+      }
     },
-    "pause": "Pause",
-    "ready": "Prêt",
-    "statuses": {
-      "available": "Disponible",
-      "onCall": "En Appel",
-      "wrapUp": "En Post-Appel",
-      "onPause": "En Pause",
-      "ringing": "Sonnerie",
-      "disconnected": "Déconnecté",
-      "onHold": "Mise en attente",
-      "training": "Formation"
+    "audio": {
+      "title": "Bibliothèque Média",
+      "description": "Gérez les fichiers audio utilisés dans les SVI (messages d'accueil, musiques d'attente).",
+      "userJourney": {
+        "title": "Parcours Utilisateur : Ajouter un Message d'Accueil",
+        "steps": [
+          "Naviguez vers la 'Bibliothèque Média'.",
+          "Cliquez sur 'Téléverser un Fichier'.",
+          "Sélectionnez un fichier audio (MP3 ou WAV) depuis votre ordinateur.",
+          "Donnez-lui un nom descriptif (ex: 'Message_Bienvenue_Principal').",
+          "Enregistrez le fichier.",
+          "Le fichier est maintenant disponible pour être sélectionné dans les noeuds 'Média' de vos flux SVI."
+        ]
+      },
+      "specs": {
+        "title": "Spécifications Techniques",
+        "points": [
+          "Les métadonnées sont stockées dans la table 'audio_files'.",
+          "Les fichiers physiques sont stockés sur le système de fichiers du serveur.",
+          "Le backend doit convertir les fichiers téléversés en un format compatible avec Asterisk (ex: .wav, 8kHz, 16-bit mono).",
+          "Les fichiers sont servis à Asterisk via un chemin local."
+        ]
+      },
+      "simplificationTip": {
+        "title": "Astuce de Simplification",
+        "content": "Utilisez une convention de nommage cohérente pour vos fichiers audio (ex: 'SVI_Bienvenue', 'Musique_Attente_Generique') pour les retrouver facilement lors de la construction de vos flux."
+      }
     },
-    "feedback": {
-      "activateCampaign": "Veuillez activer une campagne pour commencer à appeler.",
-      "noContactAvailable": "Aucun contact disponible pour {campaignName}.",
-      "errorFetchingContact": "Erreur lors de la recherche de contact.",
-      "mustEndTask": "Veuillez terminer votre tâche actuelle avant de charger un rappel."
+    "records": {
+      "title": "Enregistrements",
+      "description": "Écoutez, téléchargez et recherchez les enregistrements d'appels.",
+      "userJourney": {
+        "title": "Parcours Utilisateur : Trouver un Enregistrement d'Appel",
+        "steps": [
+          "Naviguez vers la section 'Enregistrements'.",
+          "Utilisez les filtres pour rechercher par date, agent ou campagne.",
+          "Trouvez l'appel désiré dans la liste.",
+          "Cliquez sur le bouton de lecture pour écouter l'enregistrement directement dans le navigateur.",
+          "Cliquez sur 'Télécharger' pour sauvegarder le fichier.",
+          "Cliquez sur 'Supprimer' pour effacer définitivement l'enregistrement."
+        ]
+      },
+      "specs": {
+        "title": "Spécifications Techniques",
+        "points": [
+          "L'enregistrement des appels est activé par campagne.",
+          "Asterisk sauvegarde les enregistrements dans un répertoire spécifique sur le serveur.",
+          "Le nom de fichier de l'enregistrement doit être lié à l'ID unique de l'appel dans la table 'call_history'.",
+          "Le backend fournit un point d'accès sécurisé pour streamer ou télécharger ces fichiers."
+        ]
+      },
+      "simplificationTip": {
+        "title": "Astuce de Simplification",
+        "content": "Soyez attentif à l'espace de stockage. Mettez en place une politique de rétention des données pour supprimer automatiquement les anciens enregistrements qui ne sont plus nécessaires pour des raisons de qualité ou légales."
+      }
     },
-    "callNumber": "Appeler {phoneName}",
-    "statusManager": {
-      "title": "Mon Statut",
-      "settings": "Modifier le profil"
+    "qualifications": {
+      "title": "Qualifications d'appel",
+      "description": "Définissez les statuts de fin d'appel pour le reporting et les stratégies de rappel.",
+      "userJourney": {
+        "title": "Parcours Utilisateur : Ajouter une Qualification 'Vente'",
+        "steps": [
+          "Naviguez vers 'Qualifications d'appel'.",
+          "Créez un nouveau groupe, ex: 'Campagne de Ventes'.",
+          "Avec le groupe sélectionné, cliquez sur 'Ajouter une qualification'.",
+          "Entrez un code (ex: 1), une description ('Vente Réalisée'), et définissez le type sur 'Positif'.",
+          "Enregistrez la qualification.",
+          "Assignez le groupe 'Campagne de Ventes' aux paramètres de votre campagne."
+        ]
+      },
+      "specs": {
+        "title": "Spécifications Techniques",
+        "points": [
+          "Les qualifications sont stockées dans la table 'qualifications'.",
+          "Elles peuvent être groupées via la table 'qualification_groups'.",
+          "Les qualifications 'is_standard' sont globales au système et ne peuvent pas être supprimées.",
+          "Le 'type' (positif, neutre, négatif) est utilisé pour calculer les taux de conversion."
+        ]
+      },
+      "simplificationTip": {
+        "title": "Astuce de Simplification",
+        "content": "Commencez avec un ensemble de qualifications petit et clair. Trop de choix peut embrouiller les agents et diluer vos rapports. Vous pouvez toujours en ajouter plus tard."
+      }
     },
-    "respond": "Répondre",
-    "yourResponsePlaceholder": "Votre réponse...",
-    "tabs": {
-      "script": "Script",
-      "callbacks": "Rappels"
+    "supervision": {
+      "title": "Supervision en Temps Réel",
+      "description": "Tableau de bord pour visualiser l'activité du centre de contact en direct.",
+      "userJourney": {
+        "title": "Parcours Utilisateur : Superviser l'Équipe",
+        "steps": [
+          "Naviguez vers 'Supervision'.",
+          "D'un coup d'oeil, visualisez les KPIs principaux (agents prêts, en appel, etc.).",
+          "Passez à l'onglet 'Agents' pour voir le statut de chaque agent.",
+          "Pour un agent en appel, cliquez sur l'icône 'Écouter' pour monitorer la conversation.",
+          "Si nécessaire, cliquez sur 'Coach' pour parler uniquement à l'agent, ou 'Intervention' pour rejoindre la conversation.",
+          "Passez à l'onglet 'Campagnes' pour voir la progression en temps réel de chaque campagne active."
+        ]
+      },
+      "specs": {
+        "title": "Spécifications Techniques",
+        "points": [
+          "Le tableau de bord est alimenté par une connexion WebSocket.",
+          "Le 'amiListener' du backend pousse les événements (statut agent, nouveaux appels) au frontend en temps réel.",
+          "Les actions du superviseur (écoute, intervention) envoient des commandes au backend, qui les exécute via l'AMI d'Asterisk.",
+          "Les données sont agrégées dans le store du frontend (`useStore`) et ne nécessitent pas d'interrogation constante de l'API."
+        ]
+      },
+      "simplificationTip": {
+        "title": "Astuce de Simplification",
+        "content": "Concentrez-vous d'abord sur les KPIs principaux. Le tableau des agents est très utile pour identifier les agents qui sont dans un état inhabituel depuis trop longtemps (ex: post-appel ou pause prolongée)."
+      }
     },
-    "dialpad": {
-      "title": "Clavier de numérotation",
-      "call": "Appeler"
+    "reporting": {
+      "title": "Rapports & Analytiques",
+      "description": "Explorez les données historiques et générez des rapports de performance.",
+      "userJourney": {
+        "title": "Parcours Utilisateur : Créer un Rapport Hebdomadaire",
+        "steps": [
+          "Naviguez vers 'Rapports & Analytiques'.",
+          "Dans les filtres, sélectionnez la plage de dates désirée (ex: '7 derniers jours').",
+          "Optionnellement, filtrez par une campagne ou un agent spécifique.",
+          "Analysez les KPIs et les graphiques qui sont automatiquement mis à jour.",
+          "Passez entre les différents onglets ('Campagne', 'Agent', 'Historique') pour obtenir des tableaux détaillés.",
+          "Cliquez sur 'Exporter en PDF' pour générer un rapport complet."
+        ]
+      },
+      "specs": {
+        "title": "Spécifications Techniques",
+        "points": [
+          "Toutes les données sont extraites des tables 'call_history' et 'agent_sessions'.",
+          "Les calculs (moyennes, taux) sont effectués dans le frontend sur la base des données filtrées.",
+          "Les graphiques sont rendus en utilisant Chart.js.",
+          "L'export PDF est fait côté client en utilisant jsPDF et jsPDF-AutoTable."
+        ]
+      },
+      "simplificationTip": {
+        "title": "Astuce de Simplification",
+        "content": "Ne sur-filtrez pas au début. Commencez avec une vue large (ex: toutes les campagnes de la semaine dernière) pour identifier les tendances générales, puis affinez sur des campagnes ou des agents spécifiques qui se démarquent."
+      }
     },
-    "footer": {
-      "status": "Statut",
-      "campaign": "Campagne",
-      "noCampaignActive": "Aucune campagne active",
-      "dial": "Numérotation manuelle"
+    "history": {
+      "title": "Historique des Appels",
+      "description": "Journal détaillé et filtrable de tous les appels traités.",
+      "userJourney": {
+        "title": "Parcours Utilisateur : Trouver un Appel Spécifique",
+        "steps": [
+          "Naviguez vers 'Historique des Appels'.",
+          "Utilisez la barre de recherche pour trouver un appel par numéro de téléphone ou nom de contact.",
+          "Utilisez les filtres pour affiner les résultats par date, agent ou campagne.",
+          "Faites défiler les résultats paginés.",
+          "Cliquez sur une ligne pour voir plus de détails (fonctionnalité future).",
+          "Cliquez sur l'icône de lecture pour écouter l'enregistrement si disponible."
+        ]
+      },
+      "specs": {
+        "title": "Spécifications Techniques",
+        "points": [
+          "La vue interroge la table 'call_history'.",
+          "La pagination est gérée côté backend pour gérer efficacement de grands volumes de données.",
+          "Les clés étrangères (agent_id, campaign_id) sont utilisées pour joindre et afficher les noms au lieu des IDs bruts.",
+          "La fonctionnalité de recherche interroge plusieurs colonnes dans la base de données.",
+          "Le défilement infini peut être mis en oeuvre pour une expérience utilisateur plus fluide."
+        ]
+      },
+      "simplificationTip": {
+        "title": "Astuce de Simplification",
+        "content": "La barre de recherche est l'outil le plus puissant ici. Utilisez-la pour trouver rapidement des interactions spécifiques sans avoir à appliquer plusieurs filtres."
+      }
     },
-    "callControls": {
-      "title": "Contrôles d'Appel",
-      "call": "Appeler",
-      "endCall": "Terminer l'appel",
-      "hangup": "Qualifier la Fiche",
-      "hold": "Mettre en attente",
-      "transfer": "Transférer"
+    "sessions": {
+      "title": "Login/Logout Agents",
+      "description": "Journal détaillé des sessions de connexion des agents.",
+      "userJourney": {
+        "title": "Parcours Utilisateur : Vérifier le Temps de Travail d'un Agent",
+        "steps": [
+          "Naviguez vers 'Login/Logout Agents'.",
+          "Filtrez par un agent spécifique et une plage de dates.",
+          "Visualisez la liste des heures de connexion et de déconnexion pour cette période.",
+          "Le temps total de connexion est calculé et affiché."
+        ]
+      },
+      "specs": {
+        "title": "Spécifications Techniques",
+        "points": [
+          "Les données proviennent de la table 'agent_sessions'.",
+          "Une nouvelle session est créée à la connexion.",
+          "Le 'logout_time' est mis à jour à la déconnexion.",
+          "Une logique backend est nécessaire pour gérer les cas où une session n'est pas correctement fermée (ex: crash du navigateur)."
+        ]
+      },
+      "simplificationTip": {
+        "title": "Astuce de Simplification",
+        "content": "Ce module est plus utile pour les RH et la paie, ou pour enquêter sur des problèmes de présence. Pour le statut opérationnel en temps réel, utilisez le tableau de bord de Supervision."
+      }
     },
-    "qualifyFirst": "Veuillez sélectionner une qualification avant de finaliser.",
-    "errorQualifying": "Erreur lors de la qualification.",
-    "overdue": "EN RETARD",
-    "extension": "Ext: {ext}",
-    "activeQuota": {
-      "title": "Quota : {field} {operator} {value}"
+    "trunks": {
+      "title": "Trunks SIP",
+      "description": "Gérez les connexions à vos fournisseurs de téléphonie.",
+      "userJourney": {
+        "title": "Parcours Utilisateur : Ajouter un Nouvel Opérateur",
+        "steps": [
+          "Naviguez vers 'Paramètres' > 'Trunks SIP'.",
+          "Cliquez sur 'Ajouter un Trunk'.",
+          "Entrez les détails fournis par votre opérateur (nom, domaine/IP, identifiants si nécessaire).",
+          "Enregistrez le trunk. La configuration sera appliquée à Asterisk."
+        ]
+      },
+      "specs": {
+        "title": "Spécifications Techniques",
+        "points": [
+          "La configuration est stockée dans la table 'trunks'.",
+          "Le backend génère des fichiers de configuration Asterisk PJSIP sur la base de ces données.",
+          "Une commande de rechargement du système est exécutée après les modifications pour les appliquer."
+        ]
+      },
+      "simplificationTip": {
+        "title": "Astuce de Simplification",
+        "content": "La plupart des opérateurs utilisent maintenant l'authentification par IP, qui est plus simple et plus sécurisée. Préférez cette méthode à l'enregistrement par nom d'utilisateur/mot de passe si elle est disponible."
+      }
     },
-    "notesHistory": "Historique des notes",
-    "noNotes": "Aucune note pour ce contact.",
-    "addNotePlaceholder": "Ajouter une nouvelle note...",
-    "saveNote": "Enregistrer la note"
+    "dids": {
+      "title": "Numéros SDA",
+      "description": "Gérez vos numéros de téléphone entrants et leur routage.",
+      "userJourney": {
+        "title": "Parcours Utilisateur : Router un Nouveau Numéro vers un SVI",
+        "steps": [
+          "Créez d'abord un flux SVI dans la section 'Entrant'.",
+          "Naviguez vers 'Paramètres' > 'Numéros SDA'.",
+          "Cliquez sur 'Ajouter un Numéro'.",
+          "Entrez le numéro de téléphone et une description.",
+          "Sélectionnez le Trunk SIP correct pour ce numéro.",
+          "Dans le menu déroulant 'Routage Entrant', sélectionnez le flux SVI que vous avez créé.",
+          "Enregistrez le numéro."
+        ]
+      },
+      "specs": {
+        "title": "Spécifications Techniques",
+        "points": [
+          "Les numéros SDA (DID) sont stockés dans la table 'dids'.",
+          "Chaque SDA est lié à un trunk et optionnellement à un flux SVI.",
+          "Le script AGI backend utilise cette table pour trouver le SVI correct à exécuter pour un appel entrant."
+        ]
+      },
+      "simplificationTip": {
+        "title": "Astuce de Simplification",
+        "content": "Utilisez le champ de description pour indiquer clairement le but de chaque numéro (ex: 'Campagne Marketing - Google Ads', 'Numéro Principal du Support'). Cela facilite grandement la gestion à mesure que votre liste s'allonge."
+      }
+    },
+    "sites-config": {
+      "title": "Configuration des Sites",
+      "description": "Gérez les sites physiques ou logiques pour le routage et l'assignation des agents.",
+      "userJourney": {
+        "title": "Parcours Utilisateur : Ajouter un Nouveau Bureau",
+        "steps": [
+          "Naviguez vers 'Paramètres' > 'Configuration des Sites'.",
+          "Cliquez sur 'Ajouter un Site'.",
+          "Entrez un nom pour le site (ex: 'Bureau de Lyon').",
+          "Entrez l'adresse IP de la passerelle de téléphonie locale (ex: Yeastar PBX) pour ce site.",
+          "Enregistrez le site.",
+          "Vous pouvez maintenant assigner des utilisateurs à ce nouveau site dans le module 'Utilisateurs'."
+        ]
+      },
+      "specs": {
+        "title": "Spécifications Techniques",
+        "points": [
+          "Les sites sont stockés dans la table 'sites'.",
+          "L'IP du site est utilisée par Asterisk pour router les appels sortants via la passerelle locale correcte.",
+          "L'assignation des utilisateurs à des sites aide au reporting et à la gestion régionale."
+        ]
+      },
+      "simplificationTip": {
+        "title": "Astuce de Simplification",
+        "content": "Même si vous n'avez qu'un seul emplacement physique, créez un site 'Bureau Principal'. Cela facilitera l'expansion vers plusieurs sites à l'avenir sans changer votre configuration."
+      }
+    },
+    "module-settings": {
+      "title": "Paramètres des Modules",
+      "description": "Activez ou désactivez des fonctionnalités spécifiques pour différents rôles d'utilisateurs.",
+      "userJourney": {
+        "title": "Parcours Utilisateur : Cacher le Module 'Plannings' pour les Superviseurs",
+        "steps": [
+          "Naviguez vers 'Paramètres' > 'Paramètres des Modules'.",
+          "Sélectionnez le rôle 'Superviseur'.",
+          "Trouvez la fonctionnalité 'Plannings' dans la liste.",
+          "Décochez la case 'Visible'.",
+          "Enregistrez les changements. Les superviseurs ne verront plus 'Plannings' dans leur menu latéral."
+        ]
+      },
+      "specs": {
+        "title": "Spécifications Techniques",
+        "points": [
+          "Les paramètres de visibilité devraient être stockés dans une table dédiée, liant les rôles aux fonctionnalités.",
+          "Le payload initial `/application-data` doit inclure ces paramètres.",
+          "Le frontend utilisera ces données pour afficher conditionnellement les éléments du menu et les routes.",
+          "Les points d'accès de l'API backend doivent également être protégés pour empêcher l'accès direct aux fonctionnalités désactivées."
+        ]
+      },
+      "simplificationTip": {
+        "title": "Astuce de Simplification",
+        "content": "Commencez avec les paramètres de visibilité par défaut. Ne cachez des modules que s'ils ne sont vraiment pas utilisés par un certain rôle, pour éviter la confusion. Une interface plus propre est souvent plus efficace."
+      }
+    },
+    "languages": {
+      "title": "Langues & Traductions",
+      "description": "Gérez le support multilingue de l'application.",
+      "userJourney": {
+        "title": "Parcours Utilisateur : Explorer les Options de Langue",
+        "steps": [
+          "Trouvez le sélecteur de langue dans l'en-tête.",
+          "Cliquez dessus pour voir la liste des langues disponibles (ex: Français, Anglais, Arabe).",
+          "Sélectionnez une nouvelle langue pour changer instantanément toute l'interface utilisateur."
+        ]
+      },
+      "specs": {
+        "title": "Spécifications Techniques",
+        "points": [
+          "Le frontend utilise la bibliothèque `i18next` pour l'internationalisation (i18n).",
+          "Les traductions sont stockées dans des fichiers JSON situés dans `src/i18n/locales/`."
+        ]
+      },
+      "simplificationTip": {
+        "title": "Astuce de Simplification",
+        "content": "Cette section est à titre informatif. La gestion des traductions est actuellement une tâche de développeur qui implique de modifier directement les fichiers JSON. Une évolution future pourrait être une interface pour modifier les traductions sans toucher au code."
+      }
+    },
+    "database-client": {
+      "title": "Client Base de Données",
+      "description": "Interagissez directement avec la base de données PostgreSQL. (SuperAdmin uniquement)",
+      "userJourney": {
+        "title": "Parcours Utilisateur : Lancer une Requête Rapide",
+        "steps": [
+          "Naviguez vers 'Paramètres' > 'Client Base de Données'.",
+          "Utilisez l'explorateur de schéma à gauche pour voir les tables et les colonnes.",
+          "Écrivez une requête SQL dans l'éditeur (ex: `SELECT * FROM users LIMIT 5;`).",
+          "Assurez-vous que le 'Mode Lecture Seule' est actif pour la sécurité.",
+          "Cliquez sur 'Exécuter'.",
+          "Visualisez les résultats dans le tableau ci-dessous."
+        ]
+      },
+      "specs": {
+        "title": "Spécifications Techniques",
+        "points": [
+          "C'est une fonctionnalité à haut risque, strictement limitée aux SuperAdmins.",
+          "Le backend fournit un point d'accès qui exécute des requêtes SQL brutes.",
+          "Le 'Mode Lecture Seule' doit être appliqué côté backend en vérifiant la chaîne de la requête pour les instructions autres que SELECT.",
+          "Toutes les requêtes doivent être journalisées pour l'audit de sécurité."
+        ]
+      },
+      "simplificationTip": {
+        "title": "Astuce de Simplification",
+        "content": "Utilisez cet outil pour des vérifications rapides et des diagnostics uniquement. Pour des rapports complexes, utilisez le module dédié 'Rapports & Analytiques'. Vérifiez toujours votre requête avant de l'exécuter, surtout si le 'Mode Lecture Seule' est désactivé."
+      }
+    },
+    "system-connection": {
+      "title": "Connexion Système",
+      "description": "Configurez les connexions aux services de base comme la base de données et Asterisk.",
+      "userJourney": {
+        "title": "Parcours Utilisateur : Changer l'Hôte de la Base de Données",
+        "steps": [
+          "Naviguez vers 'Paramètres' > 'Connexion Système'.",
+          "Localisez la section 'Base de Données'.",
+          "Mettez à jour le champ 'Hôte' avec la nouvelle adresse IP ou le nom d'hôte.",
+          "Entrez le mot de passe de la base de données pour confirmer le changement.",
+          "Enregistrez les paramètres.",
+          "Un redémarrage du serveur sera nécessaire pour appliquer la nouvelle configuration."
+        ]
+      },
+      "specs": {
+        "title": "Spécifications Techniques",
+        "points": [
+          "Cette interface modifie le fichier `.env` du backend.",
+          "Les changements nécessitent un redémarrage complet du service backend pour prendre effet.",
+          "Les mots de passe ne sont pas affichés pour des raisons de sécurité, seulement mis à jour si un nouveau est saisi.",
+          "Le backend doit valider les paramètres de connexion avant de les enregistrer."
+        ]
+      },
+      "simplificationTip": {
+        "title": "Astuce de Simplification",
+        "content": "C'est une zone de configuration critique. Ne modifiez pas ces paramètres à moins d'effectuer une maintenance système ou une migration. Des paramètres incorrects provoqueront une panne complète du service."
+      }
+    },
+    "maintenance": {
+      "title": "Maintenance & Sauvegardes",
+      "description": "Gérez les sauvegardes, les restaurations et les tâches de maintenance du système."
+    },
+    "help": {
+      "title": "Centre d'Aide",
+      "description": "Trouvez la documentation et les ressources de support."
+    },
+    "api-docs": {
+      "title": "Documentation API",
+      "description": "Documentation technique pour l'API REST.",
+      "iframeTitle": "Documentation de l'API Interactive",
+      "userJourney": {
+        "title": "Parcours Utilisateur : Trouver un Endpoint",
+        "steps": [
+          "Naviguez vers 'Paramètres' > 'Documentation API'.",
+          "L'interface Swagger/OpenAPI est affichée.",
+          "Développez une étiquette de ressource (ex: 'Utilisateurs') pour voir tous les endpoints associés.",
+          "Cliquez sur un endpoint pour voir ses détails, paramètres et exemples de réponses."
+        ]
+      },
+      "specs": {
+        "title": "Spécifications Techniques",
+        "points": [
+          "La documentation est générée automatiquement à partir du code du backend en utilisant des annotations Swagger/OpenAPI.",
+          "L'interface est servie par le paquet `swagger-ui-express`.",
+          "Cela fournit un moyen interactif pour les développeurs de tester et de comprendre l'API."
+        ]
+      },
+      "simplificationTip": {
+        "title": "Astuce de Simplification",
+        "content": "Utilisez la fonctionnalité 'Try it out' dans la documentation de l'API pour tester les endpoints directement depuis votre navigateur. C'est un excellent moyen de déboguer ou de comprendre comment une fonctionnalité spécifique fonctionne sans avoir à écrire de code."
+      }
+    },
+    "billing": {
+      "title": "Facturation & Abonnement",
+      "description": "Gérez votre abonnement, vos moyens de paiement et consultez les factures."
+    },
+    "system-settings": {
+      "title": "Paramètres Système",
+      "description": "Paramètres généraux de l'application, comme l'apparence et les e-mails."
+    }
+  },
+  "alerts": {
+    "confirmDelete": "Êtes-vous sûr de vouloir supprimer cet élément ? Cette action est irréversible."
+  },
+  "scriptFeature": {
+    "addScript": "Créer un script",
+    "pageCount": "{count, plural, =0 {0 pages} one {1 page} other {# pages}}",
+    "confirmDelete": "Êtes-vous sûr de vouloir supprimer ce script ?",
+    "usedBy": "Utilisé par :",
+    "deleteDisabledTooltip": "Impossible de supprimer un script assigné à une campagne."
+  },
+  "ivrManager": {
+    "createFlow": "Créer un flux",
+    "noFlows": "Aucun flux SVI n'a été créé pour le moment."
+  },
+  "groupManager": {
+    "modal": {
+      "titleNew": "Nouveau Groupe",
+      "titleEdit": "Modifier le Groupe",
+      "groupName": "Nom du groupe",
+      "members": "Membres",
+      "noAgents": "Aucun agent disponible pour être ajouté."
+    },
+    "search": "Rechercher un groupe...",
+    "create": "Créer un groupe",
+    "headers": {
+      "name": "Nom",
+      "count": "Nombre de membres"
+    },
+    "noGroups": "Aucun groupe n'a été créé."
   },
   "userManager": {
-    "title": "Utilisateurs",
-    "importButton": "Importer (CSV)",
-    "generateButton": "Générer en masse",
+    "title": "Gestion des Utilisateurs",
     "addUserButton": "Ajouter un utilisateur",
-    "searchPlaceholder": "Rechercher par nom, identifiant, email, rôle...",
+    "importButton": "Importer des utilisateurs",
+    "generateButton": "Générer des utilisateurs",
+    "searchPlaceholder": "Rechercher par nom, identifiant, email...",
     "headers": {
       "name": "Nom",
       "id": "ID",
-      "loginId": "Identifiant / Ext.",
+      "loginId": "Identifiant",
       "role": "Rôle",
       "status": "Statut"
     },
     "modal": {
       "addTitle": "Ajouter un nouvel utilisateur",
       "editTitle": "Modifier l'utilisateur",
+      "loginId": "Identifiant / Poste",
+      "loginIdHelp": "Doit être un identifiant numérique unique de 4 à 6 chiffres.",
+      "loginIdExists": "Cet identifiant est déjà utilisé.",
+      "emailExists": "Cette adresse email est déjà utilisée.",
+      "lastSuperAdmin": "Impossible de modifier le rôle du dernier SuperAdmin.",
+      "generate": "Générer",
+      "passwordHelp": "Laisser vide pour ne pas changer",
+      "activeUser": "Utilisateur Actif",
+      "site": "Site",
+      "noSite": "Aucun site",
       "tabs": {
         "general": "Général",
-        "groups": "Groupes Assignés",
-        "campaigns": "Campagnes Assignées"
+        "groups": "Groupes",
+        "campaigns": "Campagnes"
       },
-      "firstName": "Prénom",
-      "lastName": "Nom",
-      "loginId": "Identifiant / Extension",
-      "loginIdHelp": "Doit être un numéro unique de 4 à 6 chiffres.",
-      "email": "Email",
-      "mobileNumber": "Numéro de mobile (pour \"Connect to Phone\")",
-      "useMobileAsStation": "Utiliser le mobile comme poste de travail",
-      "useMobileAsStationHelp": "Si activé, les appels seront envoyés vers ce numéro mobile.",
-      "passwordHelp": "Laisser vide pour ne pas changer",
-      "generate": "Générer",
-      "site": "Site d'affectation",
-      "noSite": "Aucun site",
-      "activeUser": "Utilisateur Actif",
-      "loginIdExists": "L'identifiant / extension existe déjà pour un autre utilisateur.",
-      "emailExists": "L'adresse email est déjà utilisée par un autre utilisateur.",
-      "lastSuperAdmin": "Impossible de modifier le rôle du dernier SuperAdmin."
+      "mobileNumber": "Numéro de mobile",
+      "useMobileAsStation": "Utiliser le mobile comme poste",
+      "useMobileAsStationHelp": "Si activé, les appels seront passés vers le numéro de mobile de l'agent au lieu d'un softphone."
     },
     "generateModal": {
       "title": "Générer des utilisateurs en masse",
-      "label": "Nombre d'utilisateurs à créer",
-      "confirm": "Confirmer"
+      "label": "Nombre d'utilisateurs à créer (1-99)",
+      "confirm": "Générer"
     },
     "delete": {
-      "superAdmin": "Un SuperAdmin ne peut pas être supprimé.",
-      "activeUser": "Désactivez l'utilisateur pour pouvoir le supprimer.",
-      "lastAdmin": "Impossible de supprimer le dernier administrateur."
+      "superAdmin": "Le SuperAdmin ne peut pas être supprimé.",
+      "activeUser": "Désactivez l'utilisateur avant de le supprimer.",
+      "lastAdmin": "Impossible de supprimer le dernier Administrateur."
     }
-  },
-  "groupManager": {
-    "modal": {
-      "noAgents": "Aucun agent actif disponible.",
-      "titleNew": "Nouveau Groupe",
-      "titleEdit": "Modifier le Groupe",
-      "groupName": "Nom du groupe",
-      "members": "Membres du groupe (Agents)"
-    },
-    "title": "Groupes d'agents",
-    "create": "Créer un groupe",
-    "search": "Rechercher par nom de groupe...",
-    "headers": {
-      "name": "Nom du Groupe",
-      "count": "Nombre de Membres"
-    },
-    "noGroups": "Aucun groupe créé."
-  },
-  "outboundCampaignsManager": {
-    "title": "Campagnes",
-    "createCampaign": "Créer une campagne",
-    "headers": {
-      "name": "Nom",
-      "id": "ID",
-      "status": "Statut",
-      "mode": "Mode",
-      "contacts": "Contacts",
-      "remaining": "Restants"
-    },
-    "import": "Importer",
-    "deleteDisabledTooltip": "Désactivez la campagne pour la supprimer.",
-    "deleteEnabledTooltip": "Supprimer la campagne",
-    "modal": {
-      "editTitle": "Modifier la Campagne",
-      "addTitle": "Nouvelle Campagne",
-      "readyTooltip": "Prêt à démarrer",
-      "notReadyTooltip": "Champs requis manquants",
-      "tabs": {
-        "general": "Général",
-        "planning": "Planing",
-        "quotas": "Quotas",
-        "filters": "Inclusion/Exclusion"
-      },
-      "agentScript": "Script d'agent",
-      "noScript": "Aucun script",
-      "qualifGroup": "Groupe de qualifications",
-      "dialingMode": "Mode de numérotation",
-      "predictive": "Prédictif",
-      "progressive": "Progressif",
-      "manual": "Manuel",
-      "callerId": "Numéro présenté (Caller ID)",
-      "wrapUpTime": "Temps de Post-Appel (secondes)",
-      "wrapUpTimeHelp": "Durée max pour l'agent en état \"Post-appel\" (max 120s).",
-      "assignedAgents": "Agents & Groupes Assignés",
-      "groups": "Groupes",
-      "individualAgents": "Agents Individuels",
-      "activeCampaign": "Campagne Active",
-      "weekdays": {
-        "monday": "Lundi",
-        "tuesday": "Mardi",
-        "wednesday": "Mercredi",
-        "thursday": "Jeudi",
-        "friday": "Vendredi",
-        "saturday": "Samedi",
-        "sunday": "Dimanche"
-      },
-      "activityDays": "Jours d'activité",
-      "timeRange": "Plage horaire",
-      "startTime": "Heure de début",
-      "endTime": "Heure de fin",
-      "operators": {
-        "equals": "est égal à",
-        "startsWith": "commence par",
-        "contains": "contient",
-        "isNotEmpty": "n'est pas vide"
-      },
-      "value": "Valeur",
-      "limit": "Limite",
-      "include": "Inclure",
-      "exclude": "Exclure",
-      "addQuotaRule": "Ajouter une règle de quota",
-      "addFilterRule": "Ajouter une règle de filtrage"
-    }
-  },
-  "scriptFeature": {
-    "title": "Scripts Sauvegardés",
-    "addScript": "Créer un script",
-    "confirmDelete": "Êtes-vous sûr de vouloir supprimer ce script ?",
-    "pageCount": "{count, plural, =0 {0 page} one {1 page} other {# pages}}"
   },
   "scriptBuilder": {
     "elements": "Éléments",
-    "preview": "Prévisualiser",
-    "background": "Fond:",
-    "changeBackgroundColor": "Changer la couleur de fond du script",
-    "page_of_pages": "Page {currentPage} / {totalPages}",
-    "zoomIn": "Zoom avant",
-    "zoomOut": "Zoom arrière",
-    "resetView": "Réinitialiser la vue",
-    "pageNotFound": "Erreur: Page active non trouvée.",
-    "nameAlreadyExists": "Le nom de bloc \"{name}\" est déjà utilisé sur cette page.",
-    "technicalNameAlreadyExists": "Ce nom génère un identifiant technique (\"{fieldName}\") qui est déjà utilisé. Veuillez choisir un nom légèrement différent.",
     "palette": {
       "group": "Groupe",
       "label": "Titre",
       "text": "Texte",
       "input": "Champ de Saisie",
-      "textarea": "Texte Multi-ligne",
+      "textarea": "Zone de Texte",
       "email": "Email",
       "phone": "Téléphone",
       "date": "Date",
       "time": "Heure",
       "radio": "Choix Unique",
-      "checkbox": "Choix Multiples",
+      "checkbox": "Choix Multiple",
       "dropdown": "Liste Déroulante",
       "button": "Bouton",
-      "history": "Historique"
+      "history": "Historique",
+      "image": "Image"
     },
     "defaults": {
-      "label": "Titre",
-      "text": "Paragraphe de texte...",
+      "label": "Titre du champ",
+      "text": "Ceci est un paragraphe de texte. Vous pouvez le modifier pour donner des instructions à l'agent.",
       "placeholder": "Saisir ici...",
-      "emailPlaceholder": "email@example.com",
+      "emailPlaceholder": "exemple@domaine.com",
       "phonePlaceholder": "0123456789",
-      "question": "Question ?",
+      "question": "Votre question ici",
       "radioOption1": "Option 1",
       "radioOption2": "Option 2",
       "checkboxOptionA": "Option A",
       "checkboxOptionB": "Option B",
       "dropdownValue1": "Valeur 1",
       "dropdownValue2": "Valeur 2",
-      "buttonText": "Cliquer"
+      "buttonText": "Cliquer ici"
     },
+    "background": "Fond",
+    "changeBackgroundColor": "Changer la couleur de fond du script",
+    "preview": "Aperçu",
+    "page_of_pages": "Page {currentPage}/{totalPages}",
+    "zoomIn": "Zoom avant",
+    "zoomOut": "Zoom arrière",
+    "resetView": "Réinitialiser la vue",
+    "cannotDeleteLastPage": "Impossible de supprimer la dernière page.",
+    "cannotDeleteStartPage": "Impossible de supprimer la page de démarrage.",
+    "confirmDeletePage": "Êtes-vous sûr de vouloir supprimer cette page ?",
+    "nameAlreadyExists": "Le nom '{name}' est déjà utilisé sur cette page.",
+    "technicalNameAlreadyExists": "Le nom technique '{fieldName}' est déjà utilisé. Veuillez choisir un autre nom.",
+    "pageNotFound": "Page non trouvée",
     "properties": {
       "blockNameLabel": "Nom du bloc (visible par l'agent)",
-      "technicalName": "Nom technique:",
+      "technicalName": "Nom technique :",
       "tabs": {
         "content": "Contenu",
         "style": "Style"
       },
-      "showField": "Afficher ce champ dans le script",
-      "showFieldHelp": "Masque le champ pour l'agent.",
-      "placeholder": "Placeholder",
+      "showField": "Afficher ce champ",
+      "showFieldHelp": "Désactivez pour masquer ce champ standard.",
+      "placeholder": "Texte indicatif (placeholder)",
       "format": "Format",
       "formats": {
         "text": "Texte",
-        "number": "Nombre",
+        "number": "Numérique",
         "password": "Mot de passe"
       },
       "buttonText": "Texte du bouton",
       "question": "Question",
       "options": "Options",
+      "newOption": "Nouvelle option",
       "addOption": "Ajouter une option",
-      "newOption": "Nouvelle Option",
-      "historyHelp": "Ce bloc n'a pas de propriétés configurables. Il affichera l'historique des appels du contact.",
-      "blocksInGroup": "Blocs dans le groupe",
-      "dragBlocksHere": "Faites glisser des blocs ici.",
-      "deleteBlockTooltip": "Supprimer le bloc {name}",
+      "historyHelp": "Ce bloc affichera l'historique des notes du contact.",
+      "blocksInGroup": "Blocs dans ce groupe",
+      "deleteBlockTooltip": "Supprimer le bloc '{name}'",
+      "dragBlocksHere": "Glissez des blocs ici pour les ajouter au groupe.",
       "readOnly": "Lecture seule",
-      "readOnlyHelp": "L'agent ne pourra pas modifier ce champ.",
+      "readOnlyHelp": "Empêche l'agent de modifier ce champ.",
       "width": "Largeur (px)",
       "height": "Hauteur (px)",
       "font": "Police",
@@ -458,586 +833,41 @@
       "deleteBlockButton": "Supprimer \"{name}\""
     },
     "actions": {
-      "none": "Aucune action",
+      "none": "Aucune",
       "next": "Page suivante",
       "previous": "Page précédente",
-      "navigate": "Aller à la page...",
-      "save": "Enregistrer les données",
-      "insertContact": "Insérer une fiche"
+      "navigate": "Naviguer vers...",
+      "save": "Enregistrer la fiche",
+      "insertContact": "Insérer une nouvelle fiche"
     },
     "canvas": {
       "historyPreview": "Aperçu de l'historique",
       "deleteBlock": "Supprimer le bloc"
+    },
+    "image": {
+      "upload": "Téléverser une image",
+      "invalidType": "Type de fichier invalide. Seuls les fichiers PNG, JPG, GIF et SVG sont autorisés.",
+      "tooLarge": "Fichier trop volumineux. La taille maximale est de 1 Mo."
     }
-  },
-  "ivrManager": {
-    "title": "Flux SVI Sauvegardés",
-    "createFlow": "Créer un nouveau flux",
-    "searchPlaceholder": "Rechercher par nom ou ID de flux...",
-    "headers": {
-      "id": "ID",
-      "name": "Nom du Flux"
-    },
-    "noFlows": "Aucun flux SVI n'a été créé."
-  },
-  "qualificationsManager": {
-    "title": "Groupes de Qualifications",
-    "createGroup": "Créer un Groupe",
-    "addGroup": "Ajouter une qualification",
-    "searchPlaceholder": "Rechercher un groupe...",
-    "headers": {
-      "name": "Nom du Groupe",
-      "count": "Qualifications"
-    },
-    "noGroups": "Aucun groupe trouvé.",
-    "modal": {
-      "editTitle": "Modifier la Qualification",
-      "addTitle": "Ajouter une Qualification",
-      "parent": "Parent (Optionnel)",
-      "noParent": "Aucun parent",
-      "code": "Code",
-      "codeUsed": "Ce code est déjà utilisé.",
-      "description": "Description",
-      "type": "Type",
-      "types": {
-        "positive": "Positif",
-        "neutral": "Neutre",
-        "negative": "Négatif"
-      },
-      "recyclable": "Recyclable",
-      "recyclableHelp": "Permet de réinjecter les fiches avec cette qualification."
-    },
-    "groups": "Groupes",
-    "allQualifs": "Toutes les qualifications",
-    "unassigned": "Non assignées"
-  },
-  "supervision": {
-    "controlPanel": "Panneau de Contrôle",
-    "tabs": {
-      "live": "Live",
-      "agents": "Agents",
-      "calls": "Appels",
-      "campaigns": "Campagnes"
-    },
-    "kpis": {
-      "agentsReady": "Agents en Attente",
-      "agentsOnCall": "Agents en Appel",
-      "agentsOnWrapup": "Agents en Post-Appel",
-      "agentsOnPause": "Agents en Pause",
-      "activeCalls": "Appels Actifs"
-    },
-    "agentBoard": {
-      "headers": {
-        "agent": "Agent",
-        "status": "Statut",
-        "duration": "Durée",
-        "calls": "Appels",
-        "avgHandleTime": "DMC",
-        "actions": "Actions"
-      },
-      "actions": {
-        "contact": "Message pour {agentName} :",
-        "listen": "Écouter (Whisper)",
-        "barge": "Intervenir (Barge)",
-        "coach": "Coacher",
-        "forcePause": "Forcer la Pause",
-        "forceLogout": "Forcer la Déconnexion"
-      },
-      "noAgents": "Aucun agent connecté pour le moment.",
-      "confirmForceLogout": "Êtes-vous sûr de vouloir déconnecter de force l'agent {agentName} ?"
-    }
-  },
-  "agentStatuses": {
-    "available": "Disponible",
-    "onCall": "En appel",
-    "wrapUp": "Post-appel",
-    "onPause": "En Pause",
-    "ringing": "Sonnerie",
-    "disconnected": "Déconnecté",
-    "onHold": "Mise en attente",
-    "training": "Formation"
-  },
-  "callBoard": {
-    "noCalls": "Aucun appel actif pour le moment."
-  },
-  "campaignBoard": {
-    "confirmStop": "Êtes-vous sûr de vouloir arrêter définitivement la campagne {campaignName} ?",
-    "noCampaigns": "Aucune campagne à superviser."
-  },
-  "campaignDetail": {
-    "backToCampaigns": "Retour aux campagnes",
-    "associatedScript": "Script associé: {scriptName}",
-    "tabs": {
-      "contacts": "Contacts ({count})",
-      "dashboard": "Statistiques",
-      "dashboard2": "Analyse Détaillée",
-      "settings": "Paramètres"
-    },
-    "contacts": {
-      "searchPlaceholder": "Rechercher un contact...",
-      "deleteSelection": "Supprimer la sélection ({count})",
-      "headers": {
-        "lastName": "NOM",
-        "firstName": "PRÉNOM",
-        "phone": "TÉLÉPHONE",
-        "postalCode": "CODE POSTAL",
-        "status": "STATUT",
-        "lastQualif": "Dernière Qualification",
-        "lastNote": "Dernière Remarque"
-      },
-      "noContacts": "Aucun contact trouvé.",
-      "pagination": "Page {currentPage} sur {totalPages}"
-    },
-    "dashboard": {
-      "kpis": {
-        "completionRate": "Taux d'achèvement",
-        "contactRate": "Taux de contact",
-        "conversionRate": "Taux de conversion",
-        "aht": "DMC"
-      },
-      "fileProgress": {
-        "title": "Progression du Fichier",
-        "processed": "Traitées:",
-        "remaining": "Restantes:"
-      },
-      "quota": {
-        "title": "Suivi des Quotas",
-        "ruleStartsWith": "Quota: {field} commence par \"{value}\"",
-        "ruleEquals": "Quota: {field} est égal à \"{value}\"",
-        "achieved": "Réalisé:"
-      },
-      "charts": {
-        "qualifDistributionTitle": "Répartition des Qualifications",
-        "successByHourTitle": "Heures de Succès (Conversions)",
-        "conversionsLabel": "Conversions"
-      },
-      "tables": {
-        "qualifPerfTitle": "Performance par Qualification",
-        "agentPerfTitle": "Performance par Agent",
-        "headers": {
-          "qualification": "QUALIFICATION",
-          "processedRecords": "FICHES TRAITÉES",
-          "rate": "TAUX",
-          "agent": "Agent",
-          "processedCalls": "Appels Traités",
-          "conversions": "Conversions"
-        }
-      }
-    },
-    "settings": {
-      "recycling": {
-        "title": "Recyclage des Fiches",
-        "description": "Réinitialisez le statut des contacts qualifiés pour les rendre de nouveau disponibles pour les agents.",
-        "headers": {
-          "qualification": "Qualification",
-          "processedRecords": "Fiches Traitées",
-          "action": "Action"
-        },
-        "recycleButton": "Recycler",
-        "recycleButtonTooltip": "Réinitialiser le statut de toutes les fiches avec cette qualification.",
-        "notRecyclableTooltip": "Cette qualification n'est pas marquée comme recyclable."
-      }
-    },
-    "export": "Exporter",
-    "noDataToExport": "Aucune donnée traitée à exporter."
-  },
-  "qualifications": {
-    "types": {
-      "positive": "Positives",
-      "neutral": "Neutres",
-      "negative": "Négatives"
-    }
-  },
-  "contactHistory": {
-    "title": "Historique du contact",
-    "loading": "Chargement de l'historique...",
-    "kpis": {
-      "totalCalls": "Appels Totaux",
-      "talkTime": "Temps de Com.",
-      "uniqueAgents": "Agents Uniques",
-      "positiveQuals": "Qualifications Positives"
-    },
-    "timelineTitle": "Chronologie des Interactions",
-    "callBy": "Appel par {agentName}",
-    "noteBy": "Note par {agentName}",
-    "duration": "Durée:",
-    "qualification": "Qualification:",
-    "noHistory": "Aucun historique d'interaction pour ce contact."
-  },
-  "reporting": {
-    "exportPdf": "Exporter en PDF",
-    "inboundCalls": "Appels Entrants",
-    "filters": {
-      "dateRange": "Période Prédéfinie",
-      "from": "Du",
-      "to": "Au",
-      "campaign": "Campagne",
-      "agent": "Agent",
-      "dateRanges": {
-        "last7days": "7 derniers jours",
-        "last30days": "30 derniers jours",
-        "thisMonth": "Ce mois-ci"
-      },
-      "allCampaigns": "Toutes les campagnes",
-      "allAgents": "Tous les agents"
-    },
-    "kpis": {
-      "processedCalls": "Appels Traités",
-      "totalTalkTime": "Temps Total de Conversation",
-      "avgCallDuration": "Durée Moyenne d'Appel",
-      "successRate": "Taux de Succès",
-      "occupancyRate": "Taux d'Occupation (Simulé)",
-      "activeAgents": "Agents Actifs",
-      "totalLoginTime": "Temps de Connexion Total",
-      "avgAdherence": "Adhérence Moyenne au Planning"
-    },
-    "tabs": {
-      "charts": "Graphiques",
-      "timesheet": "Feuille de Temps",
-      "campaign": "Par Campagne",
-      "agent": "Par Agent",
-      "history": "Historique des Appels"
-    },
-    "charts": {
-      "dailyVolumeTitle": "Volume d'appels par jour",
-      "callCountLabel": "Nombre d'appels",
-      "callsByCampaignTitle": "Répartition des appels par campagne",
-      "successByHourTitle": "Heures de Succès (Conversions)",
-      "conversionsLabel": "Conversions",
-      "successByAgentTitle": "Taux de succès par agent",
-      "successRateLabel": "Taux de Succès (%)",
-      "adherenceByAgentTitle": "Adhérence moyenne au planning",
-      "avgAdherenceLabel": "Adhérence Moyenne (min)"
-    },
-    "tables": {
-      "campaignPerf": {
-        "title": "Performances par Campagne",
-        "headers": {
-          "campaign": "Campagne",
-          "calls": "Appels",
-          "totalDuration": "Durée Totale",
-          "avgDuration": "Durée Moyenne",
-          "successRate": "Taux de Succès"
-        }
-      },
-      "agentPerf": {
-        "titleCalls": "Performances par Agent (Appels)",
-        "titleTimesheet": "Performances par Agent (Temps de Présence)",
-        "headers": {
-          "agent": "Agent",
-          "calls": "Appels",
-          "totalDuration": "Durée Totale",
-          "avgDuration": "Durée Moyenne",
-          "successRate": "Taux de Succès",
-          "daysWorked": "Jours Travaillés",
-          "totalLoginDuration": "Durée Connexion Totale",
-          "avgAdherence": "Adhérence Moyenne"
-        }
-      },
-      "timesheet": {
-        "title": "Journal de Présence (Login/Logout)",
-        "headers": {
-          "date": "Date",
-          "agent": "Agent",
-          "firstLogin": "1er Login",
-          "lastLogout": "Dern. Logout",
-          "totalDuration": "Durée Totale",
-          "adherence": "Adhérence"
-        }
-      },
-      "callHistory": {
-        "title": "Historique des Appels",
-        "headers": {
-          "dateTime": "Date & Heure",
-          "agent": "Agent",
-          "campaign": "Campagne",
-          "number": "Numéro",
-          "duration": "Durée",
-          "qualification": "Qualification"
-        }
-      }
-    },
-    "noCallData": "Aucune donnée d'appel pour les filtres sélectionnés.",
-    "noSessionData": "Aucune donnée de session pour les filtres sélectionnés.",
-    "pdf": {
-      "title": "Rapport Analytique Détaillé",
-      "period": "Période du {startDate} au {endDate} - Généré le {today}",
-      "kpiTitle": "Indicateurs de Performance Clés (KPIs)",
-      "callKpis": "Indicateurs d'Appels",
-      "value": "Valeur",
-      "timesheetKpis": "Indicateurs de Temps de Présence",
-      "detailedAnalysis": "Analyses Détaillées",
-      "detailedLogs": "Journaux Détaillés"
-    }
-  },
-  "systemSettings": {
-    "smtp": {
-      "test": {
-        "recipientMissing": "Veuillez entrer une adresse e-mail de destination pour le test.",
-        "title": "Tester la configuration SMTP",
-        "recipient": "Email du destinataire",
-        "sendButton": "Envoyer l'e-mail de test",
-        "sending": "Envoi en cours...",
-        "success": "E-mail de test envoyé avec succès !",
-        "error": "Échec de l'envoi de l'e-mail."
-      },
-      "server": {
-        "title": "Serveur SMTP",
-        "host": "Hôte",
-        "port": "Port"
-      },
-      "auth": {
-        "label": "Authentification",
-        "description": "Utiliser un nom d'utilisateur et un mot de passe.",
-        "user": "Utilisateur",
-        "passwordPlaceholder": "Laisser vide pour ne pas changer"
-      },
-      "security": {
-        "label": "Sécurité (TLS)",
-        "description": "Activer la connexion chiffrée (recommandé)."
-      },
-      "fromAddress": "Adresse d'expédition",
-      "saveButton": "Enregistrer les paramètres SMTP"
-    },
-    "appearance": {
-      "company": {
-        "title": "Informations de l'entreprise",
-        "address": "Adresse de l'entreprise",
-        "logoUrl": "URL du logo de l'application",
-        "logoPreview": "Aperçu du logo",
-        "appName": "Nom de l'application",
-        "appNamePlaceholder": "Ex: EVSCallPro"
-      },
-      "theme": {
-        "title": "Palette de couleurs",
-        "description": "Choisissez le thème de couleur principal de l'application."
-      },
-      "language": {
-        "title": "Langue par Défaut",
-        "description": "Choisissez la langue par défaut pour les nouveaux utilisateurs.",
-        "french": "Français",
-        "english": "Anglais"
-      },
-      "saveButton": "Enregistrer les paramètres d'apparence"
-    },
-    "licenses": {
-      "title": "Licences",
-      "wip": "Ce module est en cours de développement."
-    },
-    "tabs": {
-      "appearance": "Apparence",
-      "email": "E-mail (SMTP)",
-      "licenses": "Licences"
-    },
-    "savedConfirmation": "Enregistré avec succès !",
-    "saving": "Enregistrement..."
-  },
-  "planning": {
-    "today": "Aujourd'hui",
-    "show": "Afficher:",
-    "all": "Tous",
-    "groups": "Groupes",
-    "agents": "Agents",
-    "hour": "Heure",
-    "modal": {
-      "editTitle": "Modifier l'événement",
-      "newTitle": "Nouvel événement",
-      "for": "Pour",
-      "selectTarget": "Sélectionner...",
-      "activity": "Activité",
-      "selectActivity": "Sélectionner une activité",
-      "start": "Début",
-      "end": "Fin",
-      "validationError": "Veuillez sélectionner une cible (agent/groupe) et une activité.",
-      "recurringEvent": "Événement récurrent",
-      "repeatOn": "Répéter les jours",
-      "recurrenceEnd": "Fin de la récurrence",
-      "massEditTitle": "Édition de masse",
-      "massEditDescription": "Vous allez modifier {eventCount} événement(s) pour {userCount} utilisateur(s) sélectionné(s) sur la semaine en cours.",
-      "findActivity": "Trouver l'activité",
-      "allActivities": "Toutes les activités",
-      "replaceWith": "Remplacer par",
-      "validationErrorActivity": "Veuillez sélectionner une nouvelle activité."
-    },
-    "legend": {
-        "title": "Légende & Actions",
-        "selectAll": "Tout sélectionner"
-    },
-    "actions": {
-        "selection": "Sélection: {count} agent(s)",
-        "massEdit": "Éditer en masse",
-        "massDelete": "Supprimer en masse",
-        "confirmDelete": "Êtes-vous sûr de vouloir supprimer {eventCount} événement(s) pour les {userCount} utilisateur(s) sélectionné(s) cette semaine ?"
-    },
-    "clearAllButton": "Vider le planning",
-    "clearAllConfirm": "Êtes-vous sûr de vouloir supprimer DÉFINITIVEMENT tous les événements du planning pour TOUS les utilisateurs ? Cette action est irréversible.",
-    "clearAllSuccess": "Le planning a été entièrement vidé.",
-    "clearAllError": "Une erreur est survenue lors de la suppression du planning."
-  },
-  "weekdays": {
-    "monday": "Lundi",
-    "tuesday": "Mardi",
-    "wednesday": "Mercredi",
-    "thursday": "Jeudi",
-    "friday": "Vendredi",
-    "saturday": "Samedi",
-    "sunday": "Dimanche",
-    "short": {
-        "monday": "L",
-        "tuesday": "M",
-        "wednesday": "M",
-        "thursday": "J",
-        "friday": "V",
-        "saturday": "S",
-        "sunday": "D"
-    }
-  },
-  "monitoring": {
-    "title": "État du Système",
-    "health": {
-      "up": "Opérationnel",
-      "degraded": "Performance Dégradée",
-      "down": "Panne Majeure"
-    },
-    "kpis": {
-      "cpu": "Charge CPU",
-      "ram": "Utilisation RAM",
-      "disk": "Espace Disque",
-      "recordings": "Enregistrements",
-      "latency": "Latence API",
-      "totalSize": "Taille totale"
-    },
-    "logs": {
-      "title": "Journal des Événements Système",
-      "tabs": {
-        "system": "Système",
-        "ami": "AMI",
-        "security": "Sécurité"
-      },
-      "noLogs": "Aucun journal à afficher."
-    },
-    "versions": {
-      "title": "Versions"
-    },
-    "purgeLogs": "Purger les anciens logs",
-    "connectivity": {
-      "title": "Testeur de Connectivité",
-      "sitePrefix": "Site: ",
-      "testButton": "Tester",
-      "success": "Succès",
-      "failure": "Échec",
-      "testing": "Test en cours...",
-      "idle": "Inactif"
-    }
-  },
-  "maintenance": {
-    "manual": {
-        "title": "Sauvegarde Manuelle",
-        "description": "Lancez une sauvegarde complète de la configuration du système à tout moment. Utile avant des modifications importantes.",
-        "button": "Lancer une sauvegarde maintenant",
-        "info": "La sauvegarde inclut les utilisateurs, les groupes, les scripts, les SVI, les campagnes et tous les paramètres. Les enregistrements d'appels ne sont pas inclus.",
-        "confirm": "Êtes-vous sûr de vouloir lancer une sauvegarde manuelle maintenant ?",
-        "success": "Sauvegarde manuelle lancée avec succès.",
-        "error": "Échec du lancement de la sauvegarde."
-    },
-    "schedule": {
-        "title": "Planification",
-        "frequency": "Fréquence",
-        "frequencies": {
-            "none": "Aucune",
-            "daily": "Quotidienne",
-            "weekly": "Hebdomadaire"
-        },
-        "time": "Heure (UTC)",
-        "saveSuccess": "Planification enregistrée !",
-        "saveError": "Échec de l'enregistrement de la planification.",
-        "saving": "Enregistrement...",
-        "saveButton": "Enregistrer la planification"
-    },
-    "history": {
-        "title": "Historique des Sauvegardes",
-        "headers": {
-            "datetime": "Date & Heure",
-            "status": "Statut",
-            "filename": "Nom du Fichier"
-        },
-        "statuses": {
-            "success": "Succès",
-            "failure": "Échec"
-        },
-        "download": "Télécharger",
-        "restore": "Restaurer",
-        "confirmRestore": "Êtes-vous sûr de vouloir restaurer la sauvegarde '{fileName}' ? Toutes les données actuelles seront écrasées.",
-        "confirmRestore_final": "ACTION IRRÉVERSIBLE. Confirmez-vous la restauration ? L'application sera momentanément indisponible.",
-        "restoreSuccess": "Restauration terminée. L'application va redémarrer.",
-        "restoreError": "Échec de la restauration.",
-        "deleteSuccess": "Sauvegarde supprimée.",
-        "deleteError": "Échec de la suppression de la sauvegarde.",
-        "noBackups": "Aucune sauvegarde disponible."
-    }
-  },
-  "databaseManager": {
-    "attention": "Attention : Les actions effectuées ici modifient directement la base de données. Utilisez cet outil avec une extrême prudence. Toute perte de données est irréversible.",
-    "schema": "Schéma",
-    "predefinedQueries": "Requêtes Prédéfinies",
-    "queries": {
-      "listUsers": "Lister les utilisateurs",
-      "listActiveCampaigns": "Lister les campagnes actives",
-      "countContactsByCampaign": "Compter les contacts par campagne",
-      "viewLast20Contacts": "Voir les 20 derniers contacts",
-      "listScripts": "Lister les scripts"
-    },
-    "readOnlyMode": "Mode Lecture Seule",
-    "execute": "Exécuter la requête",
-    "executing": "Exécution...",
-    "resultsPlaceholder": "Les résultats s'afficheront ici.",
-    "resultsCount": "{count} ligne(s) retournée(s)."
   },
   "agentPreview": {
+    "dataSaved": "Données enregistrées avec succès.",
+    "invalidPhone": "Veuillez renseigner un numéro de téléphone valide pour insérer une nouvelle fiche.",
+    "contactInserted": "Nouveau contact inséré avec succès.",
+    "insertError": "Erreur lors de l'insertion du contact : {message}",
     "notesHistory": "Historique des notes",
     "noNotes": "Aucune note pour ce contact.",
     "addNotePlaceholder": "Ajouter une nouvelle note...",
     "saveNote": "Enregistrer la note",
-    "dataSaved": "Données enregistrées.",
-    "invalidPhone": "Numéro de téléphone invalide.",
-    "contactInserted": "Contact inséré avec succès.",
-    "insertError": "Erreur lors de l'insertion : {message}",
-    "unsupportedBlock": "Type de bloc non supporté: {type}",
     "selectOption": "Sélectionner une option",
+    "unsupportedBlock": "Type de bloc non supporté : {type}",
     "embedded": {
       "page": "Page :"
     },
     "modal": {
-      "title": "Aperçu du Script : {scriptName}",
+      "title": "Aperçu du script : {scriptName}",
       "currentPage": "Page actuelle : {pageName}",
       "backToEditor": "Retour à l'éditeur"
     }
-  },
-  "features": {
-    "users": { "title": "Utilisateurs" },
-    "groups": { "title": "Groupes" },
-    "planning": { "title": "Plannings" },
-    "outbound": { "title": "Campagnes Sortantes" },
-    "scripts": { "title": "Scripts d'agent" },
-    "ivr": { "title": "Flux SVI" },
-    "audio": { "title": "Bibliothèque Média" },
-    "records": { "title": "Enregistrements" },
-    "qualifications": { "title": "Qualifications" },
-    "supervision": { "title": "Supervision" },
-    "reporting": { "title": "Rapports & Analytiques" },
-    "history": { "title": "Historique des Appels" },
-    "sessions": { "title": "Sessions Agents" },
-    "trunks": { "title": "Trunks SIP" },
-    "dids": { "title": "Numéros (SDA)" },
-    "sites-config": { "title": "Configuration des Sites" },
-    "module-settings": { "title": "Gestion des Modules" },
-    "languages": { "title": "Langues" },
-    "database-client": { "title": "Client Base de Données" },
-    "system-connection": { "title": "Connexion Système" },
-    "maintenance": { "title": "Maintenance" },
-    "help": { "title": "Centre d'Aide" },
-    "api-docs": { "title": "Documentation API" },
-    "billing": { "title": "Facturation" },
-    "system-settings": { "title": "Paramètres Système" }
   }
 }
