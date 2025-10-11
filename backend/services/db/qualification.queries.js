@@ -48,34 +48,33 @@ const saveQualificationGroup = async (group, assignedQualIds, id) => {
             savedGroup = res.rows[0];
         }
         
-        // Un-assign all non-standard qualifications from this group first.
-        // This makes the logic cleaner and prevents issues if a qualification is moved from another group.
-        await client.query('UPDATE qualifications SET group_id = NULL WHERE group_id = $1 AND is_standard = FALSE', [groupId]);
-        
-        // Now, assign the selected non-standard qualifications to this group.
-        if (assignedQualIds && assignedQualIds.length > 0) {
-            // We build a query that explicitly ignores any standard qualifications that might have been passed by mistake.
-            const placeholders = assignedQualIds.map((_, i) => `$${i + 2}`).join(',');
-            await client.query(
-                `UPDATE qualifications 
-                 SET group_id = $1 
-                 WHERE id IN (${placeholders}) AND is_standard = FALSE`, 
-                [groupId, ...assignedQualIds]
-            );
+        const { rows: currentQuals } = await client.query('SELECT id FROM qualifications WHERE group_id = $1', [groupId]);
+        const currentQualIds = new Set(currentQuals.map(q => q.id));
+        const desiredQualIds = new Set(assignedQualIds || []);
+
+        const toAdd = [...desiredQualIds].filter(qualId => !currentQualIds.has(qualId));
+        const toRemove = [...currentQualIds].filter(qualId => !desiredQualIds.has(qualId));
+
+        if (toRemove.length > 0) {
+            await client.query(`UPDATE qualifications SET group_id = NULL WHERE id = ANY($1::text[])`, [toRemove]);
+        }
+        if (toAdd.length > 0) {
+            // This also handles moving a qualification from another group to this one
+            await client.query(`UPDATE qualifications SET group_id = $1 WHERE id = ANY($2::text[])`, [groupId, toAdd]);
         }
         
         await client.query('COMMIT');
         
         const finalGroup = keysToCamel(savedGroup);
-        publish('events:crud', { type: id ? 'updateQualificationGroup' : 'newQualificationGroup', payload: finalGroup }); // RT: emit so all clients refresh instantly
+        publish('events:crud', { type: id ? 'updateQualificationGroup' : 'newQualificationGroup', payload: finalGroup });
         
-        // Also broadcast a general qualifications update as their groupIds have changed
         const allQuals = await getQualifications();
-        publish('events:crud', { type: 'qualificationsUpdated', payload: allQuals }); // RT: emit so all clients refresh instantly
+        publish('events:crud', { type: 'qualificationsUpdated', payload: allQuals });
 
         return finalGroup;
     } catch(e) {
         await client.query('ROLLBACK');
+        console.error("Error in saveQualificationGroup transaction:", e);
         throw e;
     } finally {
         client.release();

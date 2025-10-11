@@ -1,4 +1,4 @@
-import React, { useState, useMemo } from 'react';
+import React, { useState, useMemo, useEffect } from 'react';
 import type { Feature, Qualification, QualificationGroup } from '../types.ts';
 import { useStore } from '../src/store/useStore.ts';
 import { useI18n } from '../src/i18n/index.tsx';
@@ -87,42 +87,82 @@ interface GroupModalProps {
 const GroupModal: React.FC<GroupModalProps> = ({ group, qualifications, onSave, onClose }) => {
     const { t } = useI18n();
     const [name, setName] = useState(group?.name || '');
-    const [assignedQualIds, setAssignedQualIds] = useState<string[]>(() => 
-        qualifications.filter(q => q.groupId === group?.id).map(q => q.id)
-    );
+    const [availableQuals, setAvailableQuals] = useState<Qualification[]>([]);
+    const [assignedQuals, setAssignedQuals] = useState<Qualification[]>([]);
+    const [searchTermAvailable, setSearchTermAvailable] = useState('');
+    const [searchTermAssigned, setSearchTermAssigned] = useState('');
 
-    const handleQualToggle = (qualId: string, isChecked: boolean) => {
-        setAssignedQualIds(prev => isChecked ? [...new Set([...prev, qualId])] : prev.filter(id => id !== qualId));
+    useEffect(() => {
+        const assignedForGroup = qualifications.filter(q => q.groupId === group?.id);
+        const availableForGroup = qualifications.filter(q => q.groupId === null || q.groupId === undefined);
+        
+        setAssignedQuals(assignedForGroup.sort((a, b) => parseInt(a.code) - parseInt(b.code)));
+        setAvailableQuals(availableForGroup.sort((a, b) => parseInt(a.code) - parseInt(b.code)));
+    }, [group, qualifications]);
+
+    const handleAdd = (qual: Qualification) => {
+        setAvailableQuals(prev => prev.filter(q => q.id !== qual.id));
+        setAssignedQuals(prev => [...prev, qual].sort((a, b) => parseInt(a.code) - parseInt(b.code)));
+    };
+
+    const handleRemove = (qual: Qualification) => {
+        setAssignedQuals(prev => prev.filter(q => q.id !== qual.id));
+        setAvailableQuals(prev => [...prev, qual].sort((a, b) => parseInt(a.code) - parseInt(b.code)));
     };
 
     const handleSubmit = (e: React.FormEvent) => {
         e.preventDefault();
-        onSave({ ...group, id: group?.id || `qg-${Date.now()}`, name }, assignedQualIds);
+        onSave({ ...group, id: group?.id || `qg-${Date.now()}`, name }, assignedQuals.map(q => q.id));
     };
 
-    const availableQualifications = qualifications.filter(q => !q.isStandard && (q.groupId === null || q.groupId === group?.id));
+    const QualListItem: React.FC<{ qual: Qualification; onAction: (q: Qualification) => void; actionIcon: React.FC<any>; actionLabel: string }> = ({ qual, onAction, actionIcon: ActionIcon, actionLabel }) => {
+        const typeDotColor = { positive: 'bg-green-500', neutral: 'bg-slate-500', negative: 'bg-red-500' };
+        return (
+            <div className="flex items-center justify-between p-2 rounded-md hover:bg-slate-100 dark:hover:bg-slate-700">
+                <div className="flex items-center gap-3 overflow-hidden">
+                    <span className={`w-2 h-2 rounded-full flex-shrink-0 ${typeDotColor[qual.type]}`}></span>
+                    <span className="font-mono text-xs w-8 text-slate-500 dark:text-slate-400">{qual.code}</span>
+                    <span className="text-sm text-slate-800 dark:text-slate-200 truncate" title={qual.description}>{qual.description}</span>
+                </div>
+                <button type="button" onClick={() => onAction(qual)} title={actionLabel} className="p-1 text-slate-500 hover:text-indigo-600 dark:hover:text-indigo-400">
+                    <ActionIcon className="w-5 h-5" />
+                </button>
+            </div>
+        );
+    };
+
+    const filteredAvailable = availableQuals.filter(q => q.description.toLowerCase().includes(searchTermAvailable.toLowerCase()) || q.code.includes(searchTermAvailable));
+    const filteredAssigned = assignedQuals.filter(q => q.description.toLowerCase().includes(searchTermAssigned.toLowerCase()) || q.code.includes(searchTermAssigned));
 
     return (
         <div className="fixed inset-0 bg-slate-800 bg-opacity-75 flex items-center justify-center p-4 z-50">
-            <form onSubmit={handleSubmit} className="bg-white dark:bg-slate-800 rounded-lg shadow-xl w-full max-w-lg h-[70vh] flex flex-col">
+            <form onSubmit={handleSubmit} className="bg-white dark:bg-slate-800 rounded-lg shadow-xl w-full max-w-4xl h-[90vh] flex flex-col">
                 <div className="p-6 border-b dark:border-slate-700">
-                    <h3 className="text-lg font-medium text-slate-900 dark:text-slate-100">{group ? 'Modifier le Groupe' : 'Nouveau Groupe'}</h3>
+                    <h3 className="text-lg font-medium text-slate-900 dark:text-slate-100">{group?.id ? 'Modifier le Groupe' : 'Nouveau Groupe'}</h3>
                 </div>
                 <div className="p-6 space-y-4 overflow-y-auto flex-1">
                     <div>
-                        <label className="block text-sm font-medium">Nom du groupe</label>
+                        <label className="block text-sm font-medium text-slate-700 dark:text-slate-300">Nom du groupe</label>
                         <input type="text" value={name} onChange={e => setName(e.target.value)} required className="mt-1 block w-full p-2 border rounded-md dark:bg-slate-900 dark:border-slate-600" />
                     </div>
-                     <div>
-                        <label className="block text-sm font-medium">Qualifications assignées</label>
-                        <div className="mt-1 max-h-64 overflow-y-auto rounded-md border p-2 space-y-2 bg-slate-50 dark:bg-slate-900 dark:border-slate-700">
-                            {availableQualifications.map(qual => (
-                                <div key={qual.id} className="flex items-center"><input id={`qual-${qual.id}`} type="checkbox" checked={assignedQualIds.includes(qual.id)} onChange={e => handleQualToggle(qual.id, e.target.checked)} className="h-4 w-4 rounded" /><label htmlFor={`qual-${qual.id}`} className="ml-3 text-sm">{qual.code} - {qual.description}</label></div>
-                            ))}
+                    <div className="grid grid-cols-2 gap-6">
+                        <div>
+                            <h4 className="font-semibold mb-2 text-slate-800 dark:text-slate-200">Qualifications Disponibles</h4>
+                            <input type="search" placeholder="Rechercher..." value={searchTermAvailable} onChange={e => setSearchTermAvailable(e.target.value)} className="w-full p-2 border rounded-md mb-2 dark:bg-slate-900 dark:border-slate-600"/>
+                            <div className="h-96 overflow-y-auto rounded-md border p-2 space-y-1 bg-slate-50 dark:bg-slate-900/50 dark:border-slate-700">
+                                {filteredAvailable.map(qual => <QualListItem key={qual.id} qual={qual} onAction={handleAdd} actionIcon={PlusIcon} actionLabel="Ajouter" />)}
+                            </div>
+                        </div>
+                        <div>
+                            <h4 className="font-semibold mb-2 text-slate-800 dark:text-slate-200">Qualifications du Groupe</h4>
+                            <input type="search" placeholder="Rechercher..." value={searchTermAssigned} onChange={e => setSearchTermAssigned(e.target.value)} className="w-full p-2 border rounded-md mb-2 dark:bg-slate-900 dark:border-slate-600"/>
+                            <div className="h-96 overflow-y-auto rounded-md border p-2 space-y-1 bg-slate-50 dark:bg-slate-900/50 dark:border-slate-700">
+                                {filteredAssigned.map(qual => <QualListItem key={qual.id} qual={qual} onAction={handleRemove} actionIcon={TrashIcon} actionLabel="Retirer" />)}
+                            </div>
                         </div>
                     </div>
                 </div>
-                 <div className="bg-slate-50 dark:bg-slate-900 px-4 py-3 sm:flex sm:flex-row-reverse rounded-b-lg flex-shrink-0 border-t dark:border-slate-700">
+                <div className="bg-slate-50 dark:bg-slate-900 px-4 py-3 sm:flex sm:flex-row-reverse rounded-b-lg flex-shrink-0 border-t dark:border-slate-700">
                     <button type="submit" className="inline-flex w-full justify-center rounded-md border bg-primary px-4 py-2 font-medium text-primary-text shadow-sm hover:bg-primary-hover sm:ml-3 sm:w-auto">{t('common.save')}</button>
                     <button type="button" onClick={onClose} className="mt-3 inline-flex w-full justify-center rounded-md border border-slate-300 bg-white px-4 py-2 font-medium text-slate-700 shadow-sm hover:bg-slate-50 sm:mt-0 sm:w-auto dark:bg-slate-700 dark:text-slate-200 dark:border-slate-600 dark:hover:bg-slate-600">{t('common.cancel')}</button>
                 </div>
