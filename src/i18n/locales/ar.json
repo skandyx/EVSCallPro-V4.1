@@ -199,18 +199,66 @@
       "history": "السجل",
       "image": "صورة"
     },
+    "defaults": {
+      "label": "عنوان الحقل",
+      "text": "هذه فقرة نصية. يمكنك تحريرها لإعطاء تعليمات للوكيل.",
+      "placeholder": "أدخل هنا...",
+      "emailPlaceholder": "example@domain.com",
+      "phonePlaceholder": "0123456789",
+      "question": "سؤالك هنا",
+      "radioOption1": "خيار 1",
+      "radioOption2": "خيار 2",
+      "checkboxOptionA": "خيار أ",
+      "checkboxOptionB": "خيار ب",
+      "dropdownValue1": "قيمة 1",
+      "dropdownValue2": "قيمة 2",
+      "buttonText": "انقر هنا"
+    },
     "background": "الخلفية",
+    "changeBackgroundColor": "تغيير لون خلفية النص",
     "preview": "معاينة",
     "page_of_pages": "صفحة {currentPage}/{totalPages}",
+    "zoomIn": "تكبير",
+    "zoomOut": "تصغير",
+    "resetView": "إعادة تعيين العرض",
+    "cannotDeleteLastPage": "لا يمكن حذف الصفحة الأخيرة.",
+    "cannotDeleteStartPage": "لا يمكن حذف صفحة البداية.",
+    "confirmDeletePage": "هل أنت متأكد من أنك تريد حذف هذه الصفحة؟",
+    "nameAlreadyExists": "الاسم '{name}' مستخدم بالفعل في هذه الصفحة.",
+    "technicalNameAlreadyExists": "الاسم التقني '{fieldName}' مستخدم بالفعل. يرجى اختيار اسم آخر.",
+    "pageNotFound": "الصفحة غير موجودة",
     "properties": {
       "blockNameLabel": "اسم الكتلة (مرئي للوكيل)",
       "technicalName": "الاسم التقني:",
       "tabs": { "content": "المحتوى", "style": "النمط" },
-      "readOnly": "للقراءة فقط",
-      "action": "الإجراء",
+      "showField": "إظهار هذا الحقل",
+      "showFieldHelp": "عطّله لإخفاء هذا الحقل القياسي.",
+      "placeholder": "نص العنصر النائب",
+      "format": "التنسيق",
+      "formats": { "text": "نص", "number": "رقم", "password": "كلمة المرور" },
+      "buttonText": "نص الزر",
+      "question": "السؤال",
       "options": "الخيارات",
+      "newOption": "خيار جديد",
       "addOption": "إضافة خيار",
-      "buttonAction": "إجراء الزر"
+      "historyHelp": "ستعرض هذه الكتلة سجل ملاحظات جهة الاتصال.",
+      "blocksInGroup": "الكتل في هذه المجموعة",
+      "deleteBlockTooltip": "حذف الكتلة '{name}'",
+      "dragBlocksHere": "اسحب الكتل هنا لإضافتها إلى المجموعة.",
+      "readOnly": "للقراءة فقط",
+      "readOnlyHelp": "يمنع الوكيل من تعديل هذا الحقل.",
+      "width": "العرض (بكسل)",
+      "height": "الارتفاع (بكسل)",
+      "font": "الخط",
+      "size": "الحجم (بكسل)",
+      "alignment": "المحاذاة",
+      "background": "الخلفية",
+      "text": "النص",
+      "buttonAction": "إجراء الزر",
+      "action": "الإجراء",
+      "destinationPage": "الصفحة الهدف",
+      "selectPage": "اختر صفحة",
+      "deleteBlockButton": "حذف \"{name}\""
     },
     "actions": {
       "none": "لا شيء",
@@ -219,6 +267,10 @@
       "navigate": "الانتقال إلى...",
       "save": "حفظ السجل",
       "insertContact": "إدراج سجل جديد"
+    },
+    "canvas": {
+      "historyPreview": "معاينة السجل",
+      "deleteBlock": "حذف الكتلة"
     },
     "image": {
       "upload": "تحميل صورة",
@@ -237,10 +289,291 @@
     "saveNote": "حفظ الملاحظة",
     "selectOption": "اختر خيارًا",
     "unsupportedBlock": "نوع الكتلة غير مدعوم: {type}",
+    "embedded": {
+      "page": "صفحة:"
+    },
     "modal": {
       "title": "معاينة النص: {scriptName}",
       "currentPage": "الصفحة الحالية: {pageName}",
       "backToEditor": "العودة إلى المحرر"
     }
+  },
+  "qualifications": {
+    "types": {
+      "positive": "إيجابي",
+      "neutral": "محايد",
+      "negative": "سلبي"
+    }
+  },
+  "outboundCampaignsManager": {
+    "modal": {
+      "weekdays": {
+        "monday": "الاثنين",
+        "tuesday": "الثلاثاء",
+        "wednesday": "الأربعاء",
+        "thursday": "الخميس",
+        "friday": "الجمعة",
+        "saturday": "السبت",
+        "sunday": "الأحد"
+      },
+      "operators": {
+        "equals": "يساوي",
+        "starts_with": "يبدأ بـ"
+      }
+    }
+  },
+  "campaignDetail": {
+    "backToCampaigns": "العودة إلى الحملات",
+    "associatedScript": "النص المرتبط: {scriptName}",
+    "noDataToExport": "لا توجد بيانات جهات اتصال معالجة للتصدير.",
+    "export": "تصدير المعالج",
+    "dashboard": {
+      "kpis": {
+        "completionRate": "معدل الإنجاز",
+        "contactRate": "معدل الاتصال",
+        "conversionRate": "معدل التحويل",
+        "aht": "متوسط وقت التعامل"
+      },
+      "fileProgress": {
+        "title": "تقدم الملف",
+        "processed": "تمت المعالجة:",
+        "remaining": "المتبقي:"
+      },
+      "quota": {
+        "title": "تتبع الحصص",
+        "ruleStartsWith": "الحصة: {field} يبدأ بـ \"{value}\"",
+        "ruleEquals": "الحصة: {field} يساوي \"{value}\"",
+        "achieved": "المحقق:"
+      },
+      "charts": {
+        "successByHourTitle": "التحويلات حسب ساعة اليوم",
+        "conversionsLabel": "التحويلات"
+      },
+      "tables": {
+        "qualifPerfTitle": "أداء المؤهلات",
+        "agentPerfTitle": "أداء الوكلاء",
+        "headers": {
+          "qualification": "المؤهل",
+          "processedRecords": "السجلات المعالجة",
+          "rate": "المعدل",
+          "agent": "الوكيل",
+          "processedCalls": "المكالمات المعالجة",
+          "conversions": "التحويلات"
+        }
+      }
+    },
+    "tabs": {
+      "contacts": "جهات الاتصال ({count})",
+      "dashboard": "لوحة المعلومات",
+      "dashboard2": "تحليل مفصل",
+      "settings": "الإعدادات"
+    },
+    "contacts": {
+      "searchPlaceholder": "البحث في جهات الاتصال...",
+      "deleteSelection": "حذف التحديد ({count})",
+      "headers": {
+        "lastName": "اسم العائلة",
+        "firstName": "الاسم الأول",
+        "phone": "الهاتف",
+        "status": "الحالة",
+        "lastQualif": "آخر مؤهل",
+        "lastNote": "آخر ملاحظة"
+      },
+      "noContacts": "لم يتم العثور على جهات اتصال لهذه الحملة.",
+      "pagination": "صفحة {currentPage} من {totalPages}"
+    },
+    "settings": {
+      "recycling": {
+        "title": "إعادة تدوير جهات الاتصال",
+        "description": "إعادة إدخال جهات الاتصال في الحملة بناءً على آخر مؤهل لهم. ستتأثر فقط جهات الاتصال التي حالتها 'مؤهلة'.",
+        "headers": {
+          "qualification": "المؤهل",
+          "processedRecords": "السجلات المعالجة",
+          "action": "الإجراء"
+        },
+        "recycleButton": "إعادة تدوير",
+        "recycleButtonTooltip": "إعادة تعيين الحالة إلى 'قيد الانتظار'",
+        "notRecyclableTooltip": "هذا المؤهل غير قابل لإعادة التدوير"
+      }
+    }
+  },
+  "contactHistory": {
+    "title": "سجل جهة الاتصال",
+    "loading": "جاري تحميل السجل...",
+    "kpis": {
+      "totalCalls": "إجمالي المكالمات",
+      "talkTime": "إجمالي وقت التحدث",
+      "uniqueAgents": "وكلاء فريدون",
+      "positiveQuals": "مؤهلات إيجابية"
+    },
+    "timelineTitle": "الجدول الزمني",
+    "callBy": "مكالمة بواسطة {agentName}",
+    "noteBy": "ملاحظة بواسطة {agentName}",
+    "duration": "المدة:",
+    "qualification": "المؤهل:",
+    "noHistory": "لم يتم العثور على سجل لجهة الاتصال هذه."
+  },
+  "reporting": {
+    "exportPdf": "تصدير PDF",
+    "filters": {
+      "dateRanges": {
+        "last7days": "آخر 7 أيام",
+        "last30days": "آخر 30 يومًا",
+        "thisMonth": "هذا الشهر"
+      },
+      "allCampaigns": "كل الحملات",
+      "allAgents": "كل الوكلاء"
+    },
+    "kpis": {
+      "processedCalls": "المكالمات المعالجة",
+      "totalTalkTime": "إجمالي وقت التحدث",
+      "avgCallDuration": "متوسط مدة المكالمة",
+      "successRate": "معدل النجاح",
+      "occupancyRate": "معدل الإشغال"
+    },
+    "tabs": {
+      "charts": "الرسوم البيانية",
+      "timesheet": "ورقة الدوام",
+      "campaign": "أداء الحملة",
+      "agent": "أداء الوكيل",
+      "history": "سجل المكالمات"
+    },
+    "charts": {
+      "callsByCampaignTitle": "المكالمات حسب الحملة",
+      "successByHourTitle": "النجاح حسب الساعة",
+      "successByAgentTitle": "معدل النجاح حسب الوكيل (%)",
+      "adherenceByAgentTitle": "متوسط انحراف الالتزام (ث)",
+      "conversionsLabel": "التحويلات",
+      "successRateLabel": "معدل النجاح",
+      "avgAdherenceLabel": "انحراف الالتزام"
+    },
+    "tables": {
+      "campaignPerf": {
+        "title": "أداء الحملة",
+        "headers": {
+          "campaign": "الحملة",
+          "calls": "المكالمات",
+          "totalDuration": "المدة الإجمالية",
+          "avgDuration": "متوسط المدة",
+          "successRate": "معدل النجاح"
+        }
+      },
+      "agentPerf": {
+        "titleCalls": "أداء الوكيل (المكالمات)",
+        "headers": {
+          "agent": "الوكيل",
+          "calls": "المكالمات",
+          "totalDuration": "المدة الإجمالية",
+          "avgDuration": "متوسط المدة",
+          "successRate": "معدل النجاح"
+        }
+      },
+      "timesheet": {
+        "title": "ورقة دوام الوكيل",
+        "headers": {
+          "date": "التاريخ",
+          "agent": "الوكيل",
+          "firstLogin": "أول تسجيل دخول",
+          "lastLogout": "آخر تسجيل خروج",
+          "totalDuration": "المدة الإجمالية"
+        }
+      },
+      "callHistory": {
+        "title": "سجل المكالمات",
+        "headers": {
+          "dateTime": "التاريخ والوقت",
+          "agent": "الوكيل",
+          "campaign": "الحملة",
+          "number": "الرقم",
+          "duration": "المدة",
+          "qualification": "المؤهل"
+        }
+      }
+    },
+    "inboundCalls": "المكالمات الواردة",
+    "noSessionData": "لا توجد بيانات جلسة للفترة المحددة.",
+    "noCallData": "لا توجد بيانات مكالمات للفترة المحددة."
+  },
+  "history": {
+    "filters": {
+      "searchTerm": "بحث",
+      "searchPlaceholder": "رقم أو اسم جهة الاتصال...",
+      "startDate": "تاريخ البدء",
+      "endDate": "تاريخ الانتهاء",
+      "inbound": "وارد / بدون حملة"
+    },
+    "headers": {
+      "dateTime": "التاريخ والوقت",
+      "direction": "الاتجاه",
+      "contactName": "اسم جهة الاتصال",
+      "number": "الرقم",
+      "duration": "المدة",
+      "qualification": "المؤهل"
+    },
+    "inbound": "وارد",
+    "outbound": "صادر",
+    "listen": "استماع",
+    "noRecords": "لم يتم العثور على سجلات للمرشحات المحددة.",
+    "pagination": "صفحة {currentPage} من {totalPages} ({totalRecords} سجلات)"
+  },
+  "agentView": {
+    "extension": "رقم {ext}",
+    "statuses": {
+      "available": "متاح",
+      "onCall": "في مكالمة",
+      "wrapUp": "إنهاء",
+      "onPause": "في استراحة",
+      "ringing": "يرن",
+      "disconnected": "غير متصل",
+      "onHold": "في الانتظار",
+      "training": "تدريب"
+    },
+    "statusManager": {
+      "settings": "الإعدادات"
+    },
+    "messages": "الرسائل",
+    "clearAll": "مسح الكل",
+    "respond": "رد",
+    "yourResponsePlaceholder": "ردك...",
+    "kpis": {
+      "title": "مؤشرات الأداء اليومية",
+      "totalConnectedTime": "إجمالي وقت الاتصال",
+      "callsHandled": "المكالمات المعالجة",
+      "totalPauseTime": "إجمالي وقت الاستراحة",
+      "pauseCount": "عدد الاستراحات",
+      "totalTrainingTime": "إجمالي وقت التدريب",
+      "trainingCount": "عدد التدريبات"
+    },
+    "activeQuota": {
+      "title": "الحصة النشطة: {field} {operator} \"{value}\""
+    },
+    "feedback": {
+      "activateCampaign": "الرجاء تحديد حملة نشطة للاتصال.",
+      "noContactAvailable": "لا يوجد المزيد من جهات الاتصال المتاحة في {campaignName}.",
+      "errorFetchingContact": "خطأ في جلب جهة الاتصال التالية.",
+      "mustEndTask": "يجب أن تكون في حالة 'متاح' لبدء مهمة جديدة."
+    },
+    "searching": "جاري البحث عن جهة الاتصال التالية...",
+    "waitingForCall": "في انتظار المكالمة التالية...",
+    "myCallbacks": "مكالماتي المعاودة",
+    "overdue": "متأخر",
+    "noCallbacks": "لا توجد مكالمات معاودة مجدولة لهذا اليوم.",
+    "noScript": "لا يوجد نص مرتبط بهذه الحملة.",
+    "scriptWillBeHere": "سيتم عرض النص هنا.",
+    "callControls": {
+      "title": "أدوات التحكم في المكالمات",
+      "call": "اتصال",
+      "endCall": "إنهاء وتأهيل",
+      "hangup": "إغلاق وتأهيل",
+      "hold": "تعليق",
+      "transfer": "تحويل"
+    },
+    "askForHelp": "طلب المساعدة",
+    "helpRequestSent": "تم إرسال طلب المساعدة إلى المشرفين.",
+    "qualifications": "المؤهلات",
+    "selectQualification": "اختر مؤهلاً...",
+    "activeCampaigns": "الحملات النشطة",
+    "noCampaigns": "لا توجد حملات معينة.",
+    "callNumber": "اتصل بـ {phoneName}"
   }
 }

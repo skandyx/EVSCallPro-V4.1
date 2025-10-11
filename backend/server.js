@@ -145,7 +145,7 @@ app.get('/api/public-config', async (req, res) => {
             appFaviconDataUrl: envConfig.APP_FAVICON_DATA_URL || '',
             colorPalette: envConfig.COLOR_PALETTE || 'default',
             appName: envConfig.APP_NAME || 'Architecte de Solutions',
-            defaultLanguage: envConfig.DEFAULT_LANGUAGE || 'fr',
+            defaultLanguage: envConfig.DEFAULT_LANGUAGE || 'en',
         };
 
         res.json({ appSettings });
@@ -159,7 +159,7 @@ app.get('/api/public-config', async (req, res) => {
                 appFaviconDataUrl: '',
                 colorPalette: 'default',
                 companyAddress: '',
-                defaultLanguage: 'fr',
+                defaultLanguage: 'en',
             }
          });
     }
@@ -253,7 +253,7 @@ app.get('/api/application-data', async (req, res) => {
             appFaviconDataUrl: envConfig.APP_FAVICON_DATA_URL || '',
             colorPalette: envConfig.COLOR_PALETTE || 'default',
             appName: (envConfig.APP_NAME || 'Architecte de Solutions').replace(/"/g, ''),
-            defaultLanguage: envConfig.DEFAULT_LANGUAGE || 'fr',
+            defaultLanguage: envConfig.DEFAULT_LANGUAGE || 'en',
         };
 
         const backupLogs = [

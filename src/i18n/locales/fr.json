@@ -80,551 +80,87 @@
   "features": {
     "users": {
       "title": "Utilisateurs",
-      "description": "Gérez les comptes des collaborateurs, leurs rôles et leurs permissions.",
-      "userJourney": {
-        "title": "Parcours Utilisateur : Créer un Nouvel Agent",
-        "steps": [
-          "Naviguez vers la section 'Utilisateurs'.",
-          "Cliquez sur 'Créer un utilisateur'.",
-          "Remplissez les informations requises (nom, identifiant, rôle, etc.).",
-          "Assignez l'utilisateur aux campagnes et groupes pertinents.",
-          "Enregistrez le nouvel utilisateur."
-        ]
-      },
-      "specs": {
-        "title": "Spécifications Techniques",
-        "points": [
-          "Les utilisateurs sont stockés dans la table 'users'.",
-          "Les mots de passe doivent être hachés avec un algorithme fort (ex: bcrypt).",
-          "Les rôles ('Agent', 'Superviseur', 'Administrateur', 'SuperAdmin') définissent les niveaux d'accès.",
-          "L'identifiant de connexion doit être unique dans tout le système."
-        ]
-      },
-      "simplificationTip": {
-        "title": "Astuce de Simplification",
-        "content": "Pour les petites équipes, envisagez d'utiliser uniquement les rôles 'Agent' et 'Administrateur' pour simplifier la gestion des permissions."
-      }
+      "description": "Gérez les comptes des collaborateurs, leurs rôles et leurs permissions."
     },
     "groups": {
       "title": "Groupes",
-      "description": "Créez des groupes d'agents pour une gestion et un routage d'appels simplifiés.",
-      "userJourney": {
-        "title": "Parcours Utilisateur : Créer un Groupe",
-        "steps": [
-          "Naviguez vers la section 'Groupes'.",
-          "Cliquez sur 'Créer un groupe'.",
-          "Donnez un nom au groupe.",
-          "Sélectionnez les agents qui seront membres de ce groupe.",
-          "Enregistrez le groupe."
-        ]
-      },
-      "specs": {
-        "title": "Spécifications Techniques",
-        "points": [
-          "Les groupes sont stockés dans la table 'user_groups'.",
-          "Une table de jonction 'user_group_members' lie les utilisateurs aux groupes (plusieurs-à-plusieurs).",
-          "Les groupes peuvent être utilisés pour le routage d'appels et le filtrage dans les rapports."
-        ]
-      },
-      "simplificationTip": {
-        "title": "Astuce de Simplification",
-        "content": "Commencez avec des groupes larges (ex: 'Ventes', 'Support') et affinez-les au fur et à mesure que votre équipe grandit et se spécialise."
-      }
+      "description": "Créez des groupes d'agents pour une gestion et un routage d'appels simplifiés."
     },
     "planning": {
       "title": "Plannings",
-      "description": "Gérez les plannings hebdomadaires des agents et leurs différentes activités.",
-      "userJourney": {
-        "title": "Parcours Utilisateur : Planifier la Semaine d'un Agent",
-        "steps": [
-          "Naviguez vers la section 'Plannings'.",
-          "Sélectionnez une vue par agent ou par groupe.",
-          "Cliquez et glissez sur le calendrier pour créer un nouvel événement.",
-          "Sélectionnez le type d'activité (ex: 'Disponible', 'Pause', 'Formation').",
-          "Ajustez les heures de début et de fin.",
-          "Enregistrez l'événement."
-        ]
-      },
-      "specs": {
-        "title": "Spécifications Techniques",
-        "points": [
-          "Les événements sont stockés dans la table 'planning_events'.",
-          "Supporte les événements récurrents via une chaîne RRULE.",
-          "Les types d'activités sont configurables dans la table 'activity_types'.",
-          "Le système peut changer automatiquement le statut d'un agent en fonction du planning."
-        ]
-      },
-      "simplificationTip": {
-        "title": "Astuce de Simplification",
-        "content": "Utilisez les événements récurrents pour les heures de travail standard et ajoutez des événements spécifiques pour les exceptions comme les formations ou les réunions."
-      }
+      "description": "Gérez les plannings hebdomadaires des agents et leurs différentes activités."
     },
     "outbound": {
       "title": "Campagnes Sortantes",
-      "description": "Module central pour la création et la gestion des campagnes d'appels sortants.",
-      "userJourney": {
-        "title": "Parcours Utilisateur : Lancer une Campagne",
-        "steps": [
-          "Créez d'abord un Script d'agent et un Groupe de qualifications.",
-          "Naviguez vers 'Campagnes Sortantes' et cliquez sur 'Créer une campagne'.",
-          "Remplissez les détails principaux (nom, mode de numérotation, etc.) et assignez le script et le groupe de qualifications.",
-          "Assignez des agents à la campagne.",
-          "Allez dans la vue détaillée de la campagne et importez un fichier de contacts.",
-          "Faites correspondre les colonnes du fichier aux champs du système.",
-          "Activez la campagne."
-        ]
-      },
-      "specs": {
-        "title": "Spécifications Techniques",
-        "points": [
-          "Les paramètres des campagnes sont stockés dans la table 'campaigns'.",
-          "Les contacts sont stockés dans la table 'contacts' avec un 'campaign_id'.",
-          "Les modes de numérotation (Prédictif, Progressif, Manuel) sont gérés par la logique backend.",
-          "L'import de contacts supporte CSV et XLSX avec dédoublonnage."
-        ]
-      },
-      "simplificationTip": {
-        "title": "Astuce de Simplification",
-        "content": "Commencez avec une campagne en mode 'Manuel'. C'est plus simple à configurer et idéal pour tester votre script et votre fichier de contacts avant de passer à la numérotation automatisée."
-      }
+      "description": "Module central pour la création et la gestion des campagnes d'appels sortants."
     },
     "scripts": {
       "title": "Scripts d'agent",
-      "description": "Éditeur visuel pour construire des guides d'appel interactifs pour les agents.",
-      "userJourney": {
-        "title": "Parcours Utilisateur : Concevoir un Script",
-        "steps": [
-          "Naviguez vers 'Scripts d'agent' et cliquez sur 'Créer un script'.",
-          "Donnez un nom au script.",
-          "Glissez et déposez des éléments de la palette sur le canevas.",
-          "Sélectionnez un élément pour configurer ses propriétés (nom, contenu, style).",
-          "Utilisez des boutons avec des actions 'Naviguer' pour lier plusieurs pages.",
-          "Enregistrez le script."
-        ]
-      },
-      "specs": {
-        "title": "Spécifications Techniques",
-        "points": [
-          "Les scripts sont stockés en tant qu'objet JSONB dans la table 'scripts'.",
-          "La structure inclut des pages et des blocs avec des coordonnées, des dimensions et du contenu.",
-          "Les champs personnalisés créés dans le script sont stockés dans la colonne JSONB 'custom_fields' de la table 'contacts'.",
-          "La Vue Agent rend cette structure JSON en un formulaire interactif."
-        ]
-      },
-      "simplificationTip": {
-        "title": "Astuce de Simplification",
-        "content": "Gardez les scripts simples et ciblés. Un script de 1-2 pages est souvent plus efficace qu'un script complexe. Utilisez l'élément 'Texte' pour le guidage et les éléments 'Saisie' uniquement pour les données qui doivent être collectées."
-      }
+      "description": "Éditeur visuel pour construire des guides d'appel interactifs pour les agents."
     },
     "ivr": {
       "title": "Flux SVI",
-      "description": "Éditeur visuel pour concevoir les parcours d'appels entrants (Serveur Vocal Interactif).",
-      "userJourney": {
-        "title": "Parcours Utilisateur : Créer un SVI d'Accueil",
-        "steps": [
-          "Naviguez vers 'Flux SVI' et cliquez sur 'Créer un flux'.",
-          "Donnez un nom au flux (ex: 'Accueil Principal').",
-          "Glissez un noeud 'Média' pour jouer un message de bienvenue.",
-          "Connectez le noeud 'Début' au noeud 'Média'.",
-          "Glissez un noeud 'Menu' pour les options (ex: 'Tapez 1 pour les Ventes, 2 pour le Support').",
-          "Connectez le noeud 'Média' au noeud 'Menu'.",
-          "Glissez des noeuds 'Transfert' et connectez-les aux options du menu.",
-          "Enregistrez le flux."
-        ]
-      },
-      "specs": {
-        "title": "Spécifications Techniques",
-        "points": [
-          "Les flux SVI sont stockés en JSONB dans la table 'ivr_flows', contenant les noeuds et les connexions.",
-          "Le script AGI backend interprète ce JSON pour exécuter des commandes dans Asterisk.",
-          "Les noeuds Calendrier permettent un routage basé sur le temps (heures d'ouverture/fermeture)."
-        ]
-      },
-      "simplificationTip": {
-        "title": "Astuce de Simplification",
-        "content": "Pour une configuration simple, créez un flux qui joue un message de bienvenue (noeud 'Média') puis transfère directement l'appel (noeud 'Transfert') à un groupe d'agents, sans passer par un menu complexe."
-      }
+      "description": "Éditeur visuel pour concevoir les parcours d'appels entrants (Serveur Vocal Interactif)."
     },
     "audio": {
       "title": "Bibliothèque Média",
-      "description": "Gérez les fichiers audio utilisés dans les SVI (messages d'accueil, musiques d'attente).",
-      "userJourney": {
-        "title": "Parcours Utilisateur : Ajouter un Message d'Accueil",
-        "steps": [
-          "Naviguez vers la 'Bibliothèque Média'.",
-          "Cliquez sur 'Téléverser un Fichier'.",
-          "Sélectionnez un fichier audio (MP3 ou WAV) depuis votre ordinateur.",
-          "Donnez-lui un nom descriptif (ex: 'Message_Bienvenue_Principal').",
-          "Enregistrez le fichier.",
-          "Le fichier est maintenant disponible pour être sélectionné dans les noeuds 'Média' de vos flux SVI."
-        ]
-      },
-      "specs": {
-        "title": "Spécifications Techniques",
-        "points": [
-          "Les métadonnées sont stockées dans la table 'audio_files'.",
-          "Les fichiers physiques sont stockés sur le système de fichiers du serveur.",
-          "Le backend doit convertir les fichiers téléversés en un format compatible avec Asterisk (ex: .wav, 8kHz, 16-bit mono).",
-          "Les fichiers sont servis à Asterisk via un chemin local."
-        ]
-      },
-      "simplificationTip": {
-        "title": "Astuce de Simplification",
-        "content": "Utilisez une convention de nommage cohérente pour vos fichiers audio (ex: 'SVI_Bienvenue', 'Musique_Attente_Generique') pour les retrouver facilement lors de la construction de vos flux."
-      }
+      "description": "Gérez les fichiers audio utilisés dans les SVI (messages d'accueil, musiques d'attente)."
     },
     "records": {
       "title": "Enregistrements",
-      "description": "Écoutez, téléchargez et recherchez les enregistrements d'appels.",
-      "userJourney": {
-        "title": "Parcours Utilisateur : Trouver un Enregistrement d'Appel",
-        "steps": [
-          "Naviguez vers la section 'Enregistrements'.",
-          "Utilisez les filtres pour rechercher par date, agent ou campagne.",
-          "Trouvez l'appel désiré dans la liste.",
-          "Cliquez sur le bouton de lecture pour écouter l'enregistrement directement dans le navigateur.",
-          "Cliquez sur 'Télécharger' pour sauvegarder le fichier.",
-          "Cliquez sur 'Supprimer' pour effacer définitivement l'enregistrement."
-        ]
-      },
-      "specs": {
-        "title": "Spécifications Techniques",
-        "points": [
-          "L'enregistrement des appels est activé par campagne.",
-          "Asterisk sauvegarde les enregistrements dans un répertoire spécifique sur le serveur.",
-          "Le nom de fichier de l'enregistrement doit être lié à l'ID unique de l'appel dans la table 'call_history'.",
-          "Le backend fournit un point d'accès sécurisé pour streamer ou télécharger ces fichiers."
-        ]
-      },
-      "simplificationTip": {
-        "title": "Astuce de Simplification",
-        "content": "Soyez attentif à l'espace de stockage. Mettez en place une politique de rétention des données pour supprimer automatiquement les anciens enregistrements qui ne sont plus nécessaires pour des raisons de qualité ou légales."
-      }
+      "description": "Écoutez, téléchargez et recherchez les enregistrements d'appels."
     },
     "qualifications": {
       "title": "Qualifications d'appel",
-      "description": "Définissez les statuts de fin d'appel pour le reporting et les stratégies de rappel.",
-      "userJourney": {
-        "title": "Parcours Utilisateur : Ajouter une Qualification 'Vente'",
-        "steps": [
-          "Naviguez vers 'Qualifications d'appel'.",
-          "Créez un nouveau groupe, ex: 'Campagne de Ventes'.",
-          "Avec le groupe sélectionné, cliquez sur 'Ajouter une qualification'.",
-          "Entrez un code (ex: 1), une description ('Vente Réalisée'), et définissez le type sur 'Positif'.",
-          "Enregistrez la qualification.",
-          "Assignez le groupe 'Campagne de Ventes' aux paramètres de votre campagne."
-        ]
-      },
-      "specs": {
-        "title": "Spécifications Techniques",
-        "points": [
-          "Les qualifications sont stockées dans la table 'qualifications'.",
-          "Elles peuvent être groupées via la table 'qualification_groups'.",
-          "Les qualifications 'is_standard' sont globales au système et ne peuvent pas être supprimées.",
-          "Le 'type' (positif, neutre, négatif) est utilisé pour calculer les taux de conversion."
-        ]
-      },
-      "simplificationTip": {
-        "title": "Astuce de Simplification",
-        "content": "Commencez avec un ensemble de qualifications petit et clair. Trop de choix peut embrouiller les agents et diluer vos rapports. Vous pouvez toujours en ajouter plus tard."
-      }
+      "description": "Définissez les statuts de fin d'appel pour le reporting et les stratégies de rappel."
     },
     "supervision": {
       "title": "Supervision en Temps Réel",
-      "description": "Tableau de bord pour visualiser l'activité du centre de contact en direct.",
-      "userJourney": {
-        "title": "Parcours Utilisateur : Superviser l'Équipe",
-        "steps": [
-          "Naviguez vers 'Supervision'.",
-          "D'un coup d'oeil, visualisez les KPIs principaux (agents prêts, en appel, etc.).",
-          "Passez à l'onglet 'Agents' pour voir le statut de chaque agent.",
-          "Pour un agent en appel, cliquez sur l'icône 'Écouter' pour monitorer la conversation.",
-          "Si nécessaire, cliquez sur 'Coach' pour parler uniquement à l'agent, ou 'Intervention' pour rejoindre la conversation.",
-          "Passez à l'onglet 'Campagnes' pour voir la progression en temps réel de chaque campagne active."
-        ]
-      },
-      "specs": {
-        "title": "Spécifications Techniques",
-        "points": [
-          "Le tableau de bord est alimenté par une connexion WebSocket.",
-          "Le 'amiListener' du backend pousse les événements (statut agent, nouveaux appels) au frontend en temps réel.",
-          "Les actions du superviseur (écoute, intervention) envoient des commandes au backend, qui les exécute via l'AMI d'Asterisk.",
-          "Les données sont agrégées dans le store du frontend (`useStore`) et ne nécessitent pas d'interrogation constante de l'API."
-        ]
-      },
-      "simplificationTip": {
-        "title": "Astuce de Simplification",
-        "content": "Concentrez-vous d'abord sur les KPIs principaux. Le tableau des agents est très utile pour identifier les agents qui sont dans un état inhabituel depuis trop longtemps (ex: post-appel ou pause prolongée)."
-      }
+      "description": "Tableau de bord pour visualiser l'activité du centre de contact en direct."
     },
     "reporting": {
       "title": "Rapports & Analytiques",
-      "description": "Explorez les données historiques et générez des rapports de performance.",
-      "userJourney": {
-        "title": "Parcours Utilisateur : Créer un Rapport Hebdomadaire",
-        "steps": [
-          "Naviguez vers 'Rapports & Analytiques'.",
-          "Dans les filtres, sélectionnez la plage de dates désirée (ex: '7 derniers jours').",
-          "Optionnellement, filtrez par une campagne ou un agent spécifique.",
-          "Analysez les KPIs et les graphiques qui sont automatiquement mis à jour.",
-          "Passez entre les différents onglets ('Campagne', 'Agent', 'Historique') pour obtenir des tableaux détaillés.",
-          "Cliquez sur 'Exporter en PDF' pour générer un rapport complet."
-        ]
-      },
-      "specs": {
-        "title": "Spécifications Techniques",
-        "points": [
-          "Toutes les données sont extraites des tables 'call_history' et 'agent_sessions'.",
-          "Les calculs (moyennes, taux) sont effectués dans le frontend sur la base des données filtrées.",
-          "Les graphiques sont rendus en utilisant Chart.js.",
-          "L'export PDF est fait côté client en utilisant jsPDF et jsPDF-AutoTable."
-        ]
-      },
-      "simplificationTip": {
-        "title": "Astuce de Simplification",
-        "content": "Ne sur-filtrez pas au début. Commencez avec une vue large (ex: toutes les campagnes de la semaine dernière) pour identifier les tendances générales, puis affinez sur des campagnes ou des agents spécifiques qui se démarquent."
-      }
+      "description": "Explorez les données historiques et générez des rapports de performance."
     },
     "history": {
       "title": "Historique des Appels",
-      "description": "Journal détaillé et filtrable de tous les appels traités.",
-      "userJourney": {
-        "title": "Parcours Utilisateur : Trouver un Appel Spécifique",
-        "steps": [
-          "Naviguez vers 'Historique des Appels'.",
-          "Utilisez la barre de recherche pour trouver un appel par numéro de téléphone ou nom de contact.",
-          "Utilisez les filtres pour affiner les résultats par date, agent ou campagne.",
-          "Faites défiler les résultats paginés.",
-          "Cliquez sur une ligne pour voir plus de détails (fonctionnalité future).",
-          "Cliquez sur l'icône de lecture pour écouter l'enregistrement si disponible."
-        ]
-      },
-      "specs": {
-        "title": "Spécifications Techniques",
-        "points": [
-          "La vue interroge la table 'call_history'.",
-          "La pagination est gérée côté backend pour gérer efficacement de grands volumes de données.",
-          "Les clés étrangères (agent_id, campaign_id) sont utilisées pour joindre et afficher les noms au lieu des IDs bruts.",
-          "La fonctionnalité de recherche interroge plusieurs colonnes dans la base de données.",
-          "Le défilement infini peut être mis en oeuvre pour une expérience utilisateur plus fluide."
-        ]
-      },
-      "simplificationTip": {
-        "title": "Astuce de Simplification",
-        "content": "La barre de recherche est l'outil le plus puissant ici. Utilisez-la pour trouver rapidement des interactions spécifiques sans avoir à appliquer plusieurs filtres."
-      }
+      "description": "Journal détaillé et filtrable de tous les appels traités."
     },
     "sessions": {
       "title": "Login/Logout Agents",
-      "description": "Journal détaillé des sessions de connexion des agents.",
-      "userJourney": {
-        "title": "Parcours Utilisateur : Vérifier le Temps de Travail d'un Agent",
-        "steps": [
-          "Naviguez vers 'Login/Logout Agents'.",
-          "Filtrez par un agent spécifique et une plage de dates.",
-          "Visualisez la liste des heures de connexion et de déconnexion pour cette période.",
-          "Le temps total de connexion est calculé et affiché."
-        ]
-      },
-      "specs": {
-        "title": "Spécifications Techniques",
-        "points": [
-          "Les données proviennent de la table 'agent_sessions'.",
-          "Une nouvelle session est créée à la connexion.",
-          "Le 'logout_time' est mis à jour à la déconnexion.",
-          "Une logique backend est nécessaire pour gérer les cas où une session n'est pas correctement fermée (ex: crash du navigateur)."
-        ]
-      },
-      "simplificationTip": {
-        "title": "Astuce de Simplification",
-        "content": "Ce module est plus utile pour les RH et la paie, ou pour enquêter sur des problèmes de présence. Pour le statut opérationnel en temps réel, utilisez le tableau de bord de Supervision."
-      }
+      "description": "Journal détaillé des sessions de connexion des agents."
     },
     "trunks": {
       "title": "Trunks SIP",
-      "description": "Gérez les connexions à vos fournisseurs de téléphonie.",
-      "userJourney": {
-        "title": "Parcours Utilisateur : Ajouter un Nouvel Opérateur",
-        "steps": [
-          "Naviguez vers 'Paramètres' > 'Trunks SIP'.",
-          "Cliquez sur 'Ajouter un Trunk'.",
-          "Entrez les détails fournis par votre opérateur (nom, domaine/IP, identifiants si nécessaire).",
-          "Enregistrez le trunk. La configuration sera appliquée à Asterisk."
-        ]
-      },
-      "specs": {
-        "title": "Spécifications Techniques",
-        "points": [
-          "La configuration est stockée dans la table 'trunks'.",
-          "Le backend génère des fichiers de configuration Asterisk PJSIP sur la base de ces données.",
-          "Une commande de rechargement du système est exécutée après les modifications pour les appliquer."
-        ]
-      },
-      "simplificationTip": {
-        "title": "Astuce de Simplification",
-        "content": "La plupart des opérateurs utilisent maintenant l'authentification par IP, qui est plus simple et plus sécurisée. Préférez cette méthode à l'enregistrement par nom d'utilisateur/mot de passe si elle est disponible."
-      }
+      "description": "Gérez les connexions à vos fournisseurs de téléphonie."
     },
     "dids": {
       "title": "Numéros SDA",
-      "description": "Gérez vos numéros de téléphone entrants et leur routage.",
-      "userJourney": {
-        "title": "Parcours Utilisateur : Router un Nouveau Numéro vers un SVI",
-        "steps": [
-          "Créez d'abord un flux SVI dans la section 'Entrant'.",
-          "Naviguez vers 'Paramètres' > 'Numéros SDA'.",
-          "Cliquez sur 'Ajouter un Numéro'.",
-          "Entrez le numéro de téléphone et une description.",
-          "Sélectionnez le Trunk SIP correct pour ce numéro.",
-          "Dans le menu déroulant 'Routage Entrant', sélectionnez le flux SVI que vous avez créé.",
-          "Enregistrez le numéro."
-        ]
-      },
-      "specs": {
-        "title": "Spécifications Techniques",
-        "points": [
-          "Les numéros SDA (DID) sont stockés dans la table 'dids'.",
-          "Chaque SDA est lié à un trunk et optionnellement à un flux SVI.",
-          "Le script AGI backend utilise cette table pour trouver le SVI correct à exécuter pour un appel entrant."
-        ]
-      },
-      "simplificationTip": {
-        "title": "Astuce de Simplification",
-        "content": "Utilisez le champ de description pour indiquer clairement le but de chaque numéro (ex: 'Campagne Marketing - Google Ads', 'Numéro Principal du Support'). Cela facilite grandement la gestion à mesure que votre liste s'allonge."
-      }
+      "description": "Gérez vos numéros de téléphone entrants et leur routage."
     },
     "sites-config": {
       "title": "Configuration des Sites",
-      "description": "Gérez les sites physiques ou logiques pour le routage et l'assignation des agents.",
-      "userJourney": {
-        "title": "Parcours Utilisateur : Ajouter un Nouveau Bureau",
-        "steps": [
-          "Naviguez vers 'Paramètres' > 'Configuration des Sites'.",
-          "Cliquez sur 'Ajouter un Site'.",
-          "Entrez un nom pour le site (ex: 'Bureau de Lyon').",
-          "Entrez l'adresse IP de la passerelle de téléphonie locale (ex: Yeastar PBX) pour ce site.",
-          "Enregistrez le site.",
-          "Vous pouvez maintenant assigner des utilisateurs à ce nouveau site dans le module 'Utilisateurs'."
-        ]
-      },
-      "specs": {
-        "title": "Spécifications Techniques",
-        "points": [
-          "Les sites sont stockés dans la table 'sites'.",
-          "L'IP du site est utilisée par Asterisk pour router les appels sortants via la passerelle locale correcte.",
-          "L'assignation des utilisateurs à des sites aide au reporting et à la gestion régionale."
-        ]
-      },
-      "simplificationTip": {
-        "title": "Astuce de Simplification",
-        "content": "Même si vous n'avez qu'un seul emplacement physique, créez un site 'Bureau Principal'. Cela facilitera l'expansion vers plusieurs sites à l'avenir sans changer votre configuration."
-      }
+      "description": "Gérez les sites physiques ou logiques pour le routage et l'assignation des agents."
     },
     "module-settings": {
       "title": "Paramètres des Modules",
-      "description": "Activez ou désactivez des fonctionnalités spécifiques pour différents rôles d'utilisateurs.",
-      "userJourney": {
-        "title": "Parcours Utilisateur : Cacher le Module 'Plannings' pour les Superviseurs",
-        "steps": [
-          "Naviguez vers 'Paramètres' > 'Paramètres des Modules'.",
-          "Sélectionnez le rôle 'Superviseur'.",
-          "Trouvez la fonctionnalité 'Plannings' dans la liste.",
-          "Décochez la case 'Visible'.",
-          "Enregistrez les changements. Les superviseurs ne verront plus 'Plannings' dans leur menu latéral."
-        ]
-      },
-      "specs": {
-        "title": "Spécifications Techniques",
-        "points": [
-          "Les paramètres de visibilité devraient être stockés dans une table dédiée, liant les rôles aux fonctionnalités.",
-          "Le payload initial `/application-data` doit inclure ces paramètres.",
-          "Le frontend utilisera ces données pour afficher conditionnellement les éléments du menu et les routes.",
-          "Les points d'accès de l'API backend doivent également être protégés pour empêcher l'accès direct aux fonctionnalités désactivées."
-        ]
-      },
-      "simplificationTip": {
-        "title": "Astuce de Simplification",
-        "content": "Commencez avec les paramètres de visibilité par défaut. Ne cachez des modules que s'ils ne sont vraiment pas utilisés par un certain rôle, pour éviter la confusion. Une interface plus propre est souvent plus efficace."
-      }
+      "description": "Activez ou désactivez des fonctionnalités spécifiques pour différents rôles d'utilisateurs."
     },
     "languages": {
       "title": "Langues & Traductions",
       "description": "Gérez le support multilingue de l'application.",
-      "userJourney": {
-        "title": "Parcours Utilisateur : Explorer les Options de Langue",
-        "steps": [
-          "Trouvez le sélecteur de langue dans l'en-tête.",
-          "Cliquez dessus pour voir la liste des langues disponibles (ex: Français, Anglais, Arabe).",
-          "Sélectionnez une nouvelle langue pour changer instantanément toute l'interface utilisateur."
-        ]
-      },
-      "specs": {
-        "title": "Spécifications Techniques",
-        "points": [
-          "Le frontend utilise la bibliothèque `i18next` pour l'internationalisation (i18n).",
-          "Les traductions sont stockées dans des fichiers JSON situés dans `src/i18n/locales/`."
-        ]
-      },
       "simplificationTip": {
-        "title": "Astuce de Simplification",
-        "content": "Cette section est à titre informatif. La gestion des traductions est actuellement une tâche de développeur qui implique de modifier directement les fichiers JSON. Une évolution future pourrait être une interface pour modifier les traductions sans toucher au code."
+        "title": "Information",
+        "content": "Cette section est à titre informatif. La gestion des traductions est actuellement une tâche de développeur qui implique de modifier directement les fichiers JSON."
       }
     },
     "database-client": {
       "title": "Client Base de Données",
-      "description": "Interagissez directement avec la base de données PostgreSQL. (SuperAdmin uniquement)",
-      "userJourney": {
-        "title": "Parcours Utilisateur : Lancer une Requête Rapide",
-        "steps": [
-          "Naviguez vers 'Paramètres' > 'Client Base de Données'.",
-          "Utilisez l'explorateur de schéma à gauche pour voir les tables et les colonnes.",
-          "Écrivez une requête SQL dans l'éditeur (ex: `SELECT * FROM users LIMIT 5;`).",
-          "Assurez-vous que le 'Mode Lecture Seule' est actif pour la sécurité.",
-          "Cliquez sur 'Exécuter'.",
-          "Visualisez les résultats dans le tableau ci-dessous."
-        ]
-      },
-      "specs": {
-        "title": "Spécifications Techniques",
-        "points": [
-          "C'est une fonctionnalité à haut risque, strictement limitée aux SuperAdmins.",
-          "Le backend fournit un point d'accès qui exécute des requêtes SQL brutes.",
-          "Le 'Mode Lecture Seule' doit être appliqué côté backend en vérifiant la chaîne de la requête pour les instructions autres que SELECT.",
-          "Toutes les requêtes doivent être journalisées pour l'audit de sécurité."
-        ]
-      },
-      "simplificationTip": {
-        "title": "Astuce de Simplification",
-        "content": "Utilisez cet outil pour des vérifications rapides et des diagnostics uniquement. Pour des rapports complexes, utilisez le module dédié 'Rapports & Analytiques'. Vérifiez toujours votre requête avant de l'exécuter, surtout si le 'Mode Lecture Seule' est désactivé."
-      }
+      "description": "Interagissez directement avec la base de données PostgreSQL. (SuperAdmin uniquement)"
     },
     "system-connection": {
       "title": "Connexion Système",
-      "description": "Configurez les connexions aux services de base comme la base de données et Asterisk.",
-      "userJourney": {
-        "title": "Parcours Utilisateur : Changer l'Hôte de la Base de Données",
-        "steps": [
-          "Naviguez vers 'Paramètres' > 'Connexion Système'.",
-          "Localisez la section 'Base de Données'.",
-          "Mettez à jour le champ 'Hôte' avec la nouvelle adresse IP ou le nom d'hôte.",
-          "Entrez le mot de passe de la base de données pour confirmer le changement.",
-          "Enregistrez les paramètres.",
-          "Un redémarrage du serveur sera nécessaire pour appliquer la nouvelle configuration."
-        ]
-      },
-      "specs": {
-        "title": "Spécifications Techniques",
-        "points": [
-          "Cette interface modifie le fichier `.env` du backend.",
-          "Les changements nécessitent un redémarrage complet du service backend pour prendre effet.",
-          "Les mots de passe ne sont pas affichés pour des raisons de sécurité, seulement mis à jour si un nouveau est saisi.",
-          "Le backend doit valider les paramètres de connexion avant de les enregistrer."
-        ]
-      },
-      "simplificationTip": {
-        "title": "Astuce de Simplification",
-        "content": "C'est une zone de configuration critique. Ne modifiez pas ces paramètres à moins d'effectuer une maintenance système ou une migration. Des paramètres incorrects provoqueront une panne complète du service."
-      }
+      "description": "Configurez les connexions aux services de base comme la base de données et Asterisk."
     },
     "maintenance": {
       "title": "Maintenance & Sauvegardes",
@@ -636,29 +172,7 @@
     },
     "api-docs": {
       "title": "Documentation API",
-      "description": "Documentation technique pour l'API REST.",
-      "iframeTitle": "Documentation de l'API Interactive",
-      "userJourney": {
-        "title": "Parcours Utilisateur : Trouver un Endpoint",
-        "steps": [
-          "Naviguez vers 'Paramètres' > 'Documentation API'.",
-          "L'interface Swagger/OpenAPI est affichée.",
-          "Développez une étiquette de ressource (ex: 'Utilisateurs') pour voir tous les endpoints associés.",
-          "Cliquez sur un endpoint pour voir ses détails, paramètres et exemples de réponses."
-        ]
-      },
-      "specs": {
-        "title": "Spécifications Techniques",
-        "points": [
-          "La documentation est générée automatiquement à partir du code du backend en utilisant des annotations Swagger/OpenAPI.",
-          "L'interface est servie par le paquet `swagger-ui-express`.",
-          "Cela fournit un moyen interactif pour les développeurs de tester et de comprendre l'API."
-        ]
-      },
-      "simplificationTip": {
-        "title": "Astuce de Simplification",
-        "content": "Utilisez la fonctionnalité 'Try it out' dans la documentation de l'API pour tester les endpoints directement depuis votre navigateur. C'est un excellent moyen de déboguer ou de comprendre comment une fonctionnalité spécifique fonctionne sans avoir à écrire de code."
-      }
+      "description": "Documentation technique pour l'API REST."
     },
     "billing": {
       "title": "Facturation & Abonnement",
@@ -869,5 +383,283 @@
       "currentPage": "Page actuelle : {pageName}",
       "backToEditor": "Retour à l'éditeur"
     }
+  },
+  "qualifications": {
+    "types": {
+      "positive": "Positif",
+      "neutral": "Neutre",
+      "negative": "Négatif"
+    }
+  },
+  "outboundCampaignsManager": {
+    "modal": {
+      "weekdays": {
+        "monday": "Lundi",
+        "tuesday": "Mardi",
+        "wednesday": "Mercredi",
+        "thursday": "Jeudi",
+        "friday": "Vendredi",
+        "saturday": "Samedi",
+        "sunday": "Dimanche"
+      },
+      "operators": {
+        "equals": "égal à",
+        "starts_with": "commence par"
+      }
+    }
+  },
+  "campaignDetail": {
+    "backToCampaigns": "Retour aux campagnes",
+    "associatedScript": "Script associé : {scriptName}",
+    "noDataToExport": "Aucune donnée de contacts traités à exporter.",
+    "export": "Exporter les Traités",
+    "dashboard": {
+      "kpis": {
+        "completionRate": "Taux de complétion",
+        "contactRate": "Taux de contact",
+        "conversionRate": "Taux de conversion",
+        "aht": "DMT"
+      },
+      "fileProgress": {
+        "title": "Progression du Fichier",
+        "processed": "Traitées :",
+        "remaining": "Restantes :"
+      },
+      "quota": {
+        "title": "Suivi des Quotas",
+        "ruleStartsWith": "Quota : {field} commence par \"{value}\"",
+        "ruleEquals": "Quota : {field} égal à \"{value}\"",
+        "achieved": "Atteint :"
+      },
+      "charts": {
+        "successByHourTitle": "Conversions par Heure de la Journée",
+        "conversionsLabel": "Conversions"
+      },
+      "tables": {
+        "qualifPerfTitle": "Performance des Qualifications",
+        "agentPerfTitle": "Performance des Agents",
+        "headers": {
+          "qualification": "Qualification",
+          "processedRecords": "Fiches Traitées",
+          "rate": "Taux",
+          "agent": "Agent",
+          "processedCalls": "Appels Traités",
+          "conversions": "Conversions"
+        }
+      }
+    },
+    "tabs": {
+      "contacts": "Contacts ({count})",
+      "dashboard": "Tableau de bord",
+      "dashboard2": "Analyse Détaillée",
+      "settings": "Paramètres"
+    },
+    "contacts": {
+      "searchPlaceholder": "Rechercher des contacts...",
+      "deleteSelection": "Supprimer la sélection ({count})",
+      "headers": {
+        "lastName": "Nom",
+        "firstName": "Prénom",
+        "phone": "Téléphone",
+        "status": "Statut",
+        "lastQualif": "Dernière Qualif.",
+        "lastNote": "Dernière Note"
+      },
+      "noContacts": "Aucun contact trouvé pour cette campagne.",
+      "pagination": "Page {currentPage} sur {totalPages}"
+    },
+    "settings": {
+      "recycling": {
+        "title": "Recyclage des Contacts",
+        "description": "Réinjectez des contacts dans la campagne en fonction de leur dernière qualification. Seuls les contacts avec le statut 'qualifié' seront affectés.",
+        "headers": {
+          "qualification": "Qualification",
+          "processedRecords": "Fiches Traitées",
+          "action": "Action"
+        },
+        "recycleButton": "Recycler",
+        "recycleButtonTooltip": "Réinitialiser le statut à 'en attente'",
+        "notRecyclableTooltip": "Cette qualification n'est pas recyclable"
+      }
+    }
+  },
+  "contactHistory": {
+    "title": "Historique du Contact",
+    "loading": "Chargement de l'historique...",
+    "kpis": {
+      "totalCalls": "Appels Totaux",
+      "talkTime": "Temps de Parole",
+      "uniqueAgents": "Agents Uniques",
+      "positiveQuals": "Qualifs Positives"
+    },
+    "timelineTitle": "Chronologie",
+    "callBy": "Appel par {agentName}",
+    "noteBy": "Note par {agentName}",
+    "duration": "Durée :",
+    "qualification": "Qualification :",
+    "noHistory": "Aucun historique trouvé pour ce contact."
+  },
+  "reporting": {
+    "exportPdf": "Exporter en PDF",
+    "filters": {
+      "dateRanges": {
+        "last7days": "7 derniers jours",
+        "last30days": "30 derniers jours",
+        "thisMonth": "Ce mois-ci"
+      },
+      "allCampaigns": "Toutes les campagnes",
+      "allAgents": "Tous les agents"
+    },
+    "kpis": {
+      "processedCalls": "Appels Traités",
+      "totalTalkTime": "Temps de Parole Total",
+      "avgCallDuration": "Durée Moyenne d'Appel",
+      "successRate": "Taux de Réussite",
+      "occupancyRate": "Taux d'Occupation"
+    },
+    "tabs": {
+      "charts": "Graphiques",
+      "timesheet": "Feuille de Temps",
+      "campaign": "Performance Campagne",
+      "agent": "Performance Agent",
+      "history": "Historique des Appels"
+    },
+    "charts": {
+      "callsByCampaignTitle": "Appels par Campagne",
+      "successByHourTitle": "Réussites par Heure",
+      "successByAgentTitle": "Taux de Réussite par Agent (%)",
+      "adherenceByAgentTitle": "Écart d'Adhérence Moyen (s)",
+      "conversionsLabel": "Conversions",
+      "successRateLabel": "Taux de réussite",
+      "avgAdherenceLabel": "Écart d'adhérence"
+    },
+    "tables": {
+      "campaignPerf": {
+        "title": "Performance par Campagne",
+        "headers": {
+          "campaign": "Campagne",
+          "calls": "Appels",
+          "totalDuration": "Durée Totale",
+          "avgDuration": "Durée Moyenne",
+          "successRate": "Taux de Réussite"
+        }
+      },
+      "agentPerf": {
+        "titleCalls": "Performance par Agent (Appels)",
+        "headers": {
+          "agent": "Agent",
+          "calls": "Appels",
+          "totalDuration": "Durée Totale",
+          "avgDuration": "Durée Moyenne",
+          "successRate": "Taux de Réussite"
+        }
+      },
+      "timesheet": {
+        "title": "Feuille de Temps des Agents",
+        "headers": {
+          "date": "Date",
+          "agent": "Agent",
+          "firstLogin": "Première Connexion",
+          "lastLogout": "Dernière Déconnexion",
+          "totalDuration": "Durée Totale"
+        }
+      },
+      "callHistory": {
+        "title": "Historique des Appels",
+        "headers": {
+          "dateTime": "Date & Heure",
+          "agent": "Agent",
+          "campaign": "Campagne",
+          "number": "Numéro",
+          "duration": "Durée",
+          "qualification": "Qualification"
+        }
+      }
+    },
+    "inboundCalls": "Appels Entrants",
+    "noSessionData": "Aucune donnée de session pour la période sélectionnée.",
+    "noCallData": "Aucune donnée d'appel pour la période sélectionnée."
+  },
+  "history": {
+    "filters": {
+      "searchTerm": "Recherche",
+      "searchPlaceholder": "Numéro ou Nom du contact...",
+      "startDate": "Date de début",
+      "endDate": "Date de fin",
+      "inbound": "Entrant / Sans Campagne"
+    },
+    "headers": {
+      "dateTime": "Date & Heure",
+      "direction": "Direction",
+      "contactName": "Nom du Contact",
+      "number": "Numéro",
+      "duration": "Durée",
+      "qualification": "Qualification"
+    },
+    "inbound": "Entrant",
+    "outbound": "Sortant",
+    "listen": "Écouter",
+    "noRecords": "Aucun enregistrement trouvé pour les filtres sélectionnés.",
+    "pagination": "Page {currentPage} sur {totalPages} ({totalRecords} enregistrements)"
+  },
+  "agentView": {
+    "extension": "Poste {ext}",
+    "statuses": {
+      "available": "En Attente",
+      "onCall": "En Appel",
+      "wrapUp": "En Post-Appel",
+      "onPause": "En Pause",
+      "ringing": "Sonnerie",
+      "disconnected": "Déconnecté",
+      "onHold": "Mise en attente",
+      "training": "Formation"
+    },
+    "statusManager": {
+      "settings": "Paramètres"
+    },
+    "messages": "Messages",
+    "clearAll": "Tout effacer",
+    "respond": "Répondre",
+    "yourResponsePlaceholder": "Votre réponse...",
+    "kpis": {
+      "title": "KPIs du Jour",
+      "totalConnectedTime": "Temps Total Connecté",
+      "callsHandled": "Appels Traités",
+      "totalPauseTime": "Temps Total en Pause",
+      "pauseCount": "Nb. Pauses",
+      "totalTrainingTime": "Temps Total Formation",
+      "trainingCount": "Nb. Formations"
+    },
+    "activeQuota": {
+      "title": "Quota Actif : {field} {operator} \"{value}\""
+    },
+    "feedback": {
+      "activateCampaign": "Veuillez sélectionner une campagne active pour la numérotation.",
+      "noContactAvailable": "Plus aucun contact disponible dans {campaignName}.",
+      "errorFetchingContact": "Erreur lors de la recherche d'un contact.",
+      "mustEndTask": "Vous devez être en état 'En Attente' pour démarrer une nouvelle tâche."
+    },
+    "searching": "Recherche du prochain contact...",
+    "waitingForCall": "En attente du prochain appel...",
+    "myCallbacks": "Mes Rappels",
+    "overdue": "EN RETARD",
+    "noCallbacks": "Aucun rappel prévu pour ce jour.",
+    "noScript": "Aucun script associé à cette campagne.",
+    "scriptWillBeHere": "Le script s'affichera ici.",
+    "callControls": {
+      "title": "Contrôles d'Appel",
+      "call": "Appeler",
+      "endCall": "Finaliser & Qualifier",
+      "hangup": "Raccrocher & Qualifier",
+      "hold": "Mise en attente",
+      "transfer": "Transférer"
+    },
+    "askForHelp": "Demander de l'aide",
+    "helpRequestSent": "Demande d'aide envoyée aux superviseurs.",
+    "qualifications": "Qualifications",
+    "selectQualification": "Sélectionner une qualification...",
+    "activeCampaigns": "Campagnes Actives",
+    "noCampaigns": "Aucune campagne assignée.",
+    "callNumber": "Appeler {phoneName}"
   }
 }
