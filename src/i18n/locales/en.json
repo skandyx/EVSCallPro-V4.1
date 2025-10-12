@@ -352,7 +352,52 @@
     }
   },
   "outboundCampaignsManager": {
+    "list": {
+      "title": "Campaigns",
+      "create": "Create Campaign",
+      "headers": {
+        "name": "Name",
+        "id": "ID",
+        "status": "Status",
+        "contacts": "Contacts",
+        "mode": "Mode"
+      },
+      "actions": {
+        "import": "Import"
+      }
+    },
     "modal": {
+      "editTitle": "Edit Campaign",
+      "newTitle": "New Campaign",
+      "ledReady": "Ready to start",
+      "ledIncomplete": "Missing required fields",
+      "tabs": {
+        "general": "General",
+        "planning": "Planning",
+        "quotas": "Quotas",
+        "filters": "Inclusion/Exclusion"
+      },
+      "labels": {
+        "name": "Name",
+        "agentScript": "Agent Script",
+        "qualifGroup": "Qualification Group",
+        "dialingMode": "Dialing Mode",
+        "callerId": "Caller ID",
+        "wrapUpTime": "Wrap-Up Time (seconds)",
+        "assignedAgents": "Assigned Agents & Groups",
+        "groups": "Groups",
+        "individualAgents": "Individual Agents",
+        "activeCampaign": "Active Campaign",
+        "activityDays": "Activity Days and Hours"
+      },
+      "noScript": "No script",
+      "dialingModes": {
+        "predictive": "Predictive",
+        "progressive": "Progressive",
+        "manual": "Manual"
+      },
+      "wrapUpHelp": "Max duration for an agent in 'Wrap-up' state (max 120s).",
+      "agentCount": "{count} agents",
       "weekdays": {
         "monday": "Monday",
         "tuesday": "Tuesday",
@@ -362,9 +407,24 @@
         "saturday": "Saturday",
         "sunday": "Sunday"
       },
+      "valuePlaceholder": "Value",
+      "limitPlaceholder": "Limit",
+      "addQuotaRule": "Add quota rule",
+      "addFilterRule": "Add filter rule",
       "operators": {
         "equals": "equals",
-        "starts_with": "starts with"
+        "startsWith": "starts with",
+        "contains": "contains",
+        "isNotEmpty": "is not empty"
+      },
+      "filterTypes": {
+        "include": "Include",
+        "exclude": "Exclude"
+      },
+      "fields": {
+        "postalCode": "Postal Code",
+        "phoneNumber": "Phone Number",
+        "lastName": "Last Name"
       }
     }
   },
@@ -417,10 +477,12 @@
     "contacts": {
       "searchPlaceholder": "Search contacts...",
       "deleteSelection": "Delete Selection ({count})",
+      "confirmDelete": "Are you sure you want to delete {count} contact(s)? This action is irreversible.",
       "headers": {
         "lastName": "Last Name",
         "firstName": "First Name",
         "phone": "Phone",
+        "querry": "QUERRY",
         "status": "Status",
         "lastQualif": "Last Qualif.",
         "lastNote": "Last Note"
@@ -439,8 +501,31 @@
         },
         "recycleButton": "Recycle",
         "recycleButtonTooltip": "Reset status to 'pending'",
-        "notRecyclableTooltip": "This qualification is not recyclable"
+        "notRecyclableTooltip": "This qualification is not recyclable",
+        "confirmRecycle": "Are you sure you want to recycle all contacts with this qualification? Their status will be reset to 'pending'."
       }
+    },
+    "dashboard2": {
+      "title": "Detailed Analysis",
+      "reset": "Reset",
+      "detailTitle": "Record details for selection",
+      "noRecords": "No records to display for the current selection.",
+      "callsLabel": "{count, plural, one {call} other {calls}}",
+      "headers": {
+        "contact": "Contact",
+        "phone": "Phone",
+        "agent": "Agent",
+        "callDate": "Call Date",
+        "qualification": "Qualification"
+      }
+    },
+    "exportHeaders": {
+      "date": "Processing Date",
+      "agent": "Agent",
+      "phone": "Phone Number",
+      "duration": "Duration",
+      "qualCode": "Qualif. Code",
+      "qualDescription": "Qualif. Description"
     }
   },
   "contactHistory": {
@@ -709,6 +794,54 @@
         "boost": "Boost Campaign",
         "stop": "Stop Campaign"
       }
+    }
+  },
+  "qualifications": {
+    "types": {
+      "positive": "Positive",
+      "neutral": "Neutral",
+      "negative": "Negative"
+    }
+  },
+  "importContactsModal": {
+    "title": "Import contacts for: {campaignName}",
+    "uploadLabel": "Upload a file (CSV, TXT, XLSX)",
+    "downloadTemplate": "Download a CSV template file",
+    "fileReadError": "An error occurred while reading the file. Make sure it is valid and not corrupted.",
+    "validationError": "An error occurred during validation. Please try again.",
+    "exportErrorReasonHeader": "Error Reason",
+    "validating": "Validating...",
+    "validateAndImport": "Validate and Import",
+    "finish": "Finish",
+    "deduplication": {
+      "title": "Deduplication",
+      "tipTitle": "Tip:",
+      "tipContent": "To deduplicate on more fields (e.g., email, customer ID), assign an agent script to this campaign.",
+      "enableLabel": "Enable deduplication",
+      "enableHelp": "Checks for duplicates within the file and against existing contacts.",
+      "criteriaLabel": "Deduplication criteria (one or more)"
+    },
+    "mapping": {
+      "description": "Match the columns from your file (right) to the destination fields (left). Phone number is required.",
+      "ignoreField": "Ignore this field"
+    },
+    "summary": {
+      "title": "Import Summary",
+      "rowsRead": "Rows Read",
+      "contactsImported": "Contacts Imported",
+      "rowsRejected": "Rows Rejected",
+      "rejectionDetails": "Rejection Details",
+      "exportRejected": "Export Rejected Rows",
+      "table": {
+        "row": "Row",
+        "reason": "Reason for rejection"
+      }
+    },
+    "fields": {
+      "firstName": "First Name",
+      "lastName": "Last Name",
+      "phoneNumber": "Phone Number",
+      "postalCode": "Postal Code"
     }
   }
 }

@@ -136,7 +136,7 @@ const Dashboard2Tab: React.FC<Dashboard2TabProps> = ({ campaign, campaignCallHis
             }, {} as Record<string, number>);
             treeData = Object.entries(callsByAgent).map(([agentId, count]) => {
                 const agent = users.find(u => u.id === agentId);
-                const label = agent ? `${agent.firstName} ${agent.lastName}` : 'Inconnu';
+                const label = agent ? `${agent.firstName} ${agent.lastName}` : t('common.unknown');
                 return { name: label, value: count, _meta: { type: 'agent', value: agentId, label } };
             });
             const agentIds = treeData.map(d => d._meta.value);
@@ -156,7 +156,7 @@ const Dashboard2Tab: React.FC<Dashboard2TabProps> = ({ campaign, campaignCallHis
             }, {} as Record<string, number>);
             treeData = Object.entries(callsByQual).map(([qualId, count]) => {
                 const qual = qualifications.find(q => q.id === qualId);
-                const label = qual ? qual.description : 'Inconnu';
+                const label = qual ? qual.description : t('common.unknown');
                 return { name: label, value: count, _meta: { type: 'qual', value: qualId, label } };
             });
             backgroundColorFunc = (ctx: any) => {
@@ -191,7 +191,7 @@ const Dashboard2Tab: React.FC<Dashboard2TabProps> = ({ campaign, campaignCallHis
             legend: { display: false },
             tooltip: {
                 callbacks: {
-                    label: (item: any) => `${item.raw._data.name}: ${item.raw.v} appels`,
+                    label: (item: any) => `${item.raw._data.name}: ${item.raw.v} ${t('campaignDetail.dashboard2.callsLabel', { count: item.raw.v })}`,
                 },
             },
         },
@@ -203,7 +203,7 @@ const Dashboard2Tab: React.FC<Dashboard2TabProps> = ({ campaign, campaignCallHis
                 }
             }
         },
-    }), [drilldownPath.length]);
+    }), [drilldownPath.length, t]);
 
     const filteredCallsForDrilldown = useMemo(() => {
         if (drilldownPath.length === 0) return campaignCallHistory;
@@ -245,10 +245,10 @@ const Dashboard2Tab: React.FC<Dashboard2TabProps> = ({ campaign, campaignCallHis
     const Breadcrumbs = () => (
         <div className="flex items-center gap-2 text-sm">
             {drilldownPath.length === 0 ? (
-                <h3 className="text-lg font-semibold text-slate-800 dark:text-slate-200">Analyse Détaillée</h3>
+                <h3 className="text-lg font-semibold text-slate-800 dark:text-slate-200">{t('campaignDetail.dashboard2.title')}</h3>
             ) : (
                 <button onClick={() => setDrilldownPath([])} className="font-semibold text-indigo-600 dark:text-indigo-400 hover:underline">
-                    Analyse Détaillée
+                    {t('campaignDetail.dashboard2.title')}
                 </button>
             )}
             {drilldownPath.map((level, index) => (
@@ -269,7 +269,7 @@ const Dashboard2Tab: React.FC<Dashboard2TabProps> = ({ campaign, campaignCallHis
                     <Breadcrumbs />
                     {drilldownPath.length > 0 && (
                         <button onClick={() => setDrilldownPath([])} className="text-xs font-semibold text-indigo-600 dark:text-indigo-400 hover:underline inline-flex items-center gap-1">
-                            <XMarkIcon className="w-4 h-4" /> Réinitialiser
+                            <XMarkIcon className="w-4 h-4" /> {t('campaignDetail.dashboard2.reset')}
                         </button>
                     )}
                 </div>
@@ -280,15 +280,15 @@ const Dashboard2Tab: React.FC<Dashboard2TabProps> = ({ campaign, campaignCallHis
             
             {drilldownPath.length > 0 && (
                  <div className="pt-4">
-                    <h3 className="text-lg font-semibold text-slate-800 dark:text-slate-200 mb-2">Détail des Fiches pour la sélection</h3>
+                    <h3 className="text-lg font-semibold text-slate-800 dark:text-slate-200 mb-2">{t('campaignDetail.dashboard2.detailTitle')}</h3>
                     <div className="overflow-x-auto max-h-96 border dark:border-slate-700 rounded-md">
                         <table className="min-w-full divide-y divide-slate-200 dark:divide-slate-700 text-sm">
                             <thead className="bg-slate-50 dark:bg-slate-700 sticky top-0"><tr>
-                                <th className="px-4 py-2 text-left font-medium text-slate-500 dark:text-slate-400 uppercase">Contact</th>
-                                <th className="px-4 py-2 text-left font-medium text-slate-500 dark:text-slate-400 uppercase">Téléphone</th>
-                                <th className="px-4 py-2 text-left font-medium text-slate-500 dark:text-slate-400 uppercase">Agent</th>
-                                <th className="px-4 py-2 text-left font-medium text-slate-500 dark:text-slate-400 uppercase">Date Appel</th>
-                                <th className="px-4 py-2 text-left font-medium text-slate-500 dark:text-slate-400 uppercase">Qualification</th>
+                                <th className="px-4 py-2 text-left font-medium text-slate-500 dark:text-slate-400 uppercase">{t('campaignDetail.dashboard2.headers.contact')}</th>
+                                <th className="px-4 py-2 text-left font-medium text-slate-500 dark:text-slate-400 uppercase">{t('campaignDetail.dashboard2.headers.phone')}</th>
+                                <th className="px-4 py-2 text-left font-medium text-slate-500 dark:text-slate-400 uppercase">{t('campaignDetail.dashboard2.headers.agent')}</th>
+                                <th className="px-4 py-2 text-left font-medium text-slate-500 dark:text-slate-400 uppercase">{t('campaignDetail.dashboard2.headers.callDate')}</th>
+                                <th className="px-4 py-2 text-left font-medium text-slate-500 dark:text-slate-400 uppercase">{t('campaignDetail.dashboard2.headers.qualification')}</th>
                             </tr></thead>
                             <tbody className="bg-white dark:bg-slate-800 divide-y divide-slate-200 dark:divide-slate-700">
                                 {contactsForDrilldownTable.length > 0 ? contactsForDrilldownTable.map(contact => (
@@ -302,7 +302,7 @@ const Dashboard2Tab: React.FC<Dashboard2TabProps> = ({ campaign, campaignCallHis
                                 )) : (
                                     <tr>
                                         <td colSpan={5} className="text-center py-8 text-slate-500 dark:text-slate-400 italic">
-                                            Aucune fiche à afficher pour la sélection actuelle.
+                                            {t('campaignDetail.dashboard2.noRecords')}
                                         </td>
                                     </tr>
                                 )}

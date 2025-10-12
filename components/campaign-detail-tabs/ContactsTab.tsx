@@ -69,8 +69,16 @@ const ContactsTab: React.FC<ContactsTabProps> = ({ campaign, campaignCallHistory
             const dateB = new Date(b.date.split(' ')[0].split('/').reverse().join('-') + 'T' + b.date.split(' ')[1]).getTime();
             return dateB - dateA;
         });
+        
+        const headers = [
+            t('campaignDetail.exportHeaders.date'),
+            t('campaignDetail.exportHeaders.agent'),
+            t('campaignDetail.exportHeaders.phone'),
+            t('campaignDetail.exportHeaders.duration'),
+            t('campaignDetail.exportHeaders.qualCode'),
+            t('campaignDetail.exportHeaders.qualDescription')
+        ];
 
-        const headers = ['Date de traitement', 'Agent', 'Numéro de téléphone', 'Durée', 'Code Qualif', 'Description Qualif'];
         const csvRows = [
             headers.join(','),
             ...processedContactsData.map(row => [
@@ -88,7 +96,7 @@ const ContactsTab: React.FC<ContactsTabProps> = ({ campaign, campaignCallHistory
         const link = document.createElement('a');
         const url = URL.createObjectURL(blob);
         link.setAttribute('href', url);
-        link.setAttribute('download', `export_campagne_${campaign.name.replace(/\s/g, '_')}.csv`);
+        link.setAttribute('download', `export_campaign_${campaign.name.replace(/\s/g, '_')}.csv`);
         document.body.appendChild(link);
         link.click();
         document.body.removeChild(link);
@@ -145,7 +153,7 @@ const ContactsTab: React.FC<ContactsTabProps> = ({ campaign, campaignCallHistory
 
     const handleDeleteSelected = () => {
         if (selectedContactIds.length === 0) return;
-        if (window.confirm(`Êtes-vous sûr de vouloir supprimer ${selectedContactIds.length} contact(s) ? Cette action est irréversible.`)) {
+        if (window.confirm(t('campaignDetail.contacts.confirmDelete', { count: selectedContactIds.length }))) {
             onDeleteContacts(selectedContactIds);
             setSelectedContactIds([]);
         }
@@ -181,7 +189,7 @@ const ContactsTab: React.FC<ContactsTabProps> = ({ campaign, campaignCallHistory
                     <SortableHeader sortKey="lastName" label={t('campaignDetail.contacts.headers.lastName')} />
                     <SortableHeader sortKey="firstName" label={t('campaignDetail.contacts.headers.firstName')} />
                     <SortableHeader sortKey="phoneNumber" label={t('campaignDetail.contacts.headers.phone')} />
-                    <th className="px-4 py-2 text-left text-xs font-medium text-slate-500 dark:text-slate-400 uppercase">QUERRY</th>
+                    <th className="px-4 py-2 text-left text-xs font-medium text-slate-500 dark:text-slate-400 uppercase">{t('campaignDetail.contacts.headers.querry')}</th>
                     <SortableHeader sortKey="status" label={t('campaignDetail.contacts.headers.status')} />
                     <th className="px-4 py-2 text-left text-xs font-medium text-slate-500 dark:text-slate-400 uppercase">{t('campaignDetail.contacts.headers.lastQualif')}</th>
                     <th className="px-4 py-2 text-left text-xs font-medium text-slate-500 dark:text-slate-400 uppercase">{t('campaignDetail.contacts.headers.lastNote')}</th>

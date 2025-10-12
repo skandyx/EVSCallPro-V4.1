@@ -1,6 +1,7 @@
 import React, { useState, useMemo } from 'react';
 import type { Campaign, SavedScript, Contact, ScriptBlock } from '../types.ts';
 import { ArrowUpTrayIcon, CheckIcon, XMarkIcon, ArrowRightIcon, InformationCircleIcon, ArrowDownTrayIcon } from './Icons.tsx';
+import { useI18n } from '../src/i18n/index.tsx';
 
 declare var Papa: any;
 declare var XLSX: any;
@@ -26,6 +27,7 @@ const ToggleSwitch: React.FC<{ enabled: boolean; onChange: (enabled: boolean) =>
 
 
 const ImportContactsModal: React.FC<ImportContactsModalProps> = ({ onClose, onImport, campaign, script }) => {
+    const { t } = useI18n();
     const [step, setStep] = useState(1);
     const [file, setFile] = useState<File | null>(null);
     const [csvHeaders, setCsvHeaders] = useState<string[]>([]);
@@ -37,10 +39,10 @@ const ImportContactsModal: React.FC<ImportContactsModalProps> = ({ onClose, onIm
 
     const availableFieldsForImport = useMemo(() => {
         const standardFieldMap: Record<string, { id: keyof Contact | (string & {}), name: string, required: boolean }> = {
-            'first_name': { id: 'firstName', name: 'Prénom', required: false },
-            'last_name': { id: 'lastName', name: 'Nom', required: false },
-            'phone_number': { id: 'phoneNumber', name: 'Numéro de Téléphone', required: true },
-            'postal_code': { id: 'postalCode', name: 'Code Postal', required: false },
+            'first_name': { id: 'firstName', name: t('importContactsModal.fields.firstName'), required: false },
+            'last_name': { id: 'lastName', name: t('importContactsModal.fields.lastName'), required: false },
+            'phone_number': { id: 'phoneNumber', name: t('importContactsModal.fields.phoneNumber'), required: true },
+            'postal_code': { id: 'postalCode', name: t('importContactsModal.fields.postalCode'), required: false },
         };
 
         const standardFields = script
@@ -52,10 +54,10 @@ const ImportContactsModal: React.FC<ImportContactsModalProps> = ({ onClose, onIm
                     return { ...mapped, name: block.name }; // Use name from script, but id/required from map
                 })
             : [ // Fallback
-                { id: 'phoneNumber', name: 'Numéro de Téléphone', required: true },
-                { id: 'firstName', name: 'Prénom', required: false },
-                { id: 'lastName', name: 'Nom', required: false },
-                { id: 'postalCode', name: 'Code Postal', required: false },
+                { id: 'phoneNumber', name: t('importContactsModal.fields.phoneNumber'), required: true },
+                { id: 'firstName', name: t('importContactsModal.fields.firstName'), required: false },
+                { id: 'lastName', name: t('importContactsModal.fields.lastName'), required: false },
+                { id: 'postalCode', name: t('importContactsModal.fields.postalCode'), required: false },
             ];
 
         if (!script) return standardFields;
@@ -74,7 +76,7 @@ const ImportContactsModal: React.FC<ImportContactsModalProps> = ({ onClose, onIm
         );
 
         return [...standardFields, ...uniqueCustomFields];
-    }, [script]);
+    }, [script, t]);
     
     const handleDedupeFieldChange = (fieldId: string, isChecked: boolean) => {
         setDeduplicationConfig(prev => {
@@ -111,7 +113,7 @@ const ImportContactsModal: React.FC<ImportContactsModalProps> = ({ onClose, onIm
                 parsedData = XLSX.utils.sheet_to_json(worksheet, { defval: "" });
             } else {
                 const result = Papa.parse(fileContent as string, { header: true, skipEmptyLines: true });
-                if (result.errors.length > 0) console.warn("Erreurs de parsing:", result.errors);
+                if (result.errors.length > 0) console.warn("Parsing errors:", result.errors);
                 parsedData = result.data;
             }
 
@@ -150,8 +152,8 @@ const ImportContactsModal: React.FC<ImportContactsModalProps> = ({ onClose, onIm
             setMappings(initialMappings);
 
         } catch (error) {
-            console.error("Erreur lors de la lecture du fichier:", error);
-            alert("Une erreur est survenue lors de la lecture du fichier. Assurez-vous qu'il est valide et non corrompu.");
+            console.error("Error reading file:", error);
+            alert(t('importContactsModal.fileReadError'));
         }
     };
     
@@ -190,7 +192,7 @@ const ImportContactsModal: React.FC<ImportContactsModalProps> = ({ onClose, onIm
             });
             setStep(4);
         } catch (error) {
-            alert("Une erreur est survenue pendant la validation. Veuillez réessayer.");
+            alert(t('importContactsModal.validationError'));
         } finally {
             setIsProcessing(false);
         }
@@ -201,14 +203,14 @@ const ImportContactsModal: React.FC<ImportContactsModalProps> = ({ onClose, onIm
 
         const dataToExport = summary.invalids.map(item => ({
             ...item.row,
-            "Motif de l'erreur": item.reason
+            [t('importContactsModal.exportErrorReasonHeader')]: item.reason
         }));
 
         const csv = Papa.unparse(dataToExport);
         const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
         const link = document.createElement('a');
         link.href = URL.createObjectURL(blob);
-        link.setAttribute('download', `contacts_invalides_${campaign.name}.csv`);
+        link.setAttribute('download', `invalid_contacts_${campaign.name}.csv`);
         document.body.appendChild(link);
         link.click();
         document.body.removeChild(link);
@@ -229,36 +231,36 @@ const ImportContactsModal: React.FC<ImportContactsModalProps> = ({ onClose, onIm
                      <div className="space-y-4">
                         <label className="block w-full cursor-pointer rounded-lg border-2 border-dashed border-slate-300 p-8 text-center hover:border-indigo-500">
                             <ArrowUpTrayIcon className="mx-auto h-12 w-12 text-slate-400" />
-                            <span className="mt-2 block text-sm font-medium text-slate-900">{file ? file.name : "Téléverser un fichier (CSV, TXT, XLSX)"}</span>
+                            <span className="mt-2 block text-sm font-medium text-slate-900">{file ? file.name : t('importContactsModal.uploadLabel')}</span>
                             <input type='file' className="sr-only" accept=".csv,.txt,.xlsx" onChange={e => e.target.files && handleFileSelect(e.target.files[0])} />
                         </label>
-                        <a href="/contact_template.csv" download className="text-sm text-indigo-600 hover:underline">Télécharger un modèle de fichier CSV</a>
+                        <a href="/contact_template.csv" download className="text-sm text-indigo-600 hover:underline">{t('importContactsModal.downloadTemplate')}</a>
                     </div>
                 );
             case 2: // Deduplication
                 return (
                     <div className="space-y-4">
-                        <h3 className="text-xl font-semibold text-slate-800">Dédoublonnage</h3>
+                        <h3 className="text-xl font-semibold text-slate-800">{t('importContactsModal.deduplication.title')}</h3>
                         {!script && (
                              <div className="bg-blue-50 border-l-4 border-blue-400 p-4 rounded-r-lg">
                                 <div className="flex">
                                     <div className="flex-shrink-0"><InformationCircleIcon className="h-5 w-5 text-blue-400"/></div>
                                     <div className="ml-3"><p className="text-sm text-blue-700">
-                                        <b>Astuce :</b> Pour dédoublonner sur plus de champs (ex: un email, un numéro de client), assignez un script d'agent à cette campagne.
+                                        <b>{t('importContactsModal.deduplication.tipTitle')}</b> {t('importContactsModal.deduplication.tipContent')}
                                     </p></div>
                                 </div>
                             </div>
                         )}
                         <div className="flex items-center justify-between p-4 bg-slate-50 rounded-md border">
                             <div>
-                                <p className="font-medium text-slate-800">Activer le dédoublonnage</p>
-                                <p className="text-sm text-slate-500">Vérifie les doublons dans le fichier et avec les contacts existants.</p>
+                                <p className="font-medium text-slate-800">{t('importContactsModal.deduplication.enableLabel')}</p>
+                                <p className="text-sm text-slate-500">{t('importContactsModal.deduplication.enableHelp')}</p>
                             </div>
                             <ToggleSwitch enabled={deduplicationConfig.enabled} onChange={e => setDeduplicationConfig(c => ({...c, enabled: e}))} />
                         </div>
                         {deduplicationConfig.enabled && (
                             <div>
-                                <label className="block text-sm font-medium text-slate-700">Critères de dédoublonnage (un ou plusieurs)</label>
+                                <label className="block text-sm font-medium text-slate-700">{t('importContactsModal.deduplication.criteriaLabel')}</label>
                                 <div className="mt-1 max-h-48 overflow-y-auto rounded-md border p-2 space-y-2 bg-white">
                                     {availableFieldsForImport.map(field => (
                                         <div key={field.id} className="flex items-center p-1 rounded-md hover:bg-slate-50">
@@ -280,7 +282,7 @@ const ImportContactsModal: React.FC<ImportContactsModalProps> = ({ onClose, onIm
             case 3: // Mapping
                 return (
                      <div className="space-y-3">
-                        <p className="text-sm text-slate-600">Faites correspondre les colonnes de votre fichier (à droite) aux champs de destination (à gauche). Le numéro de téléphone est obligatoire.</p>
+                        <p className="text-sm text-slate-600">{t('importContactsModal.mapping.description')}</p>
                         <div className="max-h-80 overflow-y-auto rounded-md border p-2 space-y-2 bg-slate-50">
                             {availableFieldsForImport.map(field => (
                                 <div key={field.id} className="grid grid-cols-2 gap-4 items-center p-1">
@@ -295,7 +297,7 @@ const ImportContactsModal: React.FC<ImportContactsModalProps> = ({ onClose, onIm
                                             });
                                         }} className="w-full p-2 border bg-white rounded-md"
                                     >
-                                        <option value="">Ignorer ce champ</option>
+                                        <option value="">{t('importContactsModal.mapping.ignoreField')}</option>
                                         {csvHeaders.map(header => (
                                             <option key={header} value={header} disabled={usedCsvHeaders.includes(header) && mappings[field.id] !== header}>{header}</option>
                                         ))}
@@ -309,23 +311,23 @@ const ImportContactsModal: React.FC<ImportContactsModalProps> = ({ onClose, onIm
                 if (!summary) return null;
                 return (
                     <div className="space-y-4">
-                        <h3 className="text-xl font-semibold text-slate-800">Résumé de l'importation</h3>
+                        <h3 className="text-xl font-semibold text-slate-800">{t('importContactsModal.summary.title')}</h3>
                         <div className="grid grid-cols-3 gap-4 text-center">
-                            <div className="bg-slate-50 p-4 rounded-md border"><p className="text-2xl font-bold">{summary.total}</p><p className="text-sm text-slate-500">Lignes lues</p></div>
-                            <div className="bg-green-50 p-4 rounded-md border border-green-200"><p className="text-2xl font-bold text-green-700">{summary.valids}</p><p className="text-sm text-green-600">Contacts importés</p></div>
-                            <div className="bg-red-50 p-4 rounded-md border border-red-200"><p className="text-2xl font-bold text-red-700">{summary.invalids.length}</p><p className="text-sm text-red-600">Lignes rejetées</p></div>
+                            <div className="bg-slate-50 p-4 rounded-md border"><p className="text-2xl font-bold">{summary.total}</p><p className="text-sm text-slate-500">{t('importContactsModal.summary.rowsRead')}</p></div>
+                            <div className="bg-green-50 p-4 rounded-md border border-green-200"><p className="text-2xl font-bold text-green-700">{summary.valids}</p><p className="text-sm text-green-600">{t('importContactsModal.summary.contactsImported')}</p></div>
+                            <div className="bg-red-50 p-4 rounded-md border border-red-200"><p className="text-2xl font-bold text-red-700">{summary.invalids.length}</p><p className="text-sm text-red-600">{t('importContactsModal.summary.rowsRejected')}</p></div>
                         </div>
                         {summary.invalids.length > 0 && (
                             <div>
                                 <div className="flex justify-between items-center mb-2">
-                                    <h4 className="font-semibold text-slate-700">Détail des rejets</h4>
+                                    <h4 className="font-semibold text-slate-700">{t('importContactsModal.summary.rejectionDetails')}</h4>
                                     <button onClick={handleExportInvalids} className="text-sm font-semibold text-indigo-600 hover:text-indigo-800 inline-flex items-center gap-1.5">
                                         <ArrowDownTrayIcon className="w-4 h-4" />
-                                        Exporter les lignes rejetées
+                                        {t('importContactsModal.summary.exportRejected')}
                                     </button>
                                 </div>
                                 <div className="max-h-80 overflow-y-auto text-sm border rounded-md bg-slate-50">
-                                    <table className="min-w-full"><thead className="bg-slate-200 sticky top-0"><tr className="text-left"><th className="p-2">Ligne</th><th className="p-2">Motif du rejet</th></tr></thead>
+                                    <table className="min-w-full"><thead className="bg-slate-200 sticky top-0"><tr className="text-left"><th className="p-2">{t('importContactsModal.summary.table.row')}</th><th className="p-2">{t('importContactsModal.summary.table.reason')}</th></tr></thead>
                                         <tbody>{summary.invalids.map((item, i) => ( <tr key={i} className="border-t"><td className="p-2 font-mono text-xs">{JSON.stringify(item.row)}</td><td className="p-2 text-red-600">{item.reason}</td></tr> ))}</tbody>
                                     </table>
                                 </div>
@@ -341,20 +343,20 @@ const ImportContactsModal: React.FC<ImportContactsModalProps> = ({ onClose, onIm
         <div className="fixed inset-0 bg-slate-800 bg-opacity-75 flex items-center justify-center p-4 z-[60]">
             <div className="bg-white rounded-lg shadow-xl w-full max-w-3xl h-[90vh] flex flex-col">
                 <div className="p-4 border-b">
-                    <h3 className="text-lg font-semibold text-slate-900">Importer des contacts pour : {campaign.name}</h3>
+                    <h3 className="text-lg font-semibold text-slate-900">{t('importContactsModal.title', { campaignName: campaign.name })}</h3>
                 </div>
                 <div className="p-6 flex-1 overflow-y-auto">{renderStepContent()}</div>
                 <div className="bg-slate-50 px-6 py-4 flex justify-between rounded-b-lg">
-                    <button onClick={onClose} className="px-4 py-2 text-sm font-medium text-slate-700">Fermer</button>
+                    <button onClick={onClose} className="px-4 py-2 text-sm font-medium text-slate-700">{t('common.close')}</button>
                     <div className="flex gap-3">
-                        {step > 1 && step < 4 && <button onClick={() => setStep(s => s - 1)} className="rounded-md border border-slate-300 bg-white px-4 py-2 font-medium text-slate-700 shadow-sm hover:bg-slate-50">Retour</button>}
+                        {step > 1 && step < 4 && <button onClick={() => setStep(s => s - 1)} className="rounded-md border border-slate-300 bg-white px-4 py-2 font-medium text-slate-700 shadow-sm hover:bg-slate-50">{t('common.previous')}</button>}
                         {step < 3 && <button onClick={() => setStep(s => s + 1)} disabled={isNextDisabled} className="inline-flex items-center gap-2 rounded-md bg-indigo-600 px-4 py-2 font-medium text-white shadow-sm hover:bg-indigo-700 disabled:bg-indigo-300">
-                            Suivant <ArrowRightIcon className="w-4 h-4"/>
+                            {t('common.next')} <ArrowRightIcon className="w-4 h-4"/>
                         </button>}
                         {step === 3 && <button onClick={processAndGoToSummary} disabled={isProcessing || isNextDisabled} className="inline-flex items-center gap-2 rounded-md bg-indigo-600 px-4 py-2 font-medium text-white shadow-sm hover:bg-indigo-700 disabled:bg-indigo-300">
-                            {isProcessing ? 'Validation...' : 'Valider et Importer'}
+                            {isProcessing ? t('importContactsModal.validating') : t('importContactsModal.validateAndImport')}
                         </button>}
-                        {step === 4 && <button onClick={onClose} className="rounded-md bg-indigo-600 px-4 py-2 font-medium text-white shadow-sm hover:bg-indigo-700">Terminer</button>}
+                        {step === 4 && <button onClick={onClose} className="rounded-md bg-indigo-600 px-4 py-2 font-medium text-white shadow-sm hover:bg-indigo-700">{t('importContactsModal.finish')}</button>}
                     </div>
                 </div>
             </div>

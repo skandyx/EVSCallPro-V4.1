@@ -43,7 +43,7 @@ const SettingsTab: React.FC<SettingsTabProps> = ({ campaign, campaignCallHistory
     }, [campaign.contacts, campaignCallHistory, qualifications]);
     
     const handleRecycleClick = (qualificationId: string) => {
-        if (window.confirm(`Êtes-vous sûr de vouloir recycler tous les contacts avec cette qualification ? Leur statut sera réinitialisé à "pending".`)) {
+        if (window.confirm(t('campaignDetail.settings.recycling.confirmRecycle'))) {
             onRecycleContacts(campaign.id, qualificationId);
         }
     };

@@ -438,7 +438,54 @@
     }
   },
   "outboundCampaignsManager": {
+    "list": {
+      "title": "Campagnes",
+      "create": "Créer une campagne",
+      "headers": {
+        "name": "Nom",
+        "id": "ID",
+        "status": "Statut",
+        "contacts": "Contacts",
+        "mode": "Mode"
+      },
+      "actions": {
+        "import": "Importer",
+        "edit": "Modifier",
+        "delete": "Supprimer"
+      }
+    },
     "modal": {
+      "editTitle": "Modifier la Campagne",
+      "newTitle": "Nouvelle Campagne",
+      "ledReady": "Prêt à démarrer",
+      "ledIncomplete": "Champs requis manquants",
+      "tabs": {
+        "general": "Général",
+        "planning": "Planing",
+        "quotas": "Quotas",
+        "filters": "Inclusion/Exclusion"
+      },
+      "labels": {
+        "name": "Nom",
+        "agentScript": "Script d'agent",
+        "qualifGroup": "Groupe de qualifications",
+        "dialingMode": "Mode de numérotation",
+        "callerId": "Numéro présenté (Caller ID)",
+        "wrapUpTime": "Temps de Post-Appel (secondes)",
+        "assignedAgents": "Agents & Groupes Assignés",
+        "groups": "Groupes",
+        "individualAgents": "Agents Individuels",
+        "activeCampaign": "Campagne Active",
+        "activityDays": "Jours et heures d'activité"
+      },
+      "noScript": "Aucun script",
+      "dialingModes": {
+        "predictive": "Prédictif",
+        "progressive": "Progressif",
+        "manual": "Manuel"
+      },
+      "wrapUpHelp": "Durée max pour l'agent en état \"Post-appel\" (max 120s).",
+      "agentCount": "{count} agents",
       "weekdays": {
         "monday": "Lundi",
         "tuesday": "Mardi",
@@ -448,9 +495,24 @@
         "saturday": "Samedi",
         "sunday": "Dimanche"
       },
+      "valuePlaceholder": "Valeur",
+      "limitPlaceholder": "Limite",
+      "addQuotaRule": "Ajouter une règle de quota",
+      "addFilterRule": "Ajouter une règle de filtrage",
       "operators": {
-        "equals": "égal à",
-        "starts_with": "commence par"
+        "equals": "est égal à",
+        "startsWith": "commence par",
+        "contains": "contient",
+        "isNotEmpty": "n'est pas vide"
+      },
+      "filterTypes": {
+        "include": "Inclure",
+        "exclude": "Exclure"
+      },
+      "fields": {
+        "postalCode": "Code Postal",
+        "phoneNumber": "Numéro de Téléphone",
+        "lastName": "Nom de famille"
       }
     }
   },
@@ -503,10 +565,12 @@
     "contacts": {
       "searchPlaceholder": "Rechercher des contacts...",
       "deleteSelection": "Supprimer la sélection ({count})",
+      "confirmDelete": "Êtes-vous sûr de vouloir supprimer {count} contact(s) ? Cette action est irréversible.",
       "headers": {
         "lastName": "Nom",
         "firstName": "Prénom",
         "phone": "Téléphone",
+        "querry": "QUERRY",
         "status": "Statut",
         "lastQualif": "Dernière Qualif.",
         "lastNote": "Dernière Note"
@@ -525,8 +589,31 @@
         },
         "recycleButton": "Recycler",
         "recycleButtonTooltip": "Réinitialiser le statut à 'en attente'",
-        "notRecyclableTooltip": "Cette qualification n'est pas recyclable"
+        "notRecyclableTooltip": "Cette qualification n'est pas recyclable",
+        "confirmRecycle": "Êtes-vous sûr de vouloir recycler tous les contacts avec cette qualification ? Leur statut sera réinitialisé à \"pending\"."
       }
+    },
+    "dashboard2": {
+      "title": "Analyse Détaillée",
+      "reset": "Réinitialiser",
+      "detailTitle": "Détail des Fiches pour la sélection",
+      "noRecords": "Aucune fiche à afficher pour la sélection actuelle.",
+      "callsLabel": "{count, plural, one {appel} other {appels}}",
+      "headers": {
+        "contact": "Contact",
+        "phone": "Téléphone",
+        "agent": "Agent",
+        "callDate": "Date Appel",
+        "qualification": "Qualification"
+      }
+    },
+    "exportHeaders": {
+      "date": "Date de traitement",
+      "agent": "Agent",
+      "phone": "Numéro de téléphone",
+      "duration": "Durée",
+      "qualCode": "Code Qualif",
+      "qualDescription": "Description Qualif"
     }
   },
   "contactHistory": {
@@ -795,6 +882,54 @@
         "boost": "Booster la campagne",
         "stop": "Arrêter la campagne"
       }
+    }
+  },
+  "qualifications": {
+    "types": {
+      "positive": "Positif",
+      "neutral": "Neutre",
+      "negative": "Négatif"
+    }
+  },
+  "importContactsModal": {
+    "title": "Importer des contacts pour : {campaignName}",
+    "uploadLabel": "Téléverser un fichier (CSV, TXT, XLSX)",
+    "downloadTemplate": "Télécharger un modèle de fichier CSV",
+    "fileReadError": "Une erreur est survenue lors de la lecture du fichier. Assurez-vous qu'il est valide et non corrompu.",
+    "validationError": "Une erreur est survenue pendant la validation. Veuillez réessayer.",
+    "exportErrorReasonHeader": "Motif de l'erreur",
+    "validating": "Validation...",
+    "validateAndImport": "Valider et Importer",
+    "finish": "Terminer",
+    "deduplication": {
+      "title": "Dédoublonnage",
+      "tipTitle": "Astuce :",
+      "tipContent": "Pour dédoublonner sur plus de champs (ex: un email, un numéro de client), assignez un script d'agent à cette campagne.",
+      "enableLabel": "Activer le dédoublonnage",
+      "enableHelp": "Vérifie les doublons dans le fichier et avec les contacts existants.",
+      "criteriaLabel": "Critères de dédoublonnage (un ou plusieurs)"
+    },
+    "mapping": {
+      "description": "Faites correspondre les colonnes de votre fichier (à droite) aux champs de destination (à gauche). Le numéro de téléphone est obligatoire.",
+      "ignoreField": "Ignorer ce champ"
+    },
+    "summary": {
+      "title": "Résumé de l'importation",
+      "rowsRead": "Lignes lues",
+      "contactsImported": "Contacts importés",
+      "rowsRejected": "Lignes rejetées",
+      "rejectionDetails": "Détail des rejets",
+      "exportRejected": "Exporter les lignes rejetées",
+      "table": {
+        "row": "Ligne",
+        "reason": "Motif du rejet"
+      }
+    },
+    "fields": {
+      "firstName": "Prénom",
+      "lastName": "Nom",
+      "phoneNumber": "Numéro de Téléphone",
+      "postalCode": "Code Postal"
     }
   }
 }
