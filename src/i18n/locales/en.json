@@ -900,5 +900,24 @@
       "download": "Download",
       "noRecords": "No records found for the selected filters.",
       "pagination": "Page {currentPage} of {totalPages}"
+  },
+   "sessionViewer": {
+    "filters": {
+      "startDate": "Start Date",
+      "endDate": "End Date",
+      "agent": "Agent",
+      "allAgents": "All Agents",
+      "group": "Group",
+      "allGroups": "All Groups"
+    },
+    "headers": {
+      "agent": "Agent",
+      "loginTime": "Login Time",
+      "logoutTime": "Logout Time",
+      "duration": "Duration",
+      "status": "Status"
+    },
+    "noSessions": "No sessions found for the selected filters.",
+    "activeNow": "Active"
   }
 }

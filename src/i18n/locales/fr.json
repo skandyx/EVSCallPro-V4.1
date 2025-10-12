@@ -986,5 +986,24 @@
       "download": "Télécharger",
       "noRecords": "Aucun enregistrement trouvé pour les filtres sélectionnés.",
       "pagination": "Page {currentPage} sur {totalPages}"
+  },
+  "sessionViewer": {
+    "filters": {
+      "startDate": "Date de début",
+      "endDate": "Date de fin",
+      "agent": "Agent",
+      "allAgents": "Tous les agents",
+      "group": "Groupe",
+      "allGroups": "Tous les groupes"
+    },
+    "headers": {
+      "agent": "Agent",
+      "loginTime": "Heure de connexion",
+      "logoutTime": "Heure de déconnexion",
+      "duration": "Durée",
+      "status": "Statut"
+    },
+    "noSessions": "Aucune session trouvée pour les filtres sélectionnés.",
+    "activeNow": "Actif"
   }
 }
