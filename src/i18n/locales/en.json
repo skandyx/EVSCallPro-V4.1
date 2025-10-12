@@ -502,7 +502,8 @@
         },
         "recycleButton": "Recycle",
         "recycleButtonTooltip": "Reset status to 'pending'",
-        "notRecyclableTooltip": "This qualification is not recyclable"
+        "notRecyclableTooltip": "This qualification is not recyclable",
+        "confirmRecycle": "Are you sure you want to recycle all contacts with this qualification? Their status will be reset to \"pending\"."
       }
     },
     "dashboard2": {
@@ -601,7 +602,7 @@
           "successRate": "Success Rate"
         }
       },
-      "groupPerf": {
+       "groupPerf": {
         "title": "Group Performance",
         "headers": {
           "group": "Group"
@@ -694,7 +695,7 @@
       "trainingCount": "Training Count"
     },
     "activeQuota": {
-      "title": "Active Quota: {field} {operator} \\"{value}\\"",
+      "title": "Active Quota: {field} {operator} \"{value}\"",
       "cardTitle": "Active Quota"
     },
     "callbacks": {
@@ -957,5 +958,25 @@
     "warning": "Changing these settings can make the application unavailable. A restart of the backend server is required to apply changes.",
     "saveButton": "Save Changes",
     "saveSuccess": "Settings saved. Please restart the backend server to apply the changes."
+  },
+  "databaseManager": {
+    "attention": "Attention: Direct interaction with the database is a high-risk operation. Incorrect queries can lead to data corruption or loss. This tool is reserved for SuperAdmins for maintenance and troubleshooting purposes only.",
+    "schema": "Database Schema",
+    "predefinedQueries": "Predefined Queries",
+    "queries": {
+      "listUsers": "List Users",
+      "listActiveCampaigns": "List Active Campaigns",
+      "countContactsByCampaign": "Count Contacts by Campaign",
+      "viewLast20Contacts": "View Last 20 Contacts",
+      "listScripts": "List Scripts"
+    },
+    "readOnlyMode": "Read-only mode",
+    "execute": "Execute",
+    "executing": "Executing...",
+    "resultsPlaceholder": "Query results will be displayed here.",
+    "resultsCount": "{count} row(s) returned.",
+    "schemaLoadError": "Failed to load the database schema.",
+    "queryError": "An error occurred while executing the query.",
+    "querySuccessNoRows": "The query was executed successfully but returned no rows."
   }
 }

@@ -781,7 +781,7 @@
       "trainingCount": "Nb. Formations"
     },
     "activeQuota": {
-      "title": "Quota Actif : {field} {operator} \\"{value}\\"",
+      "title": "Quota Actif : {field} {operator} \"{value}\"",
       "cardTitle": "Quota Actif"
     },
     "callbacks": {
@@ -1044,5 +1044,25 @@
     "warning": "Modifier ces paramètres peut rendre l'application indisponible. Un redémarrage du serveur backend est nécessaire pour appliquer les changements.",
     "saveButton": "Enregistrer les Modifications",
     "saveSuccess": "Paramètres enregistrés. Veuillez redémarrer le serveur backend pour appliquer les changements."
+  },
+  "databaseManager": {
+    "attention": "Attention : L'interaction directe avec la base de données est une opération à haut risque. Des requêtes incorrectes peuvent entraîner la corruption ou la perte de données. Cet outil est réservé aux SuperAdmins pour des besoins de maintenance et de dépannage uniquement.",
+    "schema": "Schéma de la Base de Données",
+    "predefinedQueries": "Requêtes Prédéfinies",
+    "queries": {
+      "listUsers": "Lister les Utilisateurs",
+      "listActiveCampaigns": "Lister les Campagnes Actives",
+      "countContactsByCampaign": "Compter les Contacts par Campagne",
+      "viewLast20Contacts": "Voir les 20 Derniers Contacts",
+      "listScripts": "Lister les Scripts"
+    },
+    "readOnlyMode": "Mode lecture seule",
+    "execute": "Exécuter",
+    "executing": "Exécution...",
+    "resultsPlaceholder": "Les résultats de la requête s'afficheront ici.",
+    "resultsCount": "{count} ligne(s) retournée(s).",
+    "schemaLoadError": "Impossible de charger le schéma de la base de données.",
+    "queryError": "Une erreur est survenue lors de l'exécution de la requête.",
+    "querySuccessNoRows": "La requête a été exécutée avec succès mais n'a retourné aucune ligne."
   }
 }

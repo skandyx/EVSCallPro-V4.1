@@ -28,11 +28,11 @@ const DatabaseManager: React.FC<{ feature: Feature }> = ({ feature }) => {
                 setSchema(response.data);
             } catch (err) {
                 console.error("Failed to fetch DB schema", err);
-                setError("Impossible de charger le schéma de la base de données.");
+                setError(t('databaseManager.schemaLoadError'));
             }
         };
         fetchSchema();
-    }, []);
+    }, [t]);
 
     const PREDEFINED_QUERIES = [
         { name: t('databaseManager.queries.listUsers'), query: 'SELECT id, login_id, first_name, last_name, role, is_active FROM users;' },
@@ -50,7 +50,7 @@ const DatabaseManager: React.FC<{ feature: Feature }> = ({ feature }) => {
             const response = await apiClient.post('/system/db-query', { query: sqlQuery, readOnly: isReadOnly });
             setQueryResult(response.data);
         } catch (err: any) {
-            setError(err.response?.data?.message || "Une erreur est survenue lors de l'exécution de la requête.");
+            setError(err.response?.data?.message || t('databaseManager.queryError'));
         } finally {
             setIsLoading(false);
         }
@@ -156,7 +156,7 @@ const DatabaseManager: React.FC<{ feature: Feature }> = ({ feature }) => {
                                             </table>
                                         </div>
                                     ) : (
-                                        <p className="text-slate-500 italic">La requête a été exécutée avec succès mais n'a retourné aucune ligne.</p>
+                                        <p className="text-slate-500 italic">{t('databaseManager.querySuccessNoRows')}</p>
                                     )}
                                 </div>
                             ) : (
