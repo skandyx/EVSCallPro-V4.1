@@ -24,7 +24,8 @@
     "agent": "Agent",
     "send": "Send",
     "duplicate": "Duplicate",
-    "add": "Add"
+    "add": "Add",
+    "unknown": "Unknown"
   },
   "login": {
     "title": "Sign in to your account",
@@ -630,11 +631,60 @@
       "sites": "Site Supervision"
     },
     "groupBoard": {
-      "noActiveAgents": "No active agents in any groups."
+      "noActiveAgents": "No active agents in any groups.",
+      "stats": {
+        "ready": "Ready",
+        "onCall": "On Call",
+        "onPause": "On Pause",
+        "wrapUp": "Wrap-Up"
+      }
     },
     "siteBoard": {
       "noSite": "Unassigned Site",
       "noActiveAgents": "No active agents on any sites."
+    },
+    "agentBoard": {
+      "confirmForceLogout": "Are you sure you want to force logout agent {agentName}?"
+    },
+    "callBoard": {
+      "actionAlert": "Action (simulation): {action} on call {callId}",
+      "headers": {
+        "caller": "Caller",
+        "agent": "Agent",
+        "campaign": "Campaign",
+        "duration": "Duration",
+        "actions": "Actions"
+      },
+      "noActiveCalls": "No active calls at the moment.",
+      "actions": {
+        "monitor": "Monitor Call",
+        "transfer": "Transfer Call",
+        "hangup": "Hang Up Call"
+      }
+    },
+    "campaignBoard": {
+      "actionAlert": "Action (simulation): {action} on campaign {campaignName}",
+      "confirmStop": "Are you sure you want to permanently stop the campaign {campaignName}?",
+      "headers": {
+        "campaign": "Campaign",
+        "status": "Status",
+        "offered": "Offered",
+        "answered": "Answered",
+        "hitRate": "Hit Rate",
+        "actions": "Actions"
+      },
+      "noCampaigns": "No campaigns to supervise.",
+      "statuses": {
+        "running": "Running",
+        "paused": "Paused",
+        "stopped": "Stopped"
+      },
+      "actions": {
+        "pause": "Pause",
+        "start": "Start",
+        "boost": "Boost Campaign",
+        "stop": "Stop Campaign"
+      }
     }
   }
 }

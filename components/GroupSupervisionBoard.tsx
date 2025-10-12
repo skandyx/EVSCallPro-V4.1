@@ -75,10 +75,10 @@ const GroupRow: React.FC<{
                     <span className="text-sm text-slate-500 dark:text-slate-400">({agentsInGroup.length} agents)</span>
                 </div>
                 <div className="flex items-center gap-4 text-sm font-medium text-slate-600 dark:text-slate-300">
-                    <span>Ready: <span className="font-bold text-green-600 dark:text-green-400">{groupStats.ready}</span></span>
-                    <span>On Call: <span className="font-bold text-red-600 dark:text-red-400">{groupStats.onCall}</span></span>
-                    <span>On Pause: <span className="font-bold text-orange-600 dark:text-orange-400">{groupStats.onPause}</span></span>
-                    <span>Wrap-Up: <span className="font-bold text-yellow-600 dark:text-yellow-400">{groupStats.onWrapUp}</span></span>
+                    <span>{t('supervision.groupBoard.stats.ready')}: <span className="font-bold text-green-600 dark:text-green-400">{groupStats.ready}</span></span>
+                    <span>{t('supervision.groupBoard.stats.onCall')}: <span className="font-bold text-red-600 dark:text-red-400">{groupStats.onCall}</span></span>
+                    <span>{t('supervision.groupBoard.stats.onPause')}: <span className="font-bold text-orange-600 dark:text-orange-400">{groupStats.onPause}</span></span>
+                    <span>{t('supervision.groupBoard.stats.wrapUp')}: <span className="font-bold text-yellow-600 dark:text-yellow-400">{groupStats.onWrapUp}</span></span>
                 </div>
             </button>
             {isOpen && (
@@ -91,7 +91,7 @@ const GroupRow: React.FC<{
                            {agentsInGroup.map(agent => {
                                const statusConfig = STATUS_CONFIG[agent.status];
                                return (
-                                   <tr key={agent.id}>
+                                   <tr key={agent.id} className={agent.status === 'Déconnecté' ? 'opacity-50' : ''}>
                                        <td className="px-4 py-2 w-1/3">
                                            <div className="flex items-center">
                                                 <div className="relative flex-shrink-0">
@@ -104,7 +104,7 @@ const GroupRow: React.FC<{
                                        <td className="px-4 py-2 w-1/3"><span className={`px-2 py-1 inline-flex text-xs leading-5 font-semibold rounded-full ${statusConfig?.color || 'bg-gray-100 text-gray-800'}`}>{statusConfig ? t(statusConfig.labelKey) : agent.status}</span></td>
                                        <td className="px-4 py-2 font-mono text-sm text-slate-500 dark:text-slate-400">{formatDuration(agent.statusDuration)}</td>
                                        <td className="px-4 py-2 text-right">
-                                           <button onClick={() => handleContact(agent)} title={t('supervision.agentBoard.actions.contact', { agentName: `${agent.firstName} ${agent.lastName}` })} className="p-1.5 rounded-full text-slate-500 hover:bg-slate-200 dark:hover:bg-slate-700"><EnvelopeIcon className="w-4 h-4" /></button>
+                                           <button onClick={() => handleContact(agent)} disabled={agent.status === 'Déconnecté'} title={t('supervision.agentBoard.actions.contact', { agentName: `${agent.firstName} ${agent.lastName}` })} className="p-1.5 rounded-full text-slate-500 hover:bg-slate-200 dark:hover:bg-slate-700 disabled:opacity-30 disabled:cursor-not-allowed"><EnvelopeIcon className="w-4 h-4" /></button>
                                        </td>
                                    </tr>
                                );
@@ -123,7 +123,7 @@ const GroupSupervisionBoard: React.FC<GroupSupervisionBoardProps> = ({ agentStat
 
     const groupsWithAgents = useMemo(() => {
         return userGroups.map(group => {
-            const agentsInGroup = agentStates.filter(agent => group.memberIds.includes(agent.id) && agent.status !== 'Déconnecté');
+            const agentsInGroup = agentStates.filter(agent => group.memberIds.includes(agent.id));
             return { group, agentsInGroup };
         }).filter(item => item.agentsInGroup.length > 0)
           .sort((a, b) => a.group.name.localeCompare(b.group.name));

@@ -24,7 +24,8 @@
     "agent": "Agent",
     "send": "Envoyer",
     "duplicate": "Dupliquer",
-    "add": "Ajouter"
+    "add": "Ajouter",
+    "unknown": "Inconnu"
   },
   "login": {
     "title": "Connectez-vous à votre compte",
@@ -716,11 +717,60 @@
       "sites": "Supervision Sites"
     },
     "groupBoard": {
-      "noActiveAgents": "Aucun agent actif dans aucun groupe."
+      "noActiveAgents": "Aucun agent actif dans aucun groupe.",
+      "stats": {
+        "ready": "Dispo",
+        "onCall": "En Appel",
+        "onPause": "En Pause",
+        "wrapUp": "Post-Appel"
+      }
     },
     "siteBoard": {
       "noSite": "Site non assigné",
       "noActiveAgents": "Aucun agent actif sur aucun site."
+    },
+    "agentBoard": {
+      "confirmForceLogout": "Êtes-vous sûr de vouloir déconnecter de force l'agent {agentName} ?"
+    },
+    "callBoard": {
+      "actionAlert": "Action (simulation): {action} sur l'appel {callId}",
+      "headers": {
+        "caller": "Appelant",
+        "agent": "Agent",
+        "campaign": "Campagne",
+        "duration": "Durée",
+        "actions": "Actions"
+      },
+      "noActiveCalls": "Aucun appel actif pour le moment.",
+      "actions": {
+        "monitor": "Monitorer l'appel",
+        "transfer": "Transférer l'appel",
+        "hangup": "Raccrocher l'appel"
+      }
+    },
+    "campaignBoard": {
+      "actionAlert": "Action (simulation): {action} sur la campagne {campaignName}",
+      "confirmStop": "Êtes-vous sûr de vouloir arrêter définitivement la campagne {campaignName} ?",
+      "headers": {
+        "campaign": "Campagne",
+        "status": "Statut",
+        "offered": "Offerts",
+        "answered": "Répondus",
+        "hitRate": "Taux de succès",
+        "actions": "Actions"
+      },
+      "noCampaigns": "Aucune campagne à superviser.",
+      "statuses": {
+        "running": "En cours",
+        "paused": "En pause",
+        "stopped": "Arrêtée"
+      },
+      "actions": {
+        "pause": "Mettre en pause",
+        "start": "Démarrer",
+        "boost": "Booster la campagne",
+        "stop": "Arrêter la campagne"
+      }
     }
   }
 }

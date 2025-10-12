@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useMemo } from 'react';
 import type { AgentState, User, AgentStatus } from '../types.ts';
 import { MicrophoneIcon, PhoneArrowUpRightIcon, AcademicCapIcon, PauseIcon, TrashIcon, UserCircleIcon, EnvelopeIcon } from './Icons.tsx';
 import { useI18n } from '../src/i18n/index.tsx';
@@ -28,7 +28,6 @@ const getStatusLedColor = (status: AgentStatus): string => {
         case 'En Post-Appel': return 'bg-yellow-500'; // WRAPUP
         case 'Ringing': return 'bg-blue-500'; // RINGING
         case 'En Pause': return 'bg-orange-500'; // PAUSE
-        // FIX: Added 'Formation' status to ensure the correct LED color is displayed.
         case 'Formation': return 'bg-purple-500';
         case 'Mise en attente': return 'bg-purple-500'; // ONHOLD
         case 'Déconnecté': return 'bg-gray-500'; // LOGGEDOUT
@@ -46,6 +45,19 @@ const AgentBoard: React.FC<AgentBoardProps> = ({ agents, currentUser, apiCall, o
     const { t } = useI18n();
     const hasPermission = currentUser.role === 'Administrateur' || currentUser.role === 'Superviseur' || currentUser.role === 'SuperAdmin';
 
+    const sortedAgents = useMemo(() => {
+        const statusOrder: Record<AgentStatus, number> = {
+            'Ringing': 1, 'En Appel': 2, 'Mise en attente': 3, 'En Attente': 4,
+            'En Post-Appel': 5, 'En Pause': 6, 'Formation': 7, 'Déconnecté': 8,
+        };
+        return [...agents].sort((a, b) => {
+            const orderA = statusOrder[a.status] || 9;
+            const orderB = statusOrder[b.status] || 9;
+            if (orderA !== orderB) return orderA - orderB;
+            return a.lastName.localeCompare(b.lastName);
+        });
+    }, [agents]);
+
     const handleSupervisorAction = async (action: string, agentId: string) => {
         try {
             await apiCall.post(`/supervisor/${action}`, { agentId });
@@ -57,7 +69,7 @@ const AgentBoard: React.FC<AgentBoardProps> = ({ agents, currentUser, apiCall, o
     };
 
     const handleForceLogout = async (agentId: string, agentName: string) => {
-        if (window.confirm(`Êtes-vous sûr de vouloir déconnecter de force l'agent ${agentName} ?`)) {
+        if (window.confirm(t('supervision.agentBoard.confirmForceLogout', { agentName }))) {
             await handleSupervisorAction('force-logout', agentId);
         }
     };
@@ -68,10 +80,6 @@ const AgentBoard: React.FC<AgentBoardProps> = ({ agents, currentUser, apiCall, o
             onContactAgent(agentId, agentName, message.trim());
         }
     };
-    
-    // FIX: Re-introduced the filter to hide disconnected agents as per user request,
-    // ensuring the dashboard only shows active participants for a cleaner real-time view.
-    const connectedAgents = agents.filter(agent => agent.status !== 'Déconnecté');
 
     return (
         <div className="overflow-x-auto">
@@ -87,13 +95,13 @@ const AgentBoard: React.FC<AgentBoardProps> = ({ agents, currentUser, apiCall, o
                     </tr>
                 </thead>
                 <tbody className="bg-white dark:bg-slate-800 divide-y divide-slate-200 dark:divide-slate-700 text-sm">
-                    {connectedAgents.length > 0 ? connectedAgents.map(agent => {
+                    {sortedAgents.length > 0 ? sortedAgents.map(agent => {
                         const agentFullName = `${agent.firstName} ${agent.lastName}`;
                         const canCoach = hasPermission && agent.status === 'En Appel';
                         const canForcePause = hasPermission && agent.status !== 'En Pause';
                         const statusConfig = STATUS_CONFIG[agent.status];
                         return (
-                        <tr key={agent.id}>
+                        <tr key={agent.id} className={agent.status === 'Déconnecté' ? 'opacity-50' : ''}>
                             <td className="px-4 py-3">
                                 <div className="flex items-center">
                                     <div className="relative flex-shrink-0">
@@ -119,12 +127,12 @@ const AgentBoard: React.FC<AgentBoardProps> = ({ agents, currentUser, apiCall, o
                             <td className="px-4 py-3 text-slate-600 dark:text-slate-400">{agent.callsHandledToday}</td>
                             <td className="px-4 py-3 text-slate-600 dark:text-slate-400 font-mono">{formatDuration(agent.averageHandlingTime)}</td>
                             <td className="px-4 py-3 text-center space-x-1">
-                                <button onClick={() => handleContactAgent(agent.id, agentFullName)} disabled={!hasPermission} title={t('supervision.agentBoard.actions.contact', { agentName: agentFullName })} className="p-1 rounded-md text-slate-500 hover:bg-slate-100 disabled:text-slate-300 disabled:cursor-not-allowed dark:hover:bg-slate-700"><EnvelopeIcon className="w-4 h-4"/></button>
+                                <button onClick={() => handleContactAgent(agent.id, agentFullName)} disabled={!hasPermission || agent.status === 'Déconnecté'} title={t('supervision.agentBoard.actions.contact', { agentName: agentFullName })} className="p-1 rounded-md text-slate-500 hover:bg-slate-100 disabled:text-slate-300 disabled:cursor-not-allowed dark:hover:bg-slate-700"><EnvelopeIcon className="w-4 h-4"/></button>
                                 <button onClick={() => handleSupervisorAction('listen', agent.id)} disabled={!canCoach} title={t('supervision.agentBoard.actions.listen')} className="p-1 rounded-md text-slate-500 hover:bg-slate-100 disabled:text-slate-300 disabled:cursor-not-allowed dark:hover:bg-slate-700"><MicrophoneIcon className="w-4 h-4"/></button>
                                 <button onClick={() => handleSupervisorAction('barge', agent.id)} disabled={!canCoach} title={t('supervision.agentBoard.actions.barge')} className="p-1 rounded-md text-slate-500 hover:bg-slate-100 disabled:text-slate-300 disabled:cursor-not-allowed dark:hover:bg-slate-700"><PhoneArrowUpRightIcon className="w-4 h-4"/></button>
                                 <button onClick={() => handleSupervisorAction('coach', agent.id)} disabled={!canCoach} title={t('supervision.agentBoard.actions.coach')} className="p-1 rounded-md text-slate-500 hover:bg-slate-100 disabled:text-slate-300 disabled:cursor-not-allowed dark:hover:bg-slate-700"><AcademicCapIcon className="w-4 h-4"/></button>
-                                <button onClick={() => handleSupervisorAction('force-pause', agent.id)} disabled={!canForcePause} title={t('supervision.agentBoard.actions.forcePause')} className="p-1 rounded-md text-slate-500 hover:bg-slate-100 disabled:text-slate-300 disabled:cursor-not-allowed dark:hover:bg-slate-700"><PauseIcon className="w-4 h-4"/></button>
-                                <button onClick={() => handleForceLogout(agent.id, agentFullName)} disabled={!hasPermission} title={t('supervision.agentBoard.actions.forceLogout')} className="p-1 rounded-md text-red-500 hover:bg-red-100 disabled:text-red-200 disabled:cursor-not-allowed dark:hover:bg-red-900/50"><TrashIcon className="w-4 h-4"/></button>
+                                <button onClick={() => handleSupervisorAction('force-pause', agent.id)} disabled={!canForcePause || agent.status === 'Déconnecté'} title={t('supervision.agentBoard.actions.forcePause')} className="p-1 rounded-md text-slate-500 hover:bg-slate-100 disabled:text-slate-300 disabled:cursor-not-allowed dark:hover:bg-slate-700"><PauseIcon className="w-4 h-4"/></button>
+                                <button onClick={() => handleForceLogout(agent.id, agentFullName)} disabled={!hasPermission || agent.status === 'Déconnecté'} title={t('supervision.agentBoard.actions.forceLogout')} className="p-1 rounded-md text-red-500 hover:bg-red-100 disabled:text-red-200 disabled:cursor-not-allowed dark:hover:bg-red-900/50"><TrashIcon className="w-4 h-4"/></button>
                             </td>
                         </tr>
                         )
