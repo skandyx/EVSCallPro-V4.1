@@ -3,7 +3,7 @@ import type { Feature, CallHistoryRecord, User, Campaign, Qualification, AgentSe
 import { useStore } from '../src/store/useStore.ts';
 import { useI18n } from '../src/i18n/index.tsx';
 import { ArrowLeftIcon, ArrowRightIcon } from './Icons.tsx';
-// import { amiriFontBase64 } from '../src/assets/Amiri-Regular.ts';
+import { amiriFontBase64 } from '../src/assets/Amiri-Regular.ts';
 import html2canvas from 'html2canvas';
 
 
@@ -92,6 +92,7 @@ const ReportingDashboard: React.FC<{ feature: Feature }> = ({ feature }) => {
             startDate: newStartDate.toISOString().split('T')[0],
             endDate: newEndDate.toISOString().split('T')[0]
         }));
+        setHistoryPage(1);
     };
 
     const getDateFilterRange = () => {
@@ -323,10 +324,18 @@ const ReportingDashboard: React.FC<{ feature: Feature }> = ({ feature }) => {
         const { jsPDF } = jspdf;
         const doc = new jsPDF('p', 'pt', 'a4');
         
-        // doc.addFileToVFS('Amiri-Regular.ttf', amiriFontBase64);
-        // doc.addFont('Amiri-Regular.ttf', 'Amiri', 'normal');
-        // doc.setFont('Amiri');
-        doc.setFont('helvetica');
+        if (amiriFontBase64) {
+            try {
+                doc.addFileToVFS('Amiri-Regular.ttf', amiriFontBase64);
+                doc.addFont('Amiri-Regular.ttf', 'Amiri', 'normal');
+                doc.setFont('Amiri');
+            } catch (e) {
+                console.error("Failed to load custom font, falling back to helvetica.", e);
+                doc.setFont('helvetica');
+            }
+        } else {
+            doc.setFont('helvetica');
+        }
         
         doc.text(t('reporting.pdf.title'), 40, 40);
         
@@ -336,8 +345,8 @@ const ReportingDashboard: React.FC<{ feature: Feature }> = ({ feature }) => {
             startY: 60,
             head: [[t('reporting.kpis.processedCalls'), t('reporting.kpis.totalTalkTime'), t('reporting.kpis.avgCallDuration'), t('reporting.kpis.successRate'), t('reporting.kpis.occupancyRate')]],
             body: kpiTableData,
-            styles: { halign: 'center' },
-            headStyles: { fontStyle: 'bold' }
+            styles: { halign: 'center', font: doc.getFont().fontName },
+            headStyles: { fontStyle: 'bold', font: doc.getFont().fontName }
         });
 
         const addPageIfNeeded = (currentY: number, requiredHeight: number) => {
@@ -391,8 +400,8 @@ const ReportingDashboard: React.FC<{ feature: Feature }> = ({ feature }) => {
                 startY: lastY + 10,
                 head,
                 body,
-                styles: {},
-                headStyles: { fontStyle: 'bold' },
+                styles: { font: doc.getFont().fontName },
+                headStyles: { fontStyle: 'bold', font: doc.getFont().fontName },
                 didDrawPage: (data: any) => { lastY = data.cursor.y; }
             });
             lastY = (doc as any).lastAutoTable.finalY;
@@ -440,10 +449,10 @@ const ReportingDashboard: React.FC<{ feature: Feature }> = ({ feature }) => {
             <div className="bg-white dark:bg-slate-800 p-4 rounded-lg shadow-sm border border-slate-200 dark:border-slate-700">
                 <div className="grid grid-cols-1 md:grid-cols-5 gap-4">
                     <select value={filters.dateRange} onChange={handleDateRangeChange} className="p-2 border bg-white rounded-md dark:bg-slate-900 dark:border-slate-600 dark:text-slate-200"><option value="last7days">{t('reporting.filters.dateRanges.last7days')}</option><option value="last30days">{t('reporting.filters.dateRanges.last30days')}</option><option value="thisMonth">{t('reporting.filters.dateRanges.thisMonth')}</option></select>
-                    <input type="date" value={filters.startDate} onChange={e => setFilters(f => ({ ...f, startDate: e.target.value, dateRange: '' }))} className="p-2 border rounded-md dark:bg-slate-900 dark:border-slate-600 dark:text-slate-200"/>
-                    <input type="date" value={filters.endDate} onChange={e => setFilters(f => ({ ...f, endDate: e.target.value, dateRange: '' }))} className="p-2 border rounded-md dark:bg-slate-900 dark:border-slate-600 dark:text-slate-200"/>
-                    <select value={filters.campaignId} onChange={e => setFilters(f => ({ ...f, campaignId: e.target.value }))} className="p-2 border bg-white rounded-md dark:bg-slate-900 dark:border-slate-600 dark:text-slate-200"><option value="all">{t('reporting.filters.allCampaigns')}</option>{campaigns.map(c => <option key={c.id} value={c.id}>{c.name}</option>)}</select>
-                    <select value={filters.agentId} onChange={e => setFilters(f => ({ ...f, agentId: e.target.value }))} className="p-2 border bg-white rounded-md dark:bg-slate-900 dark:border-slate-600 dark:text-slate-200"><option value="all">{t('reporting.filters.allAgents')}</option>{users.filter(u=>u.role==='Agent').map(u => <option key={u.id} value={u.id}>{u.firstName} {u.lastName}</option>)}</select>
+                    <input type="date" value={filters.startDate} onChange={e => { setFilters(f => ({ ...f, startDate: e.target.value, dateRange: '' })); setHistoryPage(1); }} className="p-2 border rounded-md dark:bg-slate-900 dark:border-slate-600 dark:text-slate-200"/>
+                    <input type="date" value={filters.endDate} onChange={e => { setFilters(f => ({ ...f, endDate: e.target.value, dateRange: '' })); setHistoryPage(1); }} className="p-2 border rounded-md dark:bg-slate-900 dark:border-slate-600 dark:text-slate-200"/>
+                    <select value={filters.campaignId} onChange={e => { setFilters(f => ({ ...f, campaignId: e.target.value })); setHistoryPage(1); }} className="p-2 border bg-white rounded-md dark:bg-slate-900 dark:border-slate-600 dark:text-slate-200"><option value="all">{t('reporting.filters.allCampaigns')}</option>{campaigns.map(c => <option key={c.id} value={c.id}>{c.name}</option>)}</select>
+                    <select value={filters.agentId} onChange={e => { setFilters(f => ({ ...f, agentId: e.target.value })); setHistoryPage(1); }} className="p-2 border bg-white rounded-md dark:bg-slate-900 dark:border-slate-600 dark:text-slate-200"><option value="all">{t('reporting.filters.allAgents')}</option>{users.filter(u=>u.role==='Agent').map(u => <option key={u.id} value={u.id}>{u.firstName} {u.lastName}</option>)}</select>
                 </div>
             </div>
             
