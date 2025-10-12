@@ -600,10 +600,10 @@ const ReportingDashboard: React.FC<{ feature: Feature }> = ({ feature }) => {
                                 {filteredHistory.length === 0 && <p className="text-center p-4">{t('reporting.noCallData')}</p>}
                             </div>
                              {totalHistoryPages > 1 && <div className="flex justify-between items-center mt-4 text-sm">
-                                <p>Page {historyPage} sur {totalPages}</p>
+                                <p>Page {historyPage} sur {totalHistoryPages}</p>
                                 <div className="flex gap-2">
                                     <button onClick={() => setHistoryPage(p => Math.max(1, p - 1))} disabled={historyPage === 1} className="p-2 disabled:opacity-50"><ArrowLeftIcon className="w-5 h-5"/></button>
-                                    <button onClick={() => setHistoryPage(p => Math.min(totalPages, p + 1))} disabled={historyPage === totalPages} className="p-2 disabled:opacity-50"><ArrowRightIcon className="w-5 h-5"/></button>
+                                    <button onClick={() => setHistoryPage(p => Math.min(totalHistoryPages, p + 1))} disabled={historyPage === totalHistoryPages} className="p-2 disabled:opacity-50"><ArrowRightIcon className="w-5 h-5"/></button>
                                 </div>
                             </div>}
                         </div>
