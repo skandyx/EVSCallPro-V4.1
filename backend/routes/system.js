@@ -10,9 +10,6 @@ const dotenv = require('dotenv');
 const { exec } = require('child_process');
 const net = require('net');
 const logger = require('../services/logger');
-const { Pool } = require('pg');
-const AsteriskManager = require('asterisk-manager');
-
 
 // Middleware to check for SuperAdmin role
 const isSuperAdmin = (req, res, next) => {
@@ -465,79 +462,5 @@ router.delete('/backups/:fileName', isSuperAdmin, (req, res) => {
     res.status(204).send();
 });
 
-router.post('/test-db', isSuperAdmin, async (req, res) => {
-    const { host, port, user, password, database } = req.body;
-    const tempPool = new Pool({ host, port, user, password, database, connectionTimeoutMillis: 5000 });
-    try {
-        const client = await tempPool.connect();
-        await client.query('SELECT NOW()');
-        client.release();
-        res.json({ message: 'Connection successful' });
-    } catch (error) {
-        res.status(500).json({ message: error.message });
-    } finally {
-        await tempPool.end();
-    }
-});
-
-router.post('/test-ami', isSuperAdmin, async (req, res) => {
-    const { amiHost, amiPort, amiUser, amiPassword } = req.body;
-    
-    let passwordToUse = amiPassword;
-    if (!passwordToUse) {
-        try {
-            const envPath = path.join(__dirname, '..', '.env');
-            const envFileContent = await fs.readFile(envPath, 'utf-8');
-            const envConfig = dotenv.parse(envFileContent);
-            passwordToUse = envConfig.AMI_SECRET;
-        } catch (e) {
-            return res.status(500).json({ message: "Could not read stored AMI password." });
-        }
-    }
-
-    const tempAmi = new AsteriskManager(amiPort, amiHost, amiUser, passwordToUse, true);
-    let responseSent = false;
-    
-    const timeout = setTimeout(() => {
-        if (!responseSent) {
-            responseSent = true;
-            tempAmi.disconnect();
-            res.status(500).json({ message: 'Connection timed out after 5 seconds.' });
-        }
-    }, 5000);
-
-    tempAmi.once('connect', () => {
-        if (!responseSent) {
-            tempAmi.action({ Action: 'Ping' }, (err, amiRes) => {
-                clearTimeout(timeout);
-                if (!responseSent) {
-                    responseSent = true;
-                    if (err) res.status(500).json({ message: err.message });
-                    else res.json({ message: 'Connection successful' });
-                }
-                tempAmi.disconnect();
-            });
-        }
-    });
-
-    tempAmi.once('error', (err) => {
-        clearTimeout(timeout);
-        if (!responseSent) {
-            responseSent = true;
-            res.status(500).json({ message: err.message });
-        }
-        tempAmi.disconnect();
-    });
-
-    tempAmi.once('disconnect', () => {
-        clearTimeout(timeout);
-        if (!responseSent && !tempAmi.isConnected()) {
-            responseSent = true;
-            res.status(500).json({ message: 'Connection failed. Check credentials and network.' });
-        }
-    });
-
-    tempAmi.connect();
-});
 
 module.exports = router;

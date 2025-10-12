@@ -7,8 +7,8 @@ import type {
     SystemConnectionSettings, SystemSmtpSettings, SystemAppSettings, ModuleVisibility,
     BackupLog, BackupSchedule, SystemLog, VersionInfo, ConnectivityService, AgentState, ActiveCall, CampaignState, PlanningEvent, AgentStatus
 } from '../../types.ts';
-import apiClient, { publicApiClient } from '../src/lib/axios.ts';
-import wsClient from '../src/services/wsClient.ts';
+import apiClient, { publicApiClient } from '../lib/axios.ts';
+import wsClient from '../services/wsClient.ts';
 
 type Theme = 'light' | 'dark' | 'system';
 type EntityName = 'users' | 'campaigns' | 'scripts' | 'user-groups' | 'qualification-groups' | 'qualifications' | 'ivr-flows' | 'trunks' | 'dids' | 'sites' | 'audio-files';
@@ -518,14 +518,7 @@ export const useStore = create<AppState>()(
                     await apiClient.put(`/system/${type}-settings`, settings);
                 },
                 saveConnectionSettings: async (settings) => {
-                    try {
-                        const response = await apiClient.post('/system-connection', settings);
-                        get().showAlert(response.data.message || 'Settings saved.', 'info');
-                        set({ systemConnectionSettings: settings });
-                    } catch (error: any) {
-                        get().showAlert(error.response?.data?.error || 'Failed to save settings.', 'error');
-                        throw error;
-                    }
+                     await apiClient.post('/system-connection', settings);
                 },
                 saveModuleVisibility: async (visibility) => {
                     // This is a client-side only implementation as a real backend endpoint is not available.
