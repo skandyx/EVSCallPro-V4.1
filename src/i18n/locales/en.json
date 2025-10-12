@@ -363,7 +363,8 @@
         "mode": "Mode"
       },
       "actions": {
-        "import": "Import"
+        "import": "Import",
+        "deleteDisabledTooltip": "Cannot delete an active campaign. Please deactivate it first."
       }
     },
     "modal": {

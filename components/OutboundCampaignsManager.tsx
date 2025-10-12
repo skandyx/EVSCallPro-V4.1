@@ -527,7 +527,13 @@ const OutboundCampaignsManager: React.FC<{ feature: Feature }> = ({ feature }) =
                                     <td className="px-6 py-4 whitespace-nowrap text-right text-sm font-medium space-x-2">
                                         <button onClick={() => handleOpenImportModal(campaign)} className="text-link hover:underline inline-flex items-center"><ArrowUpTrayIcon className="w-4 h-4 mr-1"/> {t('outboundCampaignsManager.list.actions.import')}</button>
                                         <button onClick={() => handleEdit(campaign)} className="text-link hover:underline inline-flex items-center"><EditIcon className="w-4 h-4 mr-1"/> {t('common.edit')}</button>
-                                        <button onClick={() => onDeleteCampaign(campaign.id)} className="text-red-600 hover:text-red-900 dark:hover:text-red-400 inline-flex items-center"><TrashIcon className="w-4 h-4 mr-1"/> {t('common.delete')}</button>
+                                        <button 
+                                            onClick={() => onDeleteCampaign(campaign.id)} 
+                                            disabled={campaign.isActive}
+                                            title={campaign.isActive ? t('outboundCampaignsManager.list.actions.deleteDisabledTooltip') : t('common.delete')}
+                                            className="inline-flex items-center disabled:text-slate-400 disabled:cursor-not-allowed text-red-600 hover:text-red-900 dark:hover:text-red-400">
+                                            <TrashIcon className="w-4 h-4 mr-1"/> {t('common.delete')}
+                                        </button>
                                     </td>
                                 </tr>
                             )})}

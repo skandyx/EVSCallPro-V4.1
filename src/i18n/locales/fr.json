@@ -451,7 +451,8 @@
       "actions": {
         "import": "Importer",
         "edit": "Modifier",
-        "delete": "Supprimer"
+        "delete": "Supprimer",
+        "deleteDisabledTooltip": "Impossible de supprimer une campagne active. Veuillez la désactiver d'abord."
       }
     },
     "modal": {
