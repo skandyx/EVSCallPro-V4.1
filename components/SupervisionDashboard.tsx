@@ -3,15 +3,15 @@ import type { Feature, AgentState, ActiveCall, CampaignState, User, Campaign } f
 import AgentBoard from './AgentBoard.tsx';
 import CallBoard from './CallBoard.tsx';
 import CampaignBoard from './CampaignBoard.tsx';
-import { UsersIcon, PhoneIcon, ChartBarIcon } from './Icons.tsx';
+import GroupSupervisionBoard from './GroupSupervisionBoard.tsx';
+import SiteSupervisionBoard from './SiteSupervisionBoard.tsx';
+import { UsersIcon, PhoneIcon, ChartBarIcon, BuildingOfficeIcon } from './Icons.tsx';
 import { useI18n } from '../src/i18n/index.tsx';
-// FIX: Corrected module import path to resolve module resolution error.
 import { useStore } from '../src/store/useStore.ts';
 import apiClient from '../src/lib/axios.ts';
 import wsClient from '../src/services/wsClient.ts';
 
-// FIX: Removed 'live' tab as KPIs are now displayed globally.
-type Tab = 'agents' | 'calls' | 'campaigns';
+type Tab = 'agents' | 'calls' | 'campaigns' | 'groups' | 'sites';
 
 const KpiCard: React.FC<{ title: string; value: string | number; icon: React.FC<any> }> = ({ title, value, icon: Icon }) => (
     <div className="bg-white dark:bg-slate-800 p-4 rounded-lg shadow-sm border border-slate-200 dark:border-slate-700">
@@ -27,13 +27,10 @@ const KpiCard: React.FC<{ title: string; value: string | number; icon: React.FC<
     </div>
 );
 
-// FIX: This component was not returning any JSX, causing it to be typed as returning 'void',
-// which is not a valid React component. The entire component body has been refactored
-// to return a proper layout with a header, KPIs, and a tabbed interface.
 const SupervisionDashboard: React.FC<{ feature: Feature }> = ({ feature }) => {
     const { 
         users, campaigns, currentUser, agentStates, activeCalls, campaignStates,
-        showAlert
+        userGroups, sites, showAlert
     } = useStore(state => ({
         users: state.users,
         campaigns: state.campaigns,
@@ -41,6 +38,8 @@ const SupervisionDashboard: React.FC<{ feature: Feature }> = ({ feature }) => {
         agentStates: state.agentStates,
         activeCalls: state.activeCalls,
         campaignStates: state.campaignStates,
+        userGroups: state.userGroups,
+        sites: state.sites,
         showAlert: state.showAlert,
     }));
     
@@ -78,6 +77,10 @@ const SupervisionDashboard: React.FC<{ feature: Feature }> = ({ feature }) => {
                 return <CallBoard calls={activeCalls} agents={users} campaigns={campaigns} />;
             case 'campaigns':
                 return <CampaignBoard campaignStates={campaignStates} />;
+            case 'groups':
+                return <GroupSupervisionBoard agentStates={agentStates} userGroups={userGroups} onContactAgent={handleContactAgent} />;
+            case 'sites':
+                return <SiteSupervisionBoard agentStates={agentStates} sites={sites} onContactAgent={handleContactAgent} />;
             default:
                 return null;
         }
@@ -118,6 +121,8 @@ const SupervisionDashboard: React.FC<{ feature: Feature }> = ({ feature }) => {
                         <TabButton tabName="agents" labelKey="supervision.tabs.agents" icon={UsersIcon} />
                         <TabButton tabName="calls" labelKey="supervision.tabs.calls" icon={PhoneIcon} />
                         <TabButton tabName="campaigns" labelKey="supervision.tabs.campaigns" icon={ChartBarIcon} />
+                        <TabButton tabName="groups" labelKey="supervision.tabs.groups" icon={UsersIcon} />
+                        <TabButton tabName="sites" labelKey="supervision.tabs.sites" icon={BuildingOfficeIcon} />
                     </nav>
                 </div>
                 <div className="p-4">
@@ -128,5 +133,4 @@ const SupervisionDashboard: React.FC<{ feature: Feature }> = ({ feature }) => {
     );
 };
 
-// FIX: Added a default export to resolve the module import error in `data/features.ts`.
 export default SupervisionDashboard;

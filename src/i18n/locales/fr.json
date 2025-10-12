@@ -1,4 +1,3 @@
-
 {
   "common": {
     "save": "Enregistrer",
@@ -707,5 +706,21 @@
     "activeCampaigns": "Campagnes Actives",
     "noCampaigns": "Aucune campagne assignée.",
     "callNumber": "Appeler {phoneName}"
+  },
+  "supervision": {
+    "tabs": {
+      "agents": "Agents",
+      "calls": "Appels",
+      "campaigns": "Campagnes",
+      "groups": "Supervision Groupes",
+      "sites": "Supervision Sites"
+    },
+    "groupBoard": {
+      "noActiveAgents": "Aucun agent actif dans aucun groupe."
+    },
+    "siteBoard": {
+      "noSite": "Site non assigné",
+      "noActiveAgents": "Aucun agent actif sur aucun site."
+    }
   }
 }

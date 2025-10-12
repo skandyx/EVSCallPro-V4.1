@@ -1,4 +1,3 @@
-
 {
   "common": {
     "save": "Save",
@@ -621,5 +620,21 @@
     "activeCampaigns": "Active Campaigns",
     "noCampaigns": "No assigned campaigns.",
     "callNumber": "Call {phoneName}"
+  },
+  "supervision": {
+    "tabs": {
+      "agents": "Agents",
+      "calls": "Calls",
+      "campaigns": "Campaigns",
+      "groups": "Group Supervision",
+      "sites": "Site Supervision"
+    },
+    "groupBoard": {
+      "noActiveAgents": "No active agents in any groups."
+    },
+    "siteBoard": {
+      "noSite": "Unassigned Site",
+      "noActiveAgents": "No active agents on any sites."
+    }
   }
 }
