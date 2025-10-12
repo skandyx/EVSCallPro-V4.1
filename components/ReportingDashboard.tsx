@@ -154,19 +154,24 @@ const ReportingDashboard: React.FC<{ feature: Feature }> = ({ feature }) => {
             return acc;
         }, {} as Record<string, number>);
         
+        const campaignNames = Object.keys(counts).sort();
+
         return {
             datasets: [{
                 tree: Object.entries(counts).map(([name, value]) => ({ name, value })),
                 key: 'value',
                 spacing: 1, borderWidth: 1, borderColor: 'white',
                 backgroundColor: (ctx: any) => {
-                    if (ctx.type !== 'data') {
+                    if (ctx.type !== 'data' || !ctx.raw?._data) {
                         return 'transparent';
                     }
                     const TREEMAP_COLORS = [
                       '#2563eb', '#f59e0b', '#10b981', '#ef4444', '#8b5cf6', '#3b82f6', '#fbbf24', '#34d399', '#f87171', '#a78bfa'
                     ];
-                    return TREEMAP_COLORS[ctx.dataIndex % TREEMAP_COLORS.length];
+                    const campaignName = ctx.raw._data.name;
+                    const index = campaignNames.indexOf(campaignName);
+                    if (index === -1) return '#ccc';
+                    return TREEMAP_COLORS[index % TREEMAP_COLORS.length];
                 },
                 labels: { display: true, color: 'white', font: { size: 12 }, formatter: (ctx: any) => ctx.raw?._data.name },
             }]
