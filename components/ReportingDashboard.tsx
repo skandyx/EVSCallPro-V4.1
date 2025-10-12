@@ -3,7 +3,7 @@ import type { Feature, CallHistoryRecord, User, Campaign, Qualification, AgentSe
 import { useStore } from '../src/store/useStore.ts';
 import { useI18n } from '../src/i18n/index.tsx';
 import { ArrowLeftIcon, ArrowRightIcon } from './Icons.tsx';
-import { amiriFontBase64 } from '../src/assets/Amiri-Regular.ts';
+// import { amiriFontBase64 } from '../src/assets/Amiri-Regular.ts';
 import html2canvas from 'html2canvas';
 
 
@@ -158,7 +158,15 @@ const ReportingDashboard: React.FC<{ feature: Feature }> = ({ feature }) => {
                 tree: Object.entries(counts).map(([name, value]) => ({ name, value })),
                 key: 'value',
                 spacing: 1, borderWidth: 1, borderColor: 'white',
-                backgroundColor: (ctx: any) => (typeof Chart !== 'undefined' && Chart.getChartColor) ? Chart.getChartColor(ctx.index) : 'rgba(79, 70, 229, 0.7)',
+                backgroundColor: (ctx: any) => {
+                    if (ctx.type !== 'data') {
+                        return 'transparent';
+                    }
+                    const TREEMAP_COLORS = [
+                      '#2563eb', '#f59e0b', '#10b981', '#ef4444', '#8b5cf6', '#3b82f6', '#fbbf24', '#34d399', '#f87171', '#a78bfa'
+                    ];
+                    return TREEMAP_COLORS[ctx.dataIndex % TREEMAP_COLORS.length];
+                },
                 labels: { display: true, color: 'white', font: { size: 12 }, formatter: (ctx: any) => ctx.raw?._data.name },
             }]
         };
@@ -315,9 +323,10 @@ const ReportingDashboard: React.FC<{ feature: Feature }> = ({ feature }) => {
         const { jsPDF } = jspdf;
         const doc = new jsPDF('p', 'pt', 'a4');
         
-        doc.addFileToVFS('Amiri-Regular.ttf', amiriFontBase64);
-        doc.addFont('Amiri-Regular.ttf', 'Amiri', 'normal');
-        doc.setFont('Amiri');
+        // doc.addFileToVFS('Amiri-Regular.ttf', amiriFontBase64);
+        // doc.addFont('Amiri-Regular.ttf', 'Amiri', 'normal');
+        // doc.setFont('Amiri');
+        doc.setFont('helvetica');
         
         doc.text(t('reporting.pdf.title'), 40, 40);
         
@@ -327,7 +336,7 @@ const ReportingDashboard: React.FC<{ feature: Feature }> = ({ feature }) => {
             startY: 60,
             head: [[t('reporting.kpis.processedCalls'), t('reporting.kpis.totalTalkTime'), t('reporting.kpis.avgCallDuration'), t('reporting.kpis.successRate'), t('reporting.kpis.occupancyRate')]],
             body: kpiTableData,
-            styles: { font: 'Amiri', halign: 'center' },
+            styles: { halign: 'center' },
             headStyles: { fontStyle: 'bold' }
         });
 
@@ -382,7 +391,7 @@ const ReportingDashboard: React.FC<{ feature: Feature }> = ({ feature }) => {
                 startY: lastY + 10,
                 head,
                 body,
-                styles: { font: 'Amiri' },
+                styles: {},
                 headStyles: { fontStyle: 'bold' },
                 didDrawPage: (data: any) => { lastY = data.cursor.y; }
             });
@@ -401,12 +410,12 @@ const ReportingDashboard: React.FC<{ feature: Feature }> = ({ feature }) => {
         );
          addTableToPdf(
             t('reporting.tables.groupPerf.title'),
-            [[t('reporting.tables.groupPerf.headers.group'), t('reporting.tables.groupPerf.headers.calls'), t('reporting.tables.groupPerf.headers.totalDuration'), t('reporting.tables.groupPerf.headers.avgDuration'), t('reporting.tables.groupPerf.headers.successRate')]],
+            [[t('reporting.tables.groupPerf.headers.group'), t('reporting.tables.agentPerf.headers.calls'), t('reporting.tables.agentPerf.headers.totalDuration'), t('reporting.tables.agentPerf.headers.avgDuration'), t('reporting.tables.agentPerf.headers.successRate')]],
             groupPerfData.map(g => [g.name, g.calls, formatDuration(g.totalDuration), formatDuration(g.avgDuration), `${g.successRate.toFixed(1)}%`])
         );
         addTableToPdf(
             t('reporting.tables.sitePerf.title'),
-            [[t('reporting.tables.sitePerf.headers.site'), t('reporting.tables.sitePerf.headers.calls'), t('reporting.tables.sitePerf.headers.totalDuration'), t('reporting.tables.sitePerf.headers.avgDuration'), t('reporting.tables.sitePerf.headers.successRate')]],
+            [[t('reporting.tables.sitePerf.headers.site'), t('reporting.tables.agentPerf.headers.calls'), t('reporting.tables.agentPerf.headers.totalDuration'), t('reporting.tables.agentPerf.headers.avgDuration'), t('reporting.tables.agentPerf.headers.successRate')]],
             sitePerfData.map(s => [s.name, s.calls, formatDuration(s.totalDuration), formatDuration(s.avgDuration), `${s.successRate.toFixed(1)}%`])
         );
         addTableToPdf(
