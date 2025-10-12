@@ -118,7 +118,6 @@ const SystemSettingsManager: React.FC<{ feature: Feature }> = ({ feature }) => {
             showAlert(t('systemSettings.saveSuccess'), 'success');
             // Apply theme immediately
             document.documentElement.setAttribute('data-theme', appSettings.colorPalette);
-            setTheme(appSettings.colorPalette); // This will persist it if theme is in persist config
         } catch (error) {
             showAlert(t('systemSettings.saveError'), 'error');
         } finally {

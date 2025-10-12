@@ -250,8 +250,7 @@ const ReportingDashboard: React.FC<{ feature: Feature }> = ({ feature }) => {
                 acc[call.agentId].successes++;
             }
             return acc;
-// FIX: Explicitly cast the initial empty object `{}` in the `reduce` call to ensure TypeScript correctly infers the accumulator's type. This resolves multiple downstream errors related to properties not existing on type 'unknown'.
-        }, {} as Record<string, { agentId: string; calls: number; totalDuration: number; successes: number }>);
+        }, {});
         return Object.values(statsByAgent).map(stat => ({
             ...stat,
             name: findEntityName(stat.agentId, users),
@@ -281,14 +280,14 @@ const ReportingDashboard: React.FC<{ feature: Feature }> = ({ feature }) => {
 
     const sitePerfData = useMemo(() => {
         const agentSiteMap = new Map(users.map(u => [u.id, u.siteId]));
-        const statsBySite = agentPerfDataCalls.reduce((acc, stat) => {
+        const statsBySite = agentPerfDataCalls.reduce<Record<string, { id: string, name: string, calls: number, totalDuration: number, successes: number }>>((acc, stat) => {
             const siteId = agentSiteMap.get(stat.agentId) || 'no-site';
             if (!acc[siteId]) acc[siteId] = { id: siteId, name: findEntityName(siteId, sites) || t('supervision.siteBoard.noSite'), calls: 0, totalDuration: 0, successes: 0 };
             acc[siteId].calls += stat.calls;
             acc[siteId].totalDuration += stat.totalDuration;
             acc[siteId].successes += stat.successes;
             return acc;
-        }, {} as Record<string, { id: string, name: string, calls: number, totalDuration: number, successes: number }>);
+        }, {});
         return Object.values(statsBySite).map(stat => ({
             ...stat,
             avgDuration: stat.calls > 0 ? stat.totalDuration / stat.calls : 0,
@@ -306,8 +305,7 @@ const ReportingDashboard: React.FC<{ feature: Feature }> = ({ feature }) => {
             if (!acc[key]) acc[key] = { agentId: session.agentId, date: new Date(session.loginTime), sessions: [] };
             acc[key].sessions.push(session);
             return acc;
-// FIX: Explicitly cast the initial empty object `{}` in the `reduce` call to ensure TypeScript correctly infers the accumulator's type, preventing properties like `.sessions` from being accessed on type 'unknown'.
-        }, {} as Record<string, { agentId: string; date: Date; sessions: AgentSession[] }>);
+        }, {});
 
         return Object.values(sessionsByAgentDay).map(group => {
             const firstLogin = new Date(Math.min(...group.sessions.map(s => new Date(s.loginTime).getTime())));

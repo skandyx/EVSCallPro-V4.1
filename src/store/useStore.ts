@@ -241,12 +241,12 @@ export const useStore = create<AppState>()(
                                 const agentStateIndex = state.agentStates.findIndex(a => a.id === payload.id);
                                 if (agentStateIndex > -1) {
                                     const { status, statusDuration } = state.agentStates[agentStateIndex];
-                                    // FIX: Replace spread with Object.assign to handle 'any' type payload safely within immer.
+// FIX: Replace spread with Object.assign to handle 'any' type payload safely within immer.
                                     Object.assign(state.agentStates[agentStateIndex], payload);
                                     state.agentStates[agentStateIndex].status = status;
                                     state.agentStates[agentStateIndex].statusDuration = statusDuration;
                                 } else if (payload.role === 'Agent') {
-                                     // FIX: Use Object.assign to safely create the new state object from an 'any' type payload.
+// FIX: Use Object.assign to safely create the new state object from an 'any' type payload.
                                      state.agentStates.push(Object.assign({}, payload, {
                                         status: 'Déconnecté' as AgentStatus,
                                         statusDuration: 0, callsHandledToday: 0, averageHandlingTime: 0, averageTalkTime: 0,
