@@ -781,7 +781,11 @@
       "trainingCount": "Nb. Formations"
     },
     "activeQuota": {
-      "title": "Quota Actif : {field} {operator} \"{value}\""
+      "title": "Quota Actif : {field} {operator} \\"{value}\\"",
+      "cardTitle": "Quota Actif"
+    },
+    "callbacks": {
+      "allCampaigns": "Toutes les campagnes"
     },
     "feedback": {
       "activateCampaign": "Veuillez sélectionner une campagne active pour la numérotation.",

@@ -694,7 +694,11 @@
       "trainingCount": "Training Count"
     },
     "activeQuota": {
-      "title": "Active Quota: {field} {operator} \"{value}\""
+      "title": "Active Quota: {field} {operator} \\"{value}\\"",
+      "cardTitle": "Active Quota"
+    },
+    "callbacks": {
+      "allCampaigns": "All campaigns"
     },
     "feedback": {
       "activateCampaign": "Please select an active campaign for dialing.",
