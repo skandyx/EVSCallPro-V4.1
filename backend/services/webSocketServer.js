@@ -107,6 +107,7 @@ function initializeWebSocketServer(server) {
                     sendToUser(event.payload.agentId, {
                         type: 'supervisorMessage',
                         payload: {
+                            id: `msg-${Date.now()}-${Math.random()}`,
                             from: from,
                             message: event.payload.message
                         }

@@ -12,7 +12,7 @@ import { useStore } from '../src/store/useStore.ts';
 type Theme = 'light' | 'dark' | 'system';
 
 interface SupervisorNotification {
-    id: number;
+    id: number | string;
     from: string;
     message: string;
     timestamp: string;
@@ -26,12 +26,13 @@ interface AgentViewProps {
 
 // --- Reusable Components ---
 const Clock: React.FC = () => {
+    const { language } = useI18n();
     const [time, setTime] = useState(new Date());
     useEffect(() => {
         const timerId = setInterval(() => setTime(new Date()), 1000);
         return () => clearInterval(timerId);
     }, []);
-    return <div className="text-sm font-medium text-slate-500 dark:text-slate-400 font-mono">{time.toLocaleDateString('fr-FR')} {time.toLocaleTimeString('fr-FR')}</div>;
+    return <div className="text-sm font-medium text-slate-500 dark:text-slate-400 font-mono">{time.toLocaleDateString(language)} {time.toLocaleTimeString(language)}</div>;
 };
 
 const ThemeSwitcher: React.FC<{ theme: Theme; setTheme: (theme: Theme) => void; }> = ({ theme, setTheme }) => {
@@ -105,7 +106,7 @@ const statusToI18nKey = (status: AgentStatus): string => {
 
 // --- Agent View ---
 const AgentView: React.FC<AgentViewProps> = ({ onUpdatePassword, onUpdateProfilePicture }) => {
-    const { t } = useI18n();
+    const { t, language } = useI18n();
 
     const { 
         currentUser, campaigns, qualifications, savedScripts, contactNotes, users, personalCallbacks,
@@ -141,7 +142,7 @@ const AgentView: React.FC<AgentViewProps> = ({ onUpdatePassword, onUpdateProfile
     const [activeDialingCampaignId, setActiveDialingCampaignId] = useState<string | null>(null);
     const [agentNotifications, setAgentNotifications] = useState<SupervisorNotification[]>([]);
     const [isAgentNotifOpen, setIsAgentNotifOpen] = useState(false);
-    const [activeReplyId, setActiveReplyId] = useState<number | null>(null);
+    const [activeReplyId, setActiveReplyId] = useState<number | string | null>(null);
     const [replyText, setReplyText] = useState('');
     const [isDialOptionsOpen, setIsDialOptionsOpen] = useState(false);
     const dialOptionsRef = useRef<HTMLDivElement>(null);
@@ -241,8 +242,18 @@ const AgentView: React.FC<AgentViewProps> = ({ onUpdatePassword, onUpdateProfile
         if (token) wsClient.connect(token);
         const handleWebSocketMessage = (event: any) => {
             if (event.type === 'supervisorMessage') {
-                const newNotif: SupervisorNotification = { id: Date.now(), from: event.payload.from, message: event.payload.message, timestamp: new Date().toISOString() };
-                setAgentNotifications(prev => [newNotif, ...prev]);
+                const newNotif: SupervisorNotification = { 
+                    id: event.payload.id || Date.now(), 
+                    from: event.payload.from, 
+                    message: event.payload.message, 
+                    timestamp: new Date().toISOString() 
+                };
+                setAgentNotifications(prev => {
+                    if (prev.some(n => n.id === newNotif.id)) {
+                        return prev;
+                    }
+                    return [newNotif, ...prev];
+                });
             }
         };
         const unsubscribe = wsClient.onMessage(handleWebSocketMessage);
@@ -440,7 +451,7 @@ const AgentView: React.FC<AgentViewProps> = ({ onUpdatePassword, onUpdateProfile
         setTimeout(() => setFeedbackMessage(null), 3000);
     }, [currentUser, t]);
 
-    const handleRespondToSupervisor = (notificationId: number) => {
+    const handleRespondToSupervisor = (notificationId: number | string) => {
         if (!replyText.trim()) return;
         wsClient.send({ type: 'agentResponseToSupervisor', payload: { agentName: `${currentUser.firstName} ${currentUser.lastName}`, message: replyText }});
         setReplyText(''); setActiveReplyId(null); setAgentNotifications(prev => prev.filter(n => n.id !== notificationId));
@@ -537,7 +548,7 @@ const AgentView: React.FC<AgentViewProps> = ({ onUpdatePassword, onUpdateProfile
                     </button>
                     <div className="text-left">
                         <p className="font-bold text-slate-800 dark:text-slate-100">{currentUser.firstName} {currentUser.lastName} - {t('agentView.extension', { ext: currentUser.loginId })}</p>
-                         {agentState && (<div className="text-xs text-slate-500 dark:text-slate-400 flex items-center gap-2"><span className={`w-2 h-2 rounded-full ${getStatusColor(agentState.status)}`}></span><span>{t(statusToI18nKey(agentState.status))}</span><span className="font-mono">{formatTimer(agentState.statusDuration)}</span></div>)}
+                         {agentState && (<div className="text-xs text-slate-500 dark:text-slate-400 flex items-center gap-2"><span className={`w-2 h-2 rounded-full ${getStatusColor(agentState.status)}`}></span><span>{t(statusToI18nKey(agentState.status))}</span><span className="font-mono">{formatTimer(agentState.totalConnectedTime)}</span></div>)}
                     </div>
                     {isStatusMenuOpen && (
                          <div className="absolute top-full left-0 mt-2 w-64 bg-white dark:bg-slate-800 rounded-md shadow-lg border dark:border-slate-700 p-2 z-20">
@@ -546,13 +557,13 @@ const AgentView: React.FC<AgentViewProps> = ({ onUpdatePassword, onUpdateProfile
                         </div>
                     )}
                 </div>
-                <div className="flex items-center gap-4"><Clock /><div className="relative"><button onClick={() => setIsAgentNotifOpen(p => !p)} className="p-2 rounded-full hover:bg-slate-100 dark:hover:bg-slate-700 text-slate-500 dark:text-slate-400"><BellAlertIcon className="w-6 h-6" />{agentNotifications.length > 0 && (<span className="absolute top-1 right-1 flex h-4 w-4"><span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-red-400 opacity-75"></span><span className="relative inline-flex rounded-full h-4 w-4 bg-red-500 text-white text-xs items-center justify-center">{agentNotifications.length}</span></span>)}</button>{isAgentNotifOpen && (<div className="absolute right-0 mt-2 w-80 origin-top-right bg-white dark:bg-slate-800 rounded-md shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none z-20"><div className="p-3 border-b dark:border-slate-700 flex justify-between items-center"><h3 className="font-semibold text-slate-800 dark:text-slate-200">{t('agentView.messages')}</h3>{agentNotifications.length > 0 && <button onClick={() => setAgentNotifications([])} className="text-xs font-medium text-indigo-600 hover:underline">{t('agentView.clearAll')}</button>}</div><div className="max-h-96 overflow-y-auto">{agentNotifications.length === 0 ? (<p className="text-sm text-slate-500 text-center p-8">Aucun nouveau message.</p>) : (agentNotifications.map(notif => (<div key={notif.id} className="p-3 border-b dark:border-slate-700 hover:bg-slate-50 dark:hover:bg-slate-700"><p className="text-sm text-slate-700 dark:text-slate-200"><span className="font-bold">{notif.from}:</span> {notif.message}</p><p className="text-xs text-slate-400 mt-1">{new Date(notif.timestamp).toLocaleTimeString()}</p>{activeReplyId === notif.id ? (<form onSubmit={(e) => { e.preventDefault(); handleRespondToSupervisor(notif.id); }} className="mt-2 flex gap-2"><input type="text" value={replyText} onChange={e => setReplyText(e.target.value)} placeholder={t('agentView.yourResponsePlaceholder')} autoFocus className="w-full text-sm p-1.5 border rounded-md dark:bg-slate-900 dark:border-slate-600"/><button type="submit" className="text-sm bg-indigo-600 text-white px-3 rounded-md hover:bg-indigo-700">{t('common.send')}</button></form>) : (<button onClick={() => setActiveReplyId(notif.id)} className="mt-2 text-xs font-semibold text-indigo-600 hover:underline">{t('agentView.respond')}</button>)}</div>)))}</div></div>)}</div><LanguageSwitcher /><ThemeSwitcher theme={theme} setTheme={setTheme} /><button onClick={logout} className="font-semibold py-2 px-4 rounded-lg inline-flex items-center bg-slate-200 hover:bg-slate-300 dark:bg-slate-700 dark:text-slate-200 dark:hover:bg-slate-600"><PowerIcon className="w-5 h-5 mr-2" /> {t('sidebar.logout')}</button></div>
+                <div className="flex items-center gap-4"><Clock /><div className="relative"><button onClick={() => setIsAgentNotifOpen(p => !p)} className="p-2 rounded-full hover:bg-slate-100 dark:hover:bg-slate-700 text-slate-500 dark:text-slate-400"><BellAlertIcon className="w-6 h-6" />{agentNotifications.length > 0 && (<span className="absolute top-1 right-1 flex h-4 w-4"><span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-red-400 opacity-75"></span><span className="relative inline-flex rounded-full h-4 w-4 bg-red-500 text-white text-xs items-center justify-center">{agentNotifications.length}</span></span>)}</button>{isAgentNotifOpen && (<div className="absolute right-0 mt-2 w-80 origin-top-right bg-white dark:bg-slate-800 rounded-md shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none z-20"><div className="p-3 border-b dark:border-slate-700 flex justify-between items-center"><h3 className="font-semibold text-slate-800 dark:text-slate-200">{t('agentView.messages')}</h3>{agentNotifications.length > 0 && <button onClick={() => setAgentNotifications([])} className="text-xs font-medium text-indigo-600 hover:underline">{t('agentView.clearAll')}</button>}</div><div className="max-h-96 overflow-y-auto">{agentNotifications.length === 0 ? (<p className="text-sm text-slate-500 text-center p-8">Aucun nouveau message.</p>) : (agentNotifications.map(notif => (<div key={String(notif.id)} className="p-3 border-b dark:border-slate-700 hover:bg-slate-50 dark:hover:bg-slate-700"><p className="text-sm text-slate-700 dark:text-slate-200"><span className="font-bold">{notif.from}:</span> {notif.message}</p><p className="text-xs text-slate-400 mt-1">{new Date(notif.timestamp).toLocaleTimeString()}</p>{activeReplyId === notif.id ? (<form onSubmit={(e) => { e.preventDefault(); handleRespondToSupervisor(notif.id); }} className="mt-2 flex gap-2"><input type="text" value={replyText} onChange={e => setReplyText(e.target.value)} placeholder={t('agentView.yourResponsePlaceholder')} autoFocus className="w-full text-sm p-1.5 border rounded-md dark:bg-slate-900 dark:border-slate-600"/><button type="submit" className="text-sm bg-indigo-600 text-white px-3 rounded-md hover:bg-indigo-700">{t('common.send')}</button></form>) : (<button onClick={() => setActiveReplyId(notif.id)} className="mt-2 text-xs font-semibold text-indigo-600 hover:underline">{t('agentView.respond')}</button>)}</div>)))}</div></div>)}</div><LanguageSwitcher /><ThemeSwitcher theme={theme} setTheme={setTheme} /><button onClick={logout} className="font-semibold py-2 px-4 rounded-lg inline-flex items-center bg-slate-200 hover:bg-slate-300 dark:bg-slate-700 dark:text-slate-200 dark:hover:bg-slate-600"><PowerIcon className="w-5 h-5 mr-2" /> {t('sidebar.logout')}</button></div>
             </header>
             
             <main className="flex-1 grid grid-cols-12 gap-4 p-4 overflow-hidden">
                 <div className="col-span-3 flex flex-col gap-4">
                      <div className="bg-white dark:bg-slate-800 p-4 rounded-lg shadow-sm border dark:border-slate-700 flex flex-col min-h-0"><h2 className="text-xl font-semibold text-slate-800 dark:text-slate-100 border-b dark:border-slate-600 pb-2 mb-4">{t('agentView.kpis.title')}</h2><div className="mb-4"><h3 className="text-base font-semibold text-slate-600 dark:text-slate-300">{t('agentView.kpis.title')}</h3>{agentState ? (<div className="grid grid-cols-2 gap-2 mt-2"><div className="col-span-2"><KpiCard title={t('agentView.kpis.totalConnectedTime')} value={formatTimer(agentState.totalConnectedTime)} /></div><KpiCard title={t('agentView.kpis.callsHandled')} value={agentState.callsHandledToday} /><KpiCard title="DMC" value={formatTimer(agentState.averageTalkTime)} /><KpiCard title={t('agentView.kpis.totalPauseTime')} value={formatTimer(agentState.totalPauseTime)} /><KpiCard title={t('agentView.kpis.pauseCount')} value={agentState.pauseCount} /><KpiCard title={t('agentView.kpis.totalTrainingTime')} value={formatTimer(agentState.totalTrainingTime)} /><KpiCard title={t('agentView.kpis.trainingCount')} value={agentState.trainingCount} /></div>) : <p className="text-xs text-slate-400 italic mt-1">Chargement...</p>}</div>{matchingQuota && (<div className="border-t dark:border-slate-600 pt-4"><h3 className="text-base font-semibold text-slate-600 dark:text-slate-300">Quota Actif</h3><div className="bg-slate-50 dark:bg-slate-700 p-3 rounded-md mt-2"><p className="text-sm font-medium text-slate-800 dark:text-slate-200 truncate" title={matchingQuota.name}>{matchingQuota.name}</p><div className="w-full bg-slate-200 dark:bg-slate-600 rounded-full h-2.5 mt-2"><div className="bg-indigo-600 h-2.5 rounded-full" style={{ width: `${matchingQuota.progress}%` }}></div></div><p className="text-xs text-right text-slate-500 dark:text-slate-400 mt-1">{matchingQuota.current} / {matchingQuota.limit}</p></div></div>)}{(!currentContact && status === 'En Attente') && (<div className="flex-1 mt-auto pt-4 border-t dark:border-slate-600"><div className="h-full flex flex-col items-center justify-center text-center">{feedbackMessage ? (<p className="text-amber-600 font-semibold">{feedbackMessage}</p>) : (<><svg className="animate-spin h-8 w-8 text-indigo-600" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"><circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle><path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path></svg><p className="text-slate-500 dark:text-slate-400 mt-4">{isLoadingNextContact ? t('agentView.searching') : t('agentView.waitingForCall')}</p></>)}</div></div>)}</div>
-                    <div className="bg-white dark:bg-slate-800 p-4 rounded-lg shadow-sm border dark:border-slate-700 flex-1 flex flex-col min-h-0"><div className="border-b dark:border-slate-600 pb-2 mb-2 flex items-center justify-between flex-shrink-0"><h2 className="text-xl font-semibold text-slate-800 dark:text-slate-100 flex items-center gap-2"><CalendarDaysIcon className="w-6 h-6 text-indigo-600 dark:text-indigo-400"/>{t('agentView.myCallbacks')}</h2><div className="flex items-center gap-2"><button onClick={() => handleCallbackDateChange(-1)} className="p-1 rounded-md hover:bg-slate-100 dark:hover:bg-slate-700"><ArrowLeftIcon className="w-4 h-4"/></button><span className="font-semibold text-sm">{callbackViewDate.toLocaleDateString('fr-FR', { weekday: 'long', day: 'numeric', month: 'long' })}</span><button onClick={() => handleCallbackDateChange(1)} className="p-1 rounded-md hover:bg-slate-100 dark:hover:bg-slate-700"><ArrowRightIcon className="w-4 h-4"/></button></div><select value={callbackCampaignFilter} onChange={e => setCallbackCampaignFilter(e.target.value)} className="text-sm p-1 border bg-white dark:bg-slate-700 dark:border-slate-600 rounded-md"><option value="all">Toutes les campagnes</option>{assignedCampaigns.map(c => <option key={c.id} value={c.id}>{c.name}</option>)}</select></div><div className="flex-1 overflow-y-auto pr-2 space-y-2 text-base">
+                    <div className="bg-white dark:bg-slate-800 p-4 rounded-lg shadow-sm border dark:border-slate-700 flex-1 flex flex-col min-h-0"><div className="border-b dark:border-slate-600 pb-2 mb-2 flex items-center justify-between flex-shrink-0"><h2 className="text-xl font-semibold text-slate-800 dark:text-slate-100 flex items-center gap-2"><CalendarDaysIcon className="w-6 h-6 text-indigo-600 dark:text-indigo-400"/>{t('agentView.myCallbacks')}</h2><div className="flex items-center gap-2"><button onClick={() => handleCallbackDateChange(-1)} className="p-1 rounded-md hover:bg-slate-100 dark:hover:bg-slate-700"><ArrowLeftIcon className="w-4 h-4"/></button><span className="font-semibold text-sm">{callbackViewDate.toLocaleDateString(language, { weekday: 'long', day: 'numeric', month: 'long' })}</span><button onClick={() => handleCallbackDateChange(1)} className="p-1 rounded-md hover:bg-slate-100 dark:hover:bg-slate-700"><ArrowRightIcon className="w-4 h-4"/></button></div><select value={callbackCampaignFilter} onChange={e => setCallbackCampaignFilter(e.target.value)} className="text-sm p-1 border bg-white dark:bg-slate-700 dark:border-slate-600 rounded-md"><option value="all">Toutes les campagnes</option>{assignedCampaigns.map(c => <option key={c.id} value={c.id}>{c.name}</option>)}</select></div><div className="flex-1 overflow-y-auto pr-2 space-y-2 text-base">
                         {mySortedCallbacks.length > 0 ? (
                             mySortedCallbacks.map(cb => {
                                 const scheduled = new Date(cb.scheduledTime);
@@ -577,7 +588,7 @@ const AgentView: React.FC<AgentViewProps> = ({ onUpdatePassword, onUpdateProfile
                                         </div>
                                         <p className={`text-xs text-slate-500 ${isOverdue ? 'dark:text-rose-200' : 'dark:text-slate-400'}`}>{campaignName}</p>
                                         <p className={`text-sm font-mono ${isOverdue ? 'text-rose-200' : 'text-slate-600 dark:text-slate-400'}`}>{cb.contactNumber}</p>
-                                        <p className={`text-sm font-bold mt-1 ${isOverdue ? 'dark:text-white' : 'text-indigo-700 dark:text-indigo-400'}`}>{scheduled.toLocaleString('fr-FR')}</p>
+                                        <p className={`text-sm font-bold mt-1 ${isOverdue ? 'dark:text-white' : 'text-indigo-700 dark:text-indigo-400'}`}>{scheduled.toLocaleString(language)}</p>
                                     </button>
                                 );
                             })
