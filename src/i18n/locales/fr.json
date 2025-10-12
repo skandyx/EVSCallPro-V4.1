@@ -709,6 +709,13 @@
     "callNumber": "Appeler {phoneName}"
   },
   "supervision": {
+    "kpis": {
+      "agentsReady": "Agents Disponibles",
+      "agentsOnCall": "Agents en Appel",
+      "agentsOnWrapup": "Agents en Post-Appel",
+      "agentsOnPause": "Agents en Pause",
+      "activeCalls": "Appels Actifs"
+    },
     "tabs": {
       "agents": "Agents",
       "calls": "Appels",
@@ -730,7 +737,24 @@
       "noActiveAgents": "Aucun agent actif sur aucun site."
     },
     "agentBoard": {
-      "confirmForceLogout": "Êtes-vous sûr de vouloir déconnecter de force l'agent {agentName} ?"
+      "headers": {
+        "agent": "Agent",
+        "status": "Statut",
+        "duration": "Durée",
+        "calls": "Appels",
+        "avgHandleTime": "DMT",
+        "actions": "Actions"
+      },
+      "noAgents": "Aucun agent à afficher.",
+      "confirmForceLogout": "Êtes-vous sûr de vouloir déconnecter de force l'agent {agentName} ?",
+      "actions": {
+        "contact": "Contacter {agentName}",
+        "listen": "Écouter l'appel",
+        "barge": "Intervenir dans l'appel",
+        "coach": "Coacher l'agent",
+        "forcePause": "Forcer la Pause",
+        "forceLogout": "Forcer la Déconnexion"
+      }
     },
     "callBoard": {
       "actionAlert": "Action (simulation): {action} sur l'appel {callId}",

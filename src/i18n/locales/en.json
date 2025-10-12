@@ -623,6 +623,13 @@
     "callNumber": "Call {phoneName}"
   },
   "supervision": {
+    "kpis": {
+      "agentsReady": "Agents Ready",
+      "agentsOnCall": "Agents On Call",
+      "agentsOnWrapup": "Agents On Wrapup",
+      "agentsOnPause": "Agents On Pause",
+      "activeCalls": "Active Calls"
+    },
     "tabs": {
       "agents": "Agents",
       "calls": "Calls",
@@ -644,7 +651,24 @@
       "noActiveAgents": "No active agents on any sites."
     },
     "agentBoard": {
-      "confirmForceLogout": "Are you sure you want to force logout agent {agentName}?"
+      "headers": {
+        "agent": "Agent",
+        "status": "Status",
+        "duration": "Duration",
+        "calls": "Calls",
+        "avgHandleTime": "AHT",
+        "actions": "Actions"
+      },
+      "noAgents": "No agents to display.",
+      "confirmForceLogout": "Are you sure you want to force logout agent {agentName}?",
+      "actions": {
+        "contact": "Contact {agentName}",
+        "listen": "Listen to call",
+        "barge": "Barge into call",
+        "coach": "Coach agent",
+        "forcePause": "Force Pause",
+        "forceLogout": "Force Logout"
+      }
     },
     "callBoard": {
       "actionAlert": "Action (simulation): {action} on call {callId}",

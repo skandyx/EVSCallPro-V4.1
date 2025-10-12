@@ -4,14 +4,14 @@ import { ChevronDownIcon, UserCircleIcon, EnvelopeIcon } from './Icons.tsx';
 import { useI18n } from '../src/i18n/index.tsx';
 
 const STATUS_CONFIG: { [key in AgentStatus]?: { labelKey: string; color: string } } = {
-    'En Attente': { labelKey: 'agentStatuses.EnAttente', color: 'bg-green-100 text-green-800 dark:bg-green-900/50 dark:text-green-200' },
-    'En Appel': { labelKey: 'agentStatuses.EnAppel', color: 'bg-red-100 text-red-800 dark:bg-red-900/50 dark:text-red-200' },
-    'En Post-Appel': { labelKey: 'agentStatuses.EnPostAppel', color: 'bg-yellow-100 text-yellow-800 dark:bg-yellow-800/50 dark:text-yellow-200' },
-    'En Pause': { labelKey: 'agentStatuses.EnPause', color: 'bg-orange-100 text-orange-800 dark:bg-orange-900/50 dark:text-orange-200' },
-    'Ringing': { labelKey: 'agentStatuses.Ringing', color: 'bg-blue-100 text-blue-800 dark:bg-blue-900/50 dark:text-blue-200' },
-    'Déconnecté': { labelKey: 'agentStatuses.Déconnecté', color: 'bg-gray-100 text-gray-800 dark:bg-slate-700 dark:text-slate-200' },
-    'Mise en attente': { labelKey: 'agentStatuses.Miseenattente', color: 'bg-purple-100 text-purple-800 dark:bg-purple-900/50 dark:text-purple-200' },
-    'Formation': { labelKey: 'agentStatuses.Formation', color: 'bg-purple-100 text-purple-800 dark:bg-purple-900/50 dark:text-purple-200' },
+    'En Attente': { labelKey: 'agentView.statuses.available', color: 'bg-green-100 text-green-800 dark:bg-green-900/50 dark:text-green-200' },
+    'En Appel': { labelKey: 'agentView.statuses.onCall', color: 'bg-red-100 text-red-800 dark:bg-red-900/50 dark:text-red-200' },
+    'En Post-Appel': { labelKey: 'agentView.statuses.wrapUp', color: 'bg-yellow-100 text-yellow-800 dark:bg-yellow-800/50 dark:text-yellow-200' },
+    'En Pause': { labelKey: 'agentView.statuses.onPause', color: 'bg-orange-100 text-orange-800 dark:bg-orange-900/50 dark:text-orange-200' },
+    'Ringing': { labelKey: 'agentView.statuses.ringing', color: 'bg-blue-100 text-blue-800 dark:bg-blue-900/50 dark:text-blue-200' },
+    'Déconnecté': { labelKey: 'agentView.statuses.disconnected', color: 'bg-gray-100 text-gray-800 dark:bg-slate-700 dark:text-slate-200' },
+    'Mise en attente': { labelKey: 'agentView.statuses.onHold', color: 'bg-purple-100 text-purple-800 dark:bg-purple-900/50 dark:text-purple-200' },
+    'Formation': { labelKey: 'agentView.statuses.training', color: 'bg-purple-100 text-purple-800 dark:bg-purple-900/50 dark:text-purple-200' },
 };
 
 const getStatusLedColor = (status: AgentStatus): string => {
