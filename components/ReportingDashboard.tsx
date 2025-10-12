@@ -1,8 +1,11 @@
 import React, { useState, useMemo, useRef, useEffect } from 'react';
-import type { Feature, CallHistoryRecord, User, Campaign, Qualification, AgentSession } from '../types.ts';
+import type { Feature, CallHistoryRecord, User, Campaign, Qualification, AgentSession, UserGroup, Site } from '../types.ts';
 import { useStore } from '../src/store/useStore.ts';
 import { useI18n } from '../src/i18n/index.tsx';
 import { ArrowLeftIcon, ArrowRightIcon } from './Icons.tsx';
+import { amiriFontBase64 } from '../src/assets/Amiri-Regular.ts';
+import html2canvas from 'html2canvas';
+
 
 // Déclaration pour les bibliothèques globales chargées via CDN
 declare var Chart: any;
@@ -49,12 +52,14 @@ const ChartComponent: React.FC<{ id: string; type: any; data: any; options: any;
 
 const ReportingDashboard: React.FC<{ feature: Feature }> = ({ feature }) => {
     const { t } = useI18n();
-    const { callHistory, users, campaigns, qualifications, agentSessions } = useStore(state => ({
+    const { callHistory, users, campaigns, qualifications, agentSessions, userGroups, sites } = useStore(state => ({
         callHistory: state.callHistory,
         users: state.users,
         campaigns: state.campaigns,
         qualifications: state.qualifications,
         agentSessions: state.agentSessions,
+        userGroups: state.userGroups,
+        sites: state.sites,
     }));
     
     const [activeTab, setActiveTab] = useState('charts');
@@ -173,7 +178,6 @@ const ReportingDashboard: React.FC<{ feature: Feature }> = ({ feature }) => {
     }, [filteredHistory, qualifications, t]);
 
     const successByAgentData = useMemo(() => {
-        // FIX: Added an explicit type for the accumulator in the reduce function to resolve type errors.
         const agentStats = filteredHistory.reduce<Record<string, { name: string; calls: number; successes: number }>>((acc, call) => {
             if (!acc[call.agentId]) {
                 const agent = users.find(u => u.id === call.agentId);
@@ -203,7 +207,6 @@ const ReportingDashboard: React.FC<{ feature: Feature }> = ({ feature }) => {
     }, [filteredHistory, users, t]);
     
     const campaignPerfData = useMemo(() => {
-        // FIX: Added an explicit type for the accumulator in the reduce function to resolve type errors.
         const statsByCampaign = filteredHistory.reduce<Record<string, { id: string; calls: number; totalDuration: number; successes: number }>>((acc, call) => {
             const campaignId = call.campaignId || 'inbound';
             if (!acc[campaignId]) acc[campaignId] = { id: campaignId, calls: 0, totalDuration: 0, successes: 0 };
@@ -222,7 +225,6 @@ const ReportingDashboard: React.FC<{ feature: Feature }> = ({ feature }) => {
     }, [filteredHistory, campaigns, qualifications, t]);
 
     const agentPerfDataCalls = useMemo(() => {
-        // FIX: Added an explicit type for the accumulator in the reduce function to resolve type errors.
         const statsByAgent = filteredHistory.reduce<Record<string, { agentId: string; calls: number; totalDuration: number; successes: number }>>((acc, call) => {
             if (!acc[call.agentId]) acc[call.agentId] = { agentId: call.agentId, calls: 0, totalDuration: 0, successes: 0 };
             acc[call.agentId].calls++;
@@ -237,12 +239,47 @@ const ReportingDashboard: React.FC<{ feature: Feature }> = ({ feature }) => {
             successRate: stat.calls > 0 ? (stat.successes / stat.calls) * 100 : 0
         })).sort((a,b) => b.calls - a.calls);
     }, [filteredHistory, users, qualifications]);
+
+    const groupPerfData = useMemo(() => {
+        const statsByGroup = userGroups.map(group => {
+            const memberIds = new Set(group.memberIds);
+            const agentStatsForGroup = agentPerfDataCalls.filter(stat => memberIds.has(stat.agentId));
+            const calls = agentStatsForGroup.reduce((sum, stat) => sum + stat.calls, 0);
+            const totalDuration = agentStatsForGroup.reduce((sum, stat) => sum + stat.totalDuration, 0);
+            const successes = agentStatsForGroup.reduce((sum, stat) => sum + stat.successes, 0);
+            return {
+                id: group.id,
+                name: group.name,
+                calls,
+                totalDuration,
+                avgDuration: calls > 0 ? totalDuration / calls : 0,
+                successRate: calls > 0 ? (successes / calls) * 100 : 0,
+            };
+        });
+        return statsByGroup.filter(g => g.calls > 0).sort((a, b) => b.calls - a.calls);
+    }, [userGroups, agentPerfDataCalls]);
+
+    const sitePerfData = useMemo(() => {
+        const agentSiteMap = new Map(users.map(u => [u.id, u.siteId]));
+        const statsBySite = agentPerfDataCalls.reduce((acc, stat) => {
+            const siteId = agentSiteMap.get(stat.agentId) || 'no-site';
+            if (!acc[siteId]) acc[siteId] = { id: siteId, name: findEntityName(siteId, sites) || t('supervision.siteBoard.noSite'), calls: 0, totalDuration: 0, successes: 0 };
+            acc[siteId].calls += stat.calls;
+            acc[siteId].totalDuration += stat.totalDuration;
+            acc[siteId].successes += stat.successes;
+            return acc;
+        }, {} as Record<string, { id: string, name: string, calls: number, totalDuration: number, successes: number }>);
+        return Object.values(statsBySite).map(stat => ({
+            ...stat,
+            avgDuration: stat.calls > 0 ? stat.totalDuration / stat.calls : 0,
+            successRate: stat.calls > 0 ? (stat.successes / stat.calls) * 100 : 0,
+        })).sort((a,b) => b.calls - a.calls);
+    }, [users, sites, agentPerfDataCalls, t]);
     
     const timesheetData = useMemo(() => {
         const { start, end } = getDateFilterRange();
         const filteredSessions = agentSessions.filter(s => new Date(s.loginTime) <= end && (!s.logoutTime || new Date(s.logoutTime) >= start));
 
-        // FIX: Added an explicit type for the accumulator in the reduce function to resolve type errors.
         const sessionsByAgentDay = filteredSessions.reduce<Record<string, { agentId: string; date: Date; sessions: AgentSession[] }>>((acc, session) => {
             if (filters.agentId !== 'all' && session.agentId !== filters.agentId) return acc;
             const key = `${session.agentId}-${new Date(session.loginTime).toDateString()}`;
@@ -264,7 +301,7 @@ const ReportingDashboard: React.FC<{ feature: Feature }> = ({ feature }) => {
                 totalDuration,
                 adherence: 'N/A' // Placeholder
             };
-        }).sort((a,b) => b.date.getTime() - a.date.getTime() || a.agentName.localeCompare(b.agentName));
+        }).sort((a,b) => b.date.getTime() - a.date.getTime() || a.agentName.localeCompare(a.agentName));
     }, [agentSessions, users, filters]);
     
     const paginatedCallHistory = useMemo(() => {
@@ -274,30 +311,82 @@ const ReportingDashboard: React.FC<{ feature: Feature }> = ({ feature }) => {
     const totalHistoryPages = Math.ceil(filteredHistory.length / historyRecordsPerPage);
 
 
-    const handleExportPdf = () => {
+    const handleExportPdf = async () => {
         const { jsPDF } = jspdf;
         const doc = new jsPDF('p', 'pt', 'a4');
         
-        doc.text("Rapport d'Analytique", 40, 40);
+        doc.addFileToVFS('Amiri-Regular.ttf', amiriFontBase64);
+        doc.addFont('Amiri-Regular.ttf', 'Amiri', 'normal');
+        doc.setFont('Amiri');
         
-        const kpiTableData = [
-            [kpis.processedCalls, kpis.totalTalkTime, kpis.avgCallDuration, kpis.successRate, kpis.occupancyRate]
-        ];
+        doc.text(t('reporting.pdf.title'), 40, 40);
         
-        doc.autoTable({
+        const kpiTableData = [[kpis.processedCalls, kpis.totalTalkTime, kpis.avgCallDuration, kpis.successRate, kpis.occupancyRate]];
+        
+        (doc as any).autoTable({
             startY: 60,
             head: [[t('reporting.kpis.processedCalls'), t('reporting.kpis.totalTalkTime'), t('reporting.kpis.avgCallDuration'), t('reporting.kpis.successRate'), t('reporting.kpis.occupancyRate')]],
             body: kpiTableData,
+            styles: { font: 'Amiri', halign: 'center' },
+            headStyles: { fontStyle: 'bold' }
         });
 
-        const addTableToPdf = (title: string, head: string[][], body: any[][]) => {
-            let lastY = (doc as any).lastAutoTable.finalY || doc.autoTable.previous.finalY || 100;
-            if (lastY + 80 > doc.internal.pageSize.height) {
+        const addPageIfNeeded = (currentY: number, requiredHeight: number) => {
+            if (currentY + requiredHeight > doc.internal.pageSize.height) {
                 doc.addPage();
-                lastY = 0;
+                return 40; // Start Y on new page
             }
-            doc.text(title, 40, lastY + 40);
-            doc.autoTable({ startY: lastY + 50, head, body });
+            return currentY;
+        };
+
+        let lastY = (doc as any).lastAutoTable.finalY || 100;
+
+        const chartElements = [
+            { id: 'treemapChart', title: t('reporting.charts.callsByCampaignTitle') },
+            { id: 'successByHourChart', title: t('reporting.charts.successByHourTitle') },
+            { id: 'successByAgentChart', title: t('reporting.charts.successByAgentTitle') },
+            { id: 'adherenceChart', title: t('reporting.charts.adherenceByAgentTitle') },
+        ];
+        
+        doc.addPage();
+        lastY = 40;
+        doc.setFontSize(14);
+        doc.text(t('reporting.pdf.chartsTitle'), 40, lastY);
+        lastY += 20;
+
+        for (let i = 0; i < chartElements.length; i++) {
+            const chartInfo = chartElements[i];
+            const chartEl = document.getElementById(chartInfo.id)?.parentElement;
+            if (chartEl) {
+                const canvas = await html2canvas(chartEl, { scale: 2 });
+                const imgData = canvas.toDataURL('image/png');
+                const imgProps = doc.getImageProperties(imgData);
+                const pdfWidth = doc.internal.pageSize.getWidth() - 80;
+                const pdfHeight = (imgProps.height * pdfWidth) / imgProps.width;
+
+                lastY = addPageIfNeeded(lastY, pdfHeight + 40);
+                doc.setFontSize(12);
+                doc.text(chartInfo.title, 40, lastY);
+                lastY += 15;
+                doc.addImage(imgData, 'PNG', 40, lastY, pdfWidth, pdfHeight);
+                lastY += pdfHeight + 20;
+            }
+        }
+
+
+        const addTableToPdf = (title: string, head: string[][], body: any[][]) => {
+            lastY = addPageIfNeeded(lastY, 80); // Estimate space for title + table head
+            doc.setFontSize(14);
+            doc.text(title, 40, lastY);
+            (doc as any).autoTable({
+                startY: lastY + 10,
+                head,
+                body,
+                styles: { font: 'Amiri' },
+                headStyles: { fontStyle: 'bold' },
+                didDrawPage: (data: any) => { lastY = data.cursor.y; }
+            });
+            lastY = (doc as any).lastAutoTable.finalY;
         };
         
         addTableToPdf(
@@ -309,6 +398,16 @@ const ReportingDashboard: React.FC<{ feature: Feature }> = ({ feature }) => {
             t('reporting.tables.agentPerf.titleCalls'),
             [[t('reporting.tables.agentPerf.headers.agent'), t('reporting.tables.agentPerf.headers.calls'), t('reporting.tables.agentPerf.headers.totalDuration'), t('reporting.tables.agentPerf.headers.avgDuration'), t('reporting.tables.agentPerf.headers.successRate')]],
             agentPerfDataCalls.map(a => [a.name, a.calls, formatDuration(a.totalDuration), formatDuration(a.avgDuration), `${a.successRate.toFixed(1)}%`])
+        );
+         addTableToPdf(
+            t('reporting.tables.groupPerf.title'),
+            [[t('reporting.tables.groupPerf.headers.group'), t('reporting.tables.groupPerf.headers.calls'), t('reporting.tables.groupPerf.headers.totalDuration'), t('reporting.tables.groupPerf.headers.avgDuration'), t('reporting.tables.groupPerf.headers.successRate')]],
+            groupPerfData.map(g => [g.name, g.calls, formatDuration(g.totalDuration), formatDuration(g.avgDuration), `${g.successRate.toFixed(1)}%`])
+        );
+        addTableToPdf(
+            t('reporting.tables.sitePerf.title'),
+            [[t('reporting.tables.sitePerf.headers.site'), t('reporting.tables.sitePerf.headers.calls'), t('reporting.tables.sitePerf.headers.totalDuration'), t('reporting.tables.sitePerf.headers.avgDuration'), t('reporting.tables.sitePerf.headers.successRate')]],
+            sitePerfData.map(s => [s.name, s.calls, formatDuration(s.totalDuration), formatDuration(s.avgDuration), `${s.successRate.toFixed(1)}%`])
         );
         addTableToPdf(
             t('reporting.tables.timesheet.title'),
@@ -350,7 +449,7 @@ const ReportingDashboard: React.FC<{ feature: Feature }> = ({ feature }) => {
             <div className="bg-white dark:bg-slate-800 rounded-lg shadow-sm border border-slate-200 dark:border-slate-700">
                 <div className="border-b border-slate-200 dark:border-slate-700">
                     <nav className="-mb-px flex space-x-4 px-6">
-                        {['charts', 'timesheet', 'campaign', 'agent', 'history'].map(tab => (
+                        {['charts', 'timesheet', 'campaign', 'agent', 'group', 'site', 'history'].map(tab => (
                             <button key={tab} onClick={() => setActiveTab(tab)} className={`py-3 px-1 border-b-2 font-medium text-sm ${activeTab === tab ? 'border-indigo-500 text-indigo-600 dark:text-indigo-400' : 'border-transparent text-slate-500 dark:text-slate-400 hover:text-slate-700 dark:hover:text-slate-300'}`}>{t(`reporting.tabs.${tab}`)}</button>
                         ))}
                     </nav>
@@ -358,10 +457,10 @@ const ReportingDashboard: React.FC<{ feature: Feature }> = ({ feature }) => {
                 <div className="p-6">
                     {activeTab === 'charts' && (
                         <div className="grid grid-cols-1 lg:grid-cols-2 gap-8" style={{ minHeight: '600px' }}>
-                            <div className="bg-slate-50 dark:bg-slate-800/50 p-4 rounded-lg"><h3 className="font-semibold mb-2 dark:text-slate-200">{t('reporting.charts.callsByCampaignTitle')}</h3><div className="h-64"><ChartComponent id="treemapChart" type="treemap" data={callsByCampaignData} options={{...commonChartOptions, plugins: {legend: {display: false}}}} /></div></div>
-                            <div className="bg-slate-50 dark:bg-slate-800/50 p-4 rounded-lg"><h3 className="font-semibold mb-2 dark:text-slate-200">{t('reporting.charts.successByHourTitle')}</h3><div className="h-64"><ChartComponent id="successByHourChart" type="bar" data={successByHourData} options={commonChartOptions} /></div></div>
-                            <div className="bg-slate-50 dark:bg-slate-800/50 p-4 rounded-lg"><h3 className="font-semibold mb-2 dark:text-slate-200">{t('reporting.charts.successByAgentTitle')}</h3><div className="h-64"><ChartComponent id="successByAgentChart" type="bar" data={successByAgentData} options={commonChartOptions} /></div></div>
-                            <div className="bg-slate-50 dark:bg-slate-800/50 p-4 rounded-lg"><h3 className="font-semibold mb-2 dark:text-slate-200">{t('reporting.charts.adherenceByAgentTitle')}</h3><div className="h-64"><ChartComponent id="adherenceChart" type="bar" data={adherenceData} options={commonChartOptions} /></div></div>
+                            <div id="chart-parent-1" className="bg-slate-50 dark:bg-slate-800/50 p-4 rounded-lg"><h3 className="font-semibold mb-2 dark:text-slate-200">{t('reporting.charts.callsByCampaignTitle')}</h3><div className="h-64"><ChartComponent id="treemapChart" type="treemap" data={callsByCampaignData} options={{...commonChartOptions, plugins: {legend: {display: false}}}} /></div></div>
+                            <div id="chart-parent-2" className="bg-slate-50 dark:bg-slate-800/50 p-4 rounded-lg"><h3 className="font-semibold mb-2 dark:text-slate-200">{t('reporting.charts.successByHourTitle')}</h3><div className="h-64"><ChartComponent id="successByHourChart" type="bar" data={successByHourData} options={commonChartOptions} /></div></div>
+                            <div id="chart-parent-3" className="bg-slate-50 dark:bg-slate-800/50 p-4 rounded-lg"><h3 className="font-semibold mb-2 dark:text-slate-200">{t('reporting.charts.successByAgentTitle')}</h3><div className="h-64"><ChartComponent id="successByAgentChart" type="bar" data={successByAgentData} options={commonChartOptions} /></div></div>
+                            <div id="chart-parent-4" className="bg-slate-50 dark:bg-slate-800/50 p-4 rounded-lg"><h3 className="font-semibold mb-2 dark:text-slate-200">{t('reporting.charts.adherenceByAgentTitle')}</h3><div className="h-64"><ChartComponent id="adherenceChart" type="bar" data={adherenceData} options={commonChartOptions} /></div></div>
                         </div>
                     )}
                     {activeTab === 'timesheet' && (
@@ -415,6 +514,44 @@ const ReportingDashboard: React.FC<{ feature: Feature }> = ({ feature }) => {
                                         <td className="px-4 py-2">{formatDuration(a.totalDuration)}</td><td className="px-4 py-2">{formatDuration(a.avgDuration)}</td><td className="px-4 py-2">{a.successRate.toFixed(1)}%</td></tr>)}</tbody>
                                 </table>
                                 {agentPerfDataCalls.length === 0 && <p className="text-center p-4">{t('reporting.noCallData')}</p>}
+                            </div>
+                        </div>
+                    )}
+                    {activeTab === 'group' && (
+                        <div className="space-y-4">
+                            <h3 className="font-semibold text-lg">{t('reporting.tables.groupPerf.title')}</h3>
+                            <div className="overflow-x-auto border rounded-md dark:border-slate-700 max-h-[600px]">
+                                <table className="min-w-full divide-y divide-slate-200 dark:divide-slate-700 text-sm">
+                                    <thead className="bg-slate-50 dark:bg-slate-700 sticky top-0"><tr>
+                                        <th className="px-4 py-2 text-left font-medium uppercase">{t('reporting.tables.groupPerf.headers.group')}</th>
+                                        <th className="px-4 py-2 text-left font-medium uppercase">{t('reporting.tables.agentPerf.headers.calls')}</th>
+                                        <th className="px-4 py-2 text-left font-medium uppercase">{t('reporting.tables.agentPerf.headers.totalDuration')}</th>
+                                        <th className="px-4 py-2 text-left font-medium uppercase">{t('reporting.tables.agentPerf.headers.avgDuration')}</th>
+                                        <th className="px-4 py-2 text-left font-medium uppercase">{t('reporting.tables.agentPerf.headers.successRate')}</th>
+                                    </tr></thead>
+                                    <tbody className="divide-y divide-slate-200 dark:divide-slate-700">{groupPerfData.map(g => <tr key={g.id}><td className="px-4 py-2">{g.name}</td><td className="px-4 py-2">{g.calls}</td>
+                                        <td className="px-4 py-2">{formatDuration(g.totalDuration)}</td><td className="px-4 py-2">{formatDuration(g.avgDuration)}</td><td className="px-4 py-2">{g.successRate.toFixed(1)}%</td></tr>)}</tbody>
+                                </table>
+                                {groupPerfData.length === 0 && <p className="text-center p-4">{t('reporting.noCallData')}</p>}
+                            </div>
+                        </div>
+                    )}
+                    {activeTab === 'site' && (
+                        <div className="space-y-4">
+                            <h3 className="font-semibold text-lg">{t('reporting.tables.sitePerf.title')}</h3>
+                            <div className="overflow-x-auto border rounded-md dark:border-slate-700 max-h-[600px]">
+                                <table className="min-w-full divide-y divide-slate-200 dark:divide-slate-700 text-sm">
+                                    <thead className="bg-slate-50 dark:bg-slate-700 sticky top-0"><tr>
+                                        <th className="px-4 py-2 text-left font-medium uppercase">{t('reporting.tables.sitePerf.headers.site')}</th>
+                                        <th className="px-4 py-2 text-left font-medium uppercase">{t('reporting.tables.agentPerf.headers.calls')}</th>
+                                        <th className="px-4 py-2 text-left font-medium uppercase">{t('reporting.tables.agentPerf.headers.totalDuration')}</th>
+                                        <th className="px-4 py-2 text-left font-medium uppercase">{t('reporting.tables.agentPerf.headers.avgDuration')}</th>
+                                        <th className="px-4 py-2 text-left font-medium uppercase">{t('reporting.tables.agentPerf.headers.successRate')}</th>
+                                    </tr></thead>
+                                    <tbody className="divide-y divide-slate-200 dark:divide-slate-700">{sitePerfData.map(s => <tr key={s.id}><td className="px-4 py-2">{s.name}</td><td className="px-4 py-2">{s.calls}</td>
+                                        <td className="px-4 py-2">{formatDuration(s.totalDuration)}</td><td className="px-4 py-2">{formatDuration(s.avgDuration)}</td><td className="px-4 py-2">{s.successRate.toFixed(1)}%</td></tr>)}</tbody>
+                                </table>
+                                {sitePerfData.length === 0 && <p className="text-center p-4">{t('reporting.noCallData')}</p>}
                             </div>
                         </div>
                     )}
