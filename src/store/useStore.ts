@@ -226,12 +226,12 @@ export const useStore = create<AppState>()(
                             case 'newUser': 
                                 state.users.push(payload); 
                                 if (payload.role === 'Agent') {
-                                     state.agentStates.push({
-                                        ...payload,
-                                        status: 'Déconnecté',
+// FIX: Replace unsafe spread `...payload` with `Object.assign` to prevent "Spread types may only be created from object types" error when payload is of type `any`.
+                                     state.agentStates.push(Object.assign({}, payload, {
+                                        status: 'Déconnecté' as AgentStatus,
                                         statusDuration: 0, callsHandledToday: 0, averageHandlingTime: 0, averageTalkTime: 0,
                                         pauseCount: 0, trainingCount: 0, totalPauseTime: 0, totalTrainingTime: 0, totalConnectedTime: 0
-                                    });
+                                    }));
                                 }
                                 break;
                             case 'updateUser': {

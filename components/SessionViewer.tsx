@@ -13,7 +13,9 @@ const formatDuration = (milliseconds: number) => {
     return `${h}h ${m}m ${s}s`;
 };
 
-const getStatusLedColor = (status: AgentStatus): string => {
+// FIX: Made the function more robust by handling `undefined` and all `AgentStatus` types to prevent type errors.
+const getStatusLedColor = (status: AgentStatus | undefined): string => {
+    if (!status) return 'bg-gray-400';
     switch (status) {
         case 'En Attente': return 'bg-green-500';
         case 'En Appel': return 'bg-red-500';
@@ -22,6 +24,7 @@ const getStatusLedColor = (status: AgentStatus): string => {
         case 'En Pause': return 'bg-orange-500';
         case 'Formation': return 'bg-purple-500';
         case 'Mise en attente': return 'bg-purple-500';
+        case 'Déconnecté': return 'bg-gray-500';
         default: return 'bg-gray-400';
     }
 };

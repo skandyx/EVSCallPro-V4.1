@@ -240,12 +240,18 @@ const ReportingDashboard: React.FC<{ feature: Feature }> = ({ feature }) => {
 
     const agentPerfDataCalls = useMemo(() => {
         const statsByAgent = filteredHistory.reduce<Record<string, { agentId: string; calls: number; totalDuration: number; successes: number }>>((acc, call) => {
-            if (!acc[call.agentId]) acc[call.agentId] = { agentId: call.agentId, calls: 0, totalDuration: 0, successes: 0 };
+            if (!acc[call.agentId]) {
+                const agent = users.find(u => u.id === call.agentId);
+                acc[call.agentId] = { agentId: call.agentId, calls: 0, totalDuration: 0, successes: 0 };
+            }
             acc[call.agentId].calls++;
             acc[call.agentId].totalDuration += call.duration;
-            if (qualifications.find(q => q.id === call.qualificationId)?.type === 'positive') acc[call.agentId].successes++;
+            if (qualifications.find(q => q.id === call.qualificationId)?.type === 'positive') {
+                acc[call.agentId].successes++;
+            }
             return acc;
-        }, {});
+// FIX: Explicitly cast the initial empty object `{}` in the `reduce` call to ensure TypeScript correctly infers the accumulator's type. This resolves multiple downstream errors related to properties not existing on type 'unknown'.
+        }, {} as Record<string, { agentId: string; calls: number; totalDuration: number; successes: number }>);
         return Object.values(statsByAgent).map(stat => ({
             ...stat,
             name: findEntityName(stat.agentId, users),
@@ -300,7 +306,8 @@ const ReportingDashboard: React.FC<{ feature: Feature }> = ({ feature }) => {
             if (!acc[key]) acc[key] = { agentId: session.agentId, date: new Date(session.loginTime), sessions: [] };
             acc[key].sessions.push(session);
             return acc;
-        }, {});
+// FIX: Explicitly cast the initial empty object `{}` in the `reduce` call to ensure TypeScript correctly infers the accumulator's type, preventing properties like `.sessions` from being accessed on type 'unknown'.
+        }, {} as Record<string, { agentId: string; date: Date; sessions: AgentSession[] }>);
 
         return Object.values(sessionsByAgentDay).map(group => {
             const firstLogin = new Date(Math.min(...group.sessions.map(s => new Date(s.loginTime).getTime())));
@@ -595,10 +602,10 @@ const ReportingDashboard: React.FC<{ feature: Feature }> = ({ feature }) => {
                                 {filteredHistory.length === 0 && <p className="text-center p-4">{t('reporting.noCallData')}</p>}
                             </div>
                              {totalHistoryPages > 1 && <div className="flex justify-between items-center mt-4 text-sm">
-                                <p>Page {historyPage} sur {totalHistoryPages}</p>
+                                <p>Page {historyPage} sur {totalPages}</p>
                                 <div className="flex gap-2">
                                     <button onClick={() => setHistoryPage(p => Math.max(1, p - 1))} disabled={historyPage === 1} className="p-2 disabled:opacity-50"><ArrowLeftIcon className="w-5 h-5"/></button>
-                                    <button onClick={() => setHistoryPage(p => Math.min(totalHistoryPages, p + 1))} disabled={historyPage === totalHistoryPages} className="p-2 disabled:opacity-50"><ArrowRightIcon className="w-5 h-5"/></button>
+                                    <button onClick={() => setHistoryPage(p => Math.min(totalPages, p + 1))} disabled={historyPage === totalPages} className="p-2 disabled:opacity-50"><ArrowRightIcon className="w-5 h-5"/></button>
                                 </div>
                             </div>}
                         </div>

@@ -1,3 +1,5 @@
+
+
 {
   "common": {
     "save": "Save",
@@ -107,6 +109,40 @@
   },
   "alerts": {
     "confirmDelete": "Are you sure you want to delete this item? This action is irreversible."
+  },
+  "systemSettings": {
+    "appearance": {
+      "title": "Appearance & Branding",
+      "appName": "Application Name",
+      "companyAddress": "Company Address",
+      "defaultLanguage": "Default Language",
+      "colorPalette": "Color Palette",
+      "logo": "Application Logo",
+      "logoHelp": "PNG, JPG, SVG. Recommended: 200x50px, max 500KB.",
+      "favicon": "Application Icon (Favicon)",
+      "faviconHelp": "ICO, PNG, SVG. Recommended: 32x32px, max 50KB."
+    },
+    "email": {
+      "title": "Email (SMTP)",
+      "description": "Configure the server for sending emails (reports, notifications).",
+      "server": "SMTP Server",
+      "port": "Port",
+      "user": "User",
+      "from": "Sender Address",
+      "auth": "Authentication required",
+      "secure": "Secure connection (TLS)",
+      "testButton": "Send a Test Email",
+      "testModalTitle": "Test SMTP Configuration",
+      "testModalRecipient": "Recipient's Email",
+      "testModalSending": "Sending..."
+    },
+    "saveButton": "Save Settings",
+    "saveSuccess": "System settings saved successfully.",
+    "saveError": "Error while saving settings.",
+    "testEmailSuccess": "Test email sent successfully! Check your inbox.",
+    "testEmailError": "Failed to send test email.",
+    "fileTooLarge": "File is too large. Max size is {maxSize}KB.",
+    "invalidFileType": "Invalid file type."
   },
   "moduleSettings": {
     "saveButton": "Save Changes",
@@ -313,42 +349,11 @@
       "backToEditor": "Back to Editor"
     }
   },
-  "qualificationsManager": {
-    "title": "Qualification Groups",
-    "createGroup": "Create Group",
-    "searchPlaceholder": "Search for a group...",
-    "headers": {
-        "name": "Name",
-        "count": "Qualifications"
-    },
-    "noGroups": "No groups have been created. Add one to get started!",
-    "deleteDisabledTooltip": "Cannot delete a group assigned to a campaign.",
-    "modal": {
-        "addTitle": "New Qualification",
-        "editTitle": "Edit Qualification",
-        "parent": "Parent (Optional)",
-        "noParent": "No parent (Top Level)",
-        "code": "Code",
-        "codeUsed": "This code is already in use.",
-        "description": "Description",
-        "type": "Type",
-        "types": {
-            "positive": "Positive",
-            "neutral": "Neutral",
-            "negative": "Negative"
-        },
-        "recyclable": "Recyclable",
-        "recyclableHelp": "Allows contacts with this qualification to be re-injected."
-    },
-    "noQualifications": "No qualifications.",
-    "groupModal": {
-      "editTitle": "Edit Group",
-      "newTitle": "New Group",
-      "groupNameLabel": "Group Name",
-      "availableQuals": "Available Qualifications",
-      "groupQuals": "Group Qualifications",
-      "unassign": "Unassign",
-      "assign": "Assign"
+  "qualifications": {
+    "types": {
+      "positive": "Positive",
+      "neutral": "Neutral",
+      "negative": "Negative"
     }
   },
   "outboundCampaignsManager": {

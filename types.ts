@@ -459,6 +459,6 @@ export interface SystemAppSettings {
     appFaviconDataUrl: string;
     colorPalette: 'default' | 'forest' | 'ocean' | 'sunset' | 'slate' | 'rose' | 'amber' | 'cyan';
     appName: string;
-    // FIX: Added 'defaultLanguage' to support system-wide language settings.
-    defaultLanguage: 'fr' | 'en';
+    // FIX: Added 'ar' to support Arabic as a default language option.
+    defaultLanguage: 'fr' | 'en' | 'ar';
 }

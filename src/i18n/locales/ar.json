@@ -1,4 +1,5 @@
 
+
 {
   "common": {
     "save": "حفظ",
@@ -106,6 +107,40 @@
   },
   "alerts": {
     "confirmDelete": "هل أنت متأكد من أنك تريد حذف هذا العنصر؟ هذا الإجراء لا رجعة فيه."
+  },
+   "systemSettings": {
+    "appearance": {
+      "title": "المظهر والعلامة التجارية",
+      "appName": "اسم التطبيق",
+      "companyAddress": "عنوان الشركة",
+      "defaultLanguage": "اللغة الافتراضية",
+      "colorPalette": "لوحة الألوان",
+      "logo": "شعار التطبيق",
+      "logoHelp": "PNG, JPG, SVG. الموصى به: 200x50px, 500KB كحد أقصى.",
+      "favicon": "أيقونة التطبيق (Favicon)",
+      "faviconHelp": "ICO, PNG, SVG. الموصى به: 32x32px, 50KB كحد أقصى."
+    },
+    "email": {
+      "title": "البريد الإلكتروني (SMTP)",
+      "description": "تكوين الخادم لإرسال رسائل البريد الإلكتروني (تقارير، إشعارات).",
+      "server": "خادم SMTP",
+      "port": "المنفذ",
+      "user": "المستخدم",
+      "from": "عنوان المرسل",
+      "auth": "المصادقة مطلوبة",
+      "secure": "اتصال آمن (TLS)",
+      "testButton": "إرسال بريد إلكتروني تجريبي",
+      "testModalTitle": "اختبار تكوين SMTP",
+      "testModalRecipient": "بريد المستلم الإلكتروني",
+      "testModalSending": "جارٍ الإرسال..."
+    },
+    "saveButton": "حفظ الإعدادات",
+    "saveSuccess": "تم حفظ إعدادات النظام بنجاح.",
+    "saveError": "خطأ أثناء حفظ الإعدادات.",
+    "testEmailSuccess": "تم إرسال البريد الإلكتروني التجريبي بنجاح! تحقق من صندوق الوارد الخاص بك.",
+    "testEmailError": "فشل إرسال البريد الإلكتروني التجريبي.",
+    "fileTooLarge": "الملف كبير جدًا. الحجم الأقصى هو {maxSize}KB.",
+    "invalidFileType": "نوع ملف غير صالح."
   },
   "scriptFeature": {
     "addScript": "إنشاء نص",

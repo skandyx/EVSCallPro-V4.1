@@ -1,3 +1,5 @@
+
+
 {
   "common": {
     "save": "Enregistrer",
@@ -186,6 +188,40 @@
   },
   "alerts": {
     "confirmDelete": "Êtes-vous sûr de vouloir supprimer cet élément ? Cette action est irréversible."
+  },
+  "systemSettings": {
+    "appearance": {
+      "title": "Apparence & Marque",
+      "appName": "Nom de l'application",
+      "companyAddress": "Adresse de l'entreprise",
+      "defaultLanguage": "Langue par défaut",
+      "colorPalette": "Palette de couleurs",
+      "logo": "Logo de l'application",
+      "logoHelp": "PNG, JPG, SVG. Recommandé : 200x50px, max 500KB.",
+      "favicon": "Icône de l'application (Favicon)",
+      "faviconHelp": "ICO, PNG, SVG. Recommandé : 32x32px, max 50KB."
+    },
+    "email": {
+      "title": "Messagerie (SMTP)",
+      "description": "Configurez le serveur pour l'envoi d'e-mails (rapports, notifications).",
+      "server": "Serveur SMTP",
+      "port": "Port",
+      "user": "Utilisateur",
+      "from": "Adresse d'expédition",
+      "auth": "Authentification requise",
+      "secure": "Connexion sécurisée (TLS)",
+      "testButton": "Envoyer un e-mail de test",
+      "testModalTitle": "Tester la configuration SMTP",
+      "testModalRecipient": "Email du destinataire",
+      "testModalSending": "Envoi en cours..."
+    },
+    "saveButton": "Enregistrer les paramètres",
+    "saveSuccess": "Paramètres système enregistrés avec succès.",
+    "saveError": "Erreur lors de l'enregistrement des paramètres.",
+    "testEmailSuccess": "Email de test envoyé avec succès ! Vérifiez votre boîte de réception.",
+    "testEmailError": "Échec de l'envoi de l'email de test.",
+    "fileTooLarge": "Fichier trop volumineux. La taille max est de {maxSize}KB.",
+    "invalidFileType": "Type de fichier invalide."
   },
    "moduleSettings": {
     "saveButton": "Enregistrer les modifications",
