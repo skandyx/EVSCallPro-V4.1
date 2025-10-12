@@ -396,8 +396,24 @@ export const useStore = create<AppState>()(
                     const url = isNew ? `/${entityName}` : `/${entityName}/${data.id}`;
                     const method = isNew ? 'post' : 'put';
                     
+                    let dataToSend = data;
+                    if(entityName === 'qualification-groups') {
+                        // The backend route for groups is different
+                        const { assignedQualIds, ...groupData } = data;
+                        dataToSend = groupData; // Send only group data to the main endpoint
+                         if(isNew) {
+                             await apiClient.post('/qualification-groups/groups', { ...groupData, assignedQualIds });
+                         } else {
+                             await apiClient.put(`/qualification-groups/groups/${data.id}`, { ...groupData, assignedQualIds });
+                         }
+                         get().showAlert('Enregistrement réussi', 'success');
+                         // The backend will broadcast the update via WebSocket
+                         return; // Early return
+                    }
+
+
                     try {
-                        const response = await apiClient[method](url, data);
+                        const response = await apiClient[method](url, dataToSend);
                         let successMessage = 'Enregistrement réussi';
                         if (entityName === 'audio-files' && isNew) {
                             successMessage = 'Import media réussi';
@@ -411,8 +427,12 @@ export const useStore = create<AppState>()(
                 },
 
                 delete: async (entityName, id) => {
+                    let url = `/${entityName}/${id}`;
+                    if (entityName === 'qualification-groups') {
+                        url = `/qualification-groups/groups/${id}`;
+                    }
                     try {
-                        await apiClient.delete(`/${entityName}/${id}`);
+                        await apiClient.delete(url);
                          get().showAlert('Suppression réussie', 'success');
                     } catch (error: any) {
                         get().showAlert(error.response?.data?.error || `Erreur lors de la suppression.`, 'error');
@@ -501,8 +521,9 @@ export const useStore = create<AppState>()(
                      await apiClient.post('/system-connection', settings);
                 },
                 saveModuleVisibility: async (visibility) => {
-                    // This should be a real API call in a production app
-                    console.log("Saving module visibility (simulation):", visibility);
+                    // This is a client-side only implementation as a real backend endpoint is not available.
+                    // In a real app, an API call would be made here:
+                    // await apiClient.put('/system/module-visibility', visibility);
                     set({ moduleVisibility: visibility });
                 },
 

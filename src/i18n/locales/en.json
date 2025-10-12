@@ -24,7 +24,8 @@
     "campaign": "Campaign",
     "agent": "Agent",
     "send": "Send",
-    "duplicate": "Duplicate"
+    "duplicate": "Duplicate",
+    "add": "Add"
   },
   "login": {
     "title": "Sign in to your account",
@@ -94,7 +95,7 @@
     "trunks": { "title": "Trunks SIP", "description": "Manage connections to your telephony providers." },
     "dids": { "title": "DIDs", "description": "Manage your inbound phone numbers and their routing." },
     "sites-config": { "title": "Sites Configuration", "description": "Manage physical or logical sites for routing and agent assignment." },
-    "module-settings": { "title": "Module Settings", "description": "Enable or disable specific features for different user roles." },
+    "module-settings": { "title": "Module Management", "description": "Enable or disable menus for administrator and supervisor roles." },
     "languages": { "title": "Languages & Translations", "description": "Manage the application's multilingual support.", "simplificationTip": { "title": "Information", "content": "This section is for information. Managing translations is currently a developer task that involves editing the JSON files directly." } },
     "database-client": { "title": "Database Client", "description": "Directly interact with the PostgreSQL database. (SuperAdmin only)" },
     "system-connection": { "title": "System Connection", "description": "Configure connections to core services like the database and Asterisk." },
@@ -106,6 +107,20 @@
   },
   "alerts": {
     "confirmDelete": "Are you sure you want to delete this item? This action is irreversible."
+  },
+  "moduleSettings": {
+    "saveButton": "Save Changes",
+    "saveSuccess": "Settings saved successfully.",
+    "descriptions": {
+      "Agent": "Manage agents, user groups, and planning.",
+      "Outbound": "Set up outbound campaigns and agent scripts.",
+      "Inbound": "Design IVR flows for incoming calls.",
+      "Sound": "Manage audio files and call recordings.",
+      "Configuration": "Define call qualifications and other core settings.",
+      "Supervision_Reporting": "Access real-time dashboards, reports, and history.",
+      "System": "System maintenance and help center modules.",
+      "Settings": "Configure global application and system settings."
+    }
   },
   "scriptFeature": {
     "addScript": "Create Script",
@@ -298,11 +313,42 @@
       "backToEditor": "Back to Editor"
     }
   },
-  "qualifications": {
-    "types": {
-      "positive": "Positive",
-      "neutral": "Neutral",
-      "negative": "Negative"
+  "qualificationsManager": {
+    "title": "Qualification Groups",
+    "createGroup": "Create Group",
+    "searchPlaceholder": "Search for a group...",
+    "headers": {
+        "name": "Name",
+        "count": "Qualifications"
+    },
+    "noGroups": "No groups have been created. Add one to get started!",
+    "deleteDisabledTooltip": "Cannot delete a group assigned to a campaign.",
+    "modal": {
+        "addTitle": "New Qualification",
+        "editTitle": "Edit Qualification",
+        "parent": "Parent (Optional)",
+        "noParent": "No parent (Top Level)",
+        "code": "Code",
+        "codeUsed": "This code is already in use.",
+        "description": "Description",
+        "type": "Type",
+        "types": {
+            "positive": "Positive",
+            "neutral": "Neutral",
+            "negative": "Negative"
+        },
+        "recyclable": "Recyclable",
+        "recyclableHelp": "Allows contacts with this qualification to be re-injected."
+    },
+    "noQualifications": "No qualifications.",
+    "groupModal": {
+      "editTitle": "Edit Group",
+      "newTitle": "New Group",
+      "groupNameLabel": "Group Name",
+      "availableQuals": "Available Qualifications",
+      "groupQuals": "Group Qualifications",
+      "unassign": "Unassign",
+      "assign": "Assign"
     }
   },
   "outboundCampaignsManager": {

@@ -24,7 +24,8 @@
     "campaign": "Campagne",
     "agent": "Agent",
     "send": "Envoyer",
-    "duplicate": "Dupliquer"
+    "duplicate": "Dupliquer",
+    "add": "Ajouter"
   },
   "login": {
     "title": "Connectez-vous à votre compte",
@@ -143,8 +144,8 @@
       "description": "Gérez les sites physiques ou logiques pour le routage et l'assignation des agents."
     },
     "module-settings": {
-      "title": "Paramètres des Modules",
-      "description": "Activez ou désactivez des fonctionnalités spécifiques pour différents rôles d'utilisateurs."
+      "title": "Gestion des Modules",
+      "description": "Activez ou désactivez les menus pour les rôles administrateur et superviseur."
     },
     "languages": {
       "title": "Langues & Traductions",
@@ -185,6 +186,20 @@
   },
   "alerts": {
     "confirmDelete": "Êtes-vous sûr de vouloir supprimer cet élément ? Cette action est irréversible."
+  },
+   "moduleSettings": {
+    "saveButton": "Enregistrer les modifications",
+    "saveSuccess": "Paramètres enregistrés avec succès.",
+    "descriptions": {
+      "Agent": "Gérez les agents, les groupes d'utilisateurs et les plannings.",
+      "Outbound": "Configurez les campagnes sortantes et les scripts d'agent.",
+      "Inbound": "Concevez les flux SVI pour les appels entrants.",
+      "Sound": "Gérez les fichiers audio et les enregistrements d'appels.",
+      "Configuration": "Définissez les qualifications d'appel et autres paramètres de base.",
+      "Supervision_Reporting": "Accédez aux tableaux de bord temps réel, aux rapports et à l'historique.",
+      "System": "Modules de maintenance système et centre d'aide.",
+      "Settings": "Configurez les paramètres globaux de l'application et du système."
+    }
   },
   "scriptFeature": {
     "addScript": "Créer un script",
@@ -384,11 +399,42 @@
       "backToEditor": "Retour à l'éditeur"
     }
   },
-  "qualifications": {
-    "types": {
-      "positive": "Positif",
-      "neutral": "Neutre",
-      "negative": "Négatif"
+  "qualificationsManager": {
+    "title": "Groupes de Qualifications",
+    "createGroup": "Créer un groupe",
+    "searchPlaceholder": "Rechercher un groupe...",
+    "headers": {
+      "name": "Nom",
+      "count": "Qualifications"
+    },
+    "noGroups": "Aucun groupe n'a été créé. Ajoutez-en un pour commencer !",
+    "deleteDisabledTooltip": "Impossible de supprimer un groupe assigné à une campagne.",
+    "modal": {
+      "addTitle": "Nouvelle Qualification",
+      "editTitle": "Modifier la Qualification",
+      "parent": "Parent (Optionnel)",
+      "noParent": "Aucun parent (Niveau 1)",
+      "code": "Code",
+      "codeUsed": "Ce code est déjà utilisé.",
+      "description": "Description",
+      "type": "Type",
+      "types": {
+        "positive": "Positif",
+        "neutral": "Neutre",
+        "negative": "Négatif"
+      },
+      "recyclable": "Recyclable",
+      "recyclableHelp": "Permet de réinjecter les fiches qualifiées."
+    },
+    "noQualifications": "Aucune qualification.",
+    "groupModal": {
+      "editTitle": "Modifier le Groupe",
+      "newTitle": "Nouveau Groupe",
+      "groupNameLabel": "Nom du groupe",
+      "availableQuals": "Qualifications Disponibles",
+      "groupQuals": "Qualifications du Groupe",
+      "unassign": "Retirer",
+      "assign": "Assigner"
     }
   },
   "outboundCampaignsManager": {
