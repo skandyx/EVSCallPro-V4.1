@@ -81,8 +81,19 @@ const SystemSettingsManager: React.FC<{ feature: Feature }> = ({ feature }) => {
     const [isSaving, setIsSaving] = useState(false);
     const [isTestEmailModalOpen, setIsTestEmailModalOpen] = useState(false);
     
-    useEffect(() => { setAppSettings(storeAppSettings); }, [storeAppSettings]);
-    useEffect(() => { setSmtpSettings(storeSmtpSettings); }, [storeSmtpSettings]);
+    useEffect(() => {
+        setAppSettings(storeAppSettings);
+        
+        let suggestedSmtpSettings = storeSmtpSettings;
+        if (storeSmtpSettings && !storeSmtpSettings.server && storeSmtpSettings.user?.includes('@')) {
+            const domain = storeSmtpSettings.user.split('@')[1];
+            if (domain) {
+                suggestedSmtpSettings = { ...storeSmtpSettings, server: `mail.${domain}` };
+            }
+        }
+        setSmtpSettings(suggestedSmtpSettings);
+
+    }, [storeAppSettings, storeSmtpSettings]);
 
     const handleChange = (section: 'app' | 'smtp', field: string, value: any) => {
         const setter = section === 'app' ? setAppSettings : setSmtpSettings;

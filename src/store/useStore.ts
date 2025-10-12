@@ -515,7 +515,19 @@ export const useStore = create<AppState>()(
                     await apiClient.put('/system/backup-schedule', schedule);
                 },
                  saveSystemSettings: async (type, settings) => {
-                    await apiClient.put(`/system/${type}-settings`, settings);
+                    try {
+                        await apiClient.put(`/system/${type}-settings`, settings);
+                        set(state => {
+                            if (type === 'app') {
+                                state.appSettings = settings;
+                            } else if (type === 'smtp') {
+                                state.smtpSettings = settings;
+                            }
+                        });
+                    } catch (error) {
+                        console.error(`Failed to save ${type} settings`, error);
+                        throw error;
+                    }
                 },
                 saveConnectionSettings: async (settings) => {
                     try {
