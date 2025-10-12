@@ -502,8 +502,7 @@
         },
         "recycleButton": "Recycle",
         "recycleButtonTooltip": "Reset status to 'pending'",
-        "notRecyclableTooltip": "This qualification is not recyclable",
-        "confirmRecycle": "Are you sure you want to recycle all contacts with this qualification? Their status will be reset to 'pending'."
+        "notRecyclableTooltip": "This qualification is not recyclable"
       }
     },
     "dashboard2": {
