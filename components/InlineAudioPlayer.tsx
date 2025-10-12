@@ -79,6 +79,13 @@ const InlineAudioPlayer: React.FC<InlineAudioPlayerProps> = ({ fileId, src, dura
         setPlayingFileId(null); // Set global state to null
     };
 
+    const handleAudioError = () => {
+        console.error(`[AudioPlayer] Failed to load audio source: ${src}`);
+        if (isPlaying) {
+            setPlayingFileId(null);
+        }
+    };
+
     return (
         <div className="flex items-center gap-2 w-48">
             <audio 
@@ -87,6 +94,7 @@ const InlineAudioPlayer: React.FC<InlineAudioPlayerProps> = ({ fileId, src, dura
                 onTimeUpdate={handleTimeUpdate}
                 onLoadedMetadata={handleTimeUpdate} // Set initial time
                 onEnded={handleAudioEnded}
+                onError={handleAudioError}
                 preload="metadata"
             />
             <button onClick={handlePlayPause} className="text-slate-600 hover:text-slate-900 dark:text-slate-400 dark:hover:text-slate-200 p-1">

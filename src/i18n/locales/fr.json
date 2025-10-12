@@ -932,5 +932,43 @@
       "phoneNumber": "Numéro de Téléphone",
       "postalCode": "Code Postal"
     }
+  },
+  "audioManager": {
+    "title": "Bibliothèque de Fichiers Audio",
+    "uploadFile": "Téléverser un fichier",
+    "headers": {
+        "duration": "Durée",
+        "size": "Taille",
+        "uploadDate": "Date d'ajout"
+    },
+    "noFiles": "Aucun fichier audio n'a été téléversé.",
+    "saveSuccess": "Fichier sauvegardé avec succès.",
+    "saveError": "Erreur lors de la sauvegarde du fichier."
+  },
+  "audioFileModal": {
+      "editTitle": "Modifier le Fichier Audio",
+      "uploadTitle": "Téléverser un Fichier Audio",
+      "fileLabel": "Fichier (MP3, WAV)",
+      "clickToUpload": "Cliquez pour téléverser",
+      "processing": "Traitement...",
+      "displayName": "Nom d'affichage",
+      "loading": "Chargement...",
+      "selectFileError": "Veuillez sélectionner un fichier."
+  },
+  "recordsManager": {
+      "filters": {
+          "date": "Date",
+          "allAgents": "Tous les agents",
+          "allCampaigns": "Toutes les campagnes"
+      },
+      "headers": {
+          "dateTime": "Date & Heure",
+          "calledNumber": "Numéro Appelé",
+          "duration": "Durée"
+      },
+      "inbound": "Entrant",
+      "download": "Télécharger",
+      "noRecords": "Aucun enregistrement trouvé pour les filtres sélectionnés.",
+      "pagination": "Page {currentPage} sur {totalPages}"
   }
 }

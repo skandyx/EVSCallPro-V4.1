@@ -172,6 +172,32 @@ app.use('/api/media', express.static(path.join(__dirname, 'public', 'media')));
 // Protected routes
 app.use(authMiddleware); // All routes below this are now protected
 
+const RECORDINGS_DIR = path.join(__dirname, '..', 'private', 'recordings');
+// Ensure recordings directory exists for demo purposes
+// In a real app, this would be handled by Asterisk or a file management service.
+const ensureDirExists = async (dir) => {
+    try {
+        await fs.access(dir);
+    } catch (error) {
+        await fs.mkdir(dir, { recursive: true });
+    }
+};
+ensureDirExists(RECORDINGS_DIR);
+
+app.get('/api/recordings/:fileId.mp3', (req, res) => {
+    const { fileId } = req.params;
+    const filePath = path.join(RECORDINGS_DIR, `${fileId}.mp3`);
+    
+    fs.access(filePath)
+        .then(() => {
+            res.sendFile(filePath);
+        })
+        .catch(() => {
+            console.warn(`[Recordings] Recording file not found: ${filePath}`);
+            res.status(404).send('Recording not found');
+        });
+});
+
 app.use('/api/call', callRoutes);
 app.use('/api/users', usersRoutes);
 app.use('/api/user-groups', groupsRoutes);

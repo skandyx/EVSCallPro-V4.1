@@ -56,11 +56,11 @@ const AudioManager: React.FC<{ feature: Feature }> = ({ feature }) => {
                 // A real app might have a more complex file replacement logic.
                 await apiClient.put(`/audio-files/${editingFile.id}`, { name: data.name });
             }
-            showAlert('Enregistrement réussi', 'success');
+            showAlert(t('audioManager.saveSuccess'), 'success');
             setIsModalOpen(false);
             setEditingFile(null);
         } catch (error: any) {
-            showAlert(error.response?.data?.error || `Erreur lors de l'enregistrement.`, 'error');
+            showAlert(error.response?.data?.error || t('audioManager.saveError'), 'error');
         }
     };
 
@@ -89,23 +89,23 @@ const AudioManager: React.FC<{ feature: Feature }> = ({ feature }) => {
                 <div className="flex justify-between items-center mb-4">
                     <h2 className="text-2xl font-semibold flex items-center gap-2">
                         <SpeakerWaveIcon className="w-6 h-6" />
-                        Bibliothèque de Fichiers Audio
+                        {t('audioManager.title')}
                     </h2>
                     <button onClick={handleAddNew} className="bg-primary hover:bg-primary-hover text-primary-text font-bold py-2 px-4 rounded-lg shadow-md inline-flex items-center">
                         <PlusIcon className="w-5 h-5 mr-2" />
-                        Téléverser un fichier
+                        {t('audioManager.uploadFile')}
                     </button>
                 </div>
                 <div className="overflow-x-auto">
                     <table className="min-w-full divide-y divide-slate-200 dark:divide-slate-700">
                         <thead className="bg-slate-50 dark:bg-slate-700">
                             <tr>
-                                <th className="px-6 py-3 text-left text-xs font-medium text-slate-500 dark:text-slate-400 uppercase">Nom</th>
-                                <th className="px-6 py-3 text-left text-xs font-medium text-slate-500 dark:text-slate-400 uppercase">Durée</th>
-                                <th className="px-6 py-3 text-left text-xs font-medium text-slate-500 dark:text-slate-400 uppercase">Taille</th>
-                                <th className="px-6 py-3 text-left text-xs font-medium text-slate-500 dark:text-slate-400 uppercase">Date d'ajout</th>
+                                <th className="px-6 py-3 text-left text-xs font-medium text-slate-500 dark:text-slate-400 uppercase">{t('common.name')}</th>
+                                <th className="px-6 py-3 text-left text-xs font-medium text-slate-500 dark:text-slate-400 uppercase">{t('audioManager.headers.duration')}</th>
+                                <th className="px-6 py-3 text-left text-xs font-medium text-slate-500 dark:text-slate-400 uppercase">{t('audioManager.headers.size')}</th>
+                                <th className="px-6 py-3 text-left text-xs font-medium text-slate-500 dark:text-slate-400 uppercase">{t('audioManager.headers.uploadDate')}</th>
                                 <th className="px-6 py-3"></th>
-                                <th className="px-6 py-3 text-right text-xs font-medium text-slate-500 dark:text-slate-400 uppercase">Actions</th>
+                                <th className="px-6 py-3 text-right text-xs font-medium text-slate-500 dark:text-slate-400 uppercase">{t('common.actions')}</th>
                             </tr>
                         </thead>
                         <tbody className="bg-white dark:bg-slate-800 divide-y divide-slate-200 dark:divide-slate-700">
@@ -114,7 +114,7 @@ const AudioManager: React.FC<{ feature: Feature }> = ({ feature }) => {
                                     <td className="px-6 py-4 whitespace-nowrap font-medium text-slate-800 dark:text-slate-100">{file.name}</td>
                                     <td className="px-6 py-4 whitespace-nowrap text-sm text-slate-500 dark:text-slate-400 font-mono">{formatDuration(file.duration)}</td>
                                     <td className="px-6 py-4 whitespace-nowrap text-sm text-slate-500 dark:text-slate-400">{formatBytes(file.size)}</td>
-                                    <td className="px-6 py-4 whitespace-nowrap text-sm text-slate-500 dark:text-slate-400">{new Date(file.uploadDate).toLocaleDateString('fr-FR')}</td>
+                                    <td className="px-6 py-4 whitespace-nowrap text-sm text-slate-500 dark:text-slate-400">{new Date(file.uploadDate).toLocaleDateString()}</td>
                                     <td className="px-6 py-4">
                                         <InlineAudioPlayer fileId={file.id} src={`/api/media/${file.fileName}`} duration={file.duration} />
                                     </td>
@@ -127,7 +127,7 @@ const AudioManager: React.FC<{ feature: Feature }> = ({ feature }) => {
                         </tbody>
                     </table>
                      {audioFiles.length === 0 && (
-                        <p className="text-center text-slate-500 py-8">Aucun fichier audio n'a été téléversé.</p>
+                        <p className="text-center text-slate-500 py-8">{t('audioManager.noFiles')}</p>
                     )}
                 </div>
             </div>

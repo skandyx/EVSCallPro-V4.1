@@ -39,7 +39,7 @@ const AudioFileModal: React.FC<AudioFileModalProps> = ({ file, onSave, onClose }
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
         if (!file && !selectedFile) {
-            alert("Veuillez sélectionner un fichier.");
+            alert(t('audioFileModal.selectFileError'));
             return;
         }
         setIsProcessing(true);
@@ -51,18 +51,18 @@ const AudioFileModal: React.FC<AudioFileModalProps> = ({ file, onSave, onClose }
         <div className="fixed inset-0 bg-slate-800 bg-opacity-75 flex items-center justify-center p-4 z-50">
             <form onSubmit={handleSubmit} className="bg-white dark:bg-slate-800 rounded-lg shadow-xl w-full max-w-lg">
                 <div className="p-6 border-b dark:border-slate-700">
-                    <h3 className="text-lg font-medium text-slate-900 dark:text-slate-100">{file ? "Modifier le Fichier Audio" : "Téléverser un Fichier Audio"}</h3>
+                    <h3 className="text-lg font-medium text-slate-900 dark:text-slate-100">{file ? t('audioFileModal.editTitle') : t('audioFileModal.uploadTitle')}</h3>
                 </div>
                 <div className="p-6 space-y-4">
                     {!file && (
                         <div>
-                            <label className="block text-sm font-medium text-slate-700 dark:text-slate-300">Fichier (MP3, WAV)</label>
+                            <label className="block text-sm font-medium text-slate-700 dark:text-slate-300">{t('audioFileModal.fileLabel')}</label>
                             <div className="mt-1 flex items-center justify-center w-full">
                                 <label className="flex flex-col w-full h-32 border-2 border-dashed rounded-md cursor-pointer hover:bg-slate-50 dark:hover:bg-slate-700">
                                     <div className="flex flex-col items-center justify-center pt-5 pb-6">
                                         <ArrowUpTrayIcon className="w-10 h-10 text-slate-400"/>
                                         <p className="pt-1 text-sm text-slate-500 dark:text-slate-400">
-                                            {isProcessing ? "Traitement..." : (fileNameDisplay || "Cliquez pour téléverser")}
+                                            {isProcessing ? t('audioFileModal.processing') : (fileNameDisplay || t('audioFileModal.clickToUpload'))}
                                         </p>
                                     </div>
                                     <input type="file" className="hidden" accept=".mp3,.wav" onChange={handleFileChange} disabled={isProcessing}/>
@@ -71,7 +71,7 @@ const AudioFileModal: React.FC<AudioFileModalProps> = ({ file, onSave, onClose }
                         </div>
                     )}
                     <div>
-                        <label className="block text-sm font-medium text-slate-700 dark:text-slate-300">Nom d'affichage</label>
+                        <label className="block text-sm font-medium text-slate-700 dark:text-slate-300">{t('audioFileModal.displayName')}</label>
                         <input
                             type="text"
                             value={name}
@@ -83,7 +83,7 @@ const AudioFileModal: React.FC<AudioFileModalProps> = ({ file, onSave, onClose }
                 </div>
                 <div className="bg-slate-50 dark:bg-slate-900 px-4 py-3 sm:flex sm:flex-row-reverse rounded-b-lg flex-shrink-0 border-t dark:border-slate-700">
                     <button type="submit" className="inline-flex w-full justify-center rounded-md border bg-primary px-4 py-2 font-medium text-primary-text shadow-sm hover:bg-primary-hover sm:ml-3 sm:w-auto" disabled={isProcessing}>
-                        {isProcessing ? "Chargement..." : t('common.save')}
+                        {isProcessing ? t('audioFileModal.loading') : t('common.save')}
                     </button>
                     <button type="button" onClick={onClose} className="mt-3 inline-flex w-full justify-center rounded-md border border-slate-300 bg-white px-4 py-2 font-medium text-slate-700 shadow-sm hover:bg-slate-50 sm:mt-0 sm:w-auto dark:bg-slate-700 dark:text-slate-200 dark:border-slate-600 dark:hover:bg-slate-600">
                         {t('common.cancel')}

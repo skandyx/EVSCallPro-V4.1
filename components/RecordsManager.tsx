@@ -56,20 +56,20 @@ const RecordsManager: React.FC<{ feature: Feature }> = ({ feature }) => {
             <div className="bg-white dark:bg-slate-800 p-6 rounded-lg shadow-sm border border-slate-200 dark:border-slate-700">
                 <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-4 p-4 bg-slate-50 dark:bg-slate-900/50 rounded-md border dark:border-slate-700">
                     <div>
-                        <label className="block text-sm font-medium text-slate-700 dark:text-slate-300">Date</label>
+                        <label className="block text-sm font-medium text-slate-700 dark:text-slate-300">{t('recordsManager.filters.date')}</label>
                         <input type="date" value={filters.date} onChange={e => setFilters(f => ({...f, date: e.target.value}))} className="mt-1 w-full p-2 border rounded-md dark:bg-slate-900 dark:border-slate-600"/>
                     </div>
                      <div>
-                        <label className="block text-sm font-medium text-slate-700 dark:text-slate-300">Agent</label>
+                        <label className="block text-sm font-medium text-slate-700 dark:text-slate-300">{t('common.agent')}</label>
                         <select value={filters.agentId} onChange={e => setFilters(f => ({...f, agentId: e.target.value}))} className="mt-1 w-full p-2 border rounded-md dark:bg-slate-900 dark:border-slate-600 bg-white">
-                            <option value="all">Tous les agents</option>
+                            <option value="all">{t('recordsManager.filters.allAgents')}</option>
                             {users.filter(u => u.role === 'Agent').map(u => <option key={u.id} value={u.id}>{u.firstName} {u.lastName}</option>)}
                         </select>
                     </div>
                      <div>
-                        <label className="block text-sm font-medium text-slate-700 dark:text-slate-300">Campagne</label>
+                        <label className="block text-sm font-medium text-slate-700 dark:text-slate-300">{t('common.campaign')}</label>
                         <select value={filters.campaignId} onChange={e => setFilters(f => ({...f, campaignId: e.target.value}))} className="mt-1 w-full p-2 border rounded-md dark:bg-slate-900 dark:border-slate-600 bg-white">
-                            <option value="all">Toutes les campagnes</option>
+                            <option value="all">{t('recordsManager.filters.allCampaigns')}</option>
                             {campaigns.map(c => <option key={c.id} value={c.id}>{c.name}</option>)}
                         </select>
                     </div>
@@ -78,42 +78,42 @@ const RecordsManager: React.FC<{ feature: Feature }> = ({ feature }) => {
                 <div className="overflow-x-auto">
                     <table className="min-w-full divide-y divide-slate-200 dark:divide-slate-700">
                         <thead className="bg-slate-50 dark:bg-slate-700"><tr>
-                            <th className="px-6 py-3 text-left text-xs font-medium text-slate-500 dark:text-slate-400 uppercase">Date & Heure</th>
-                            <th className="px-6 py-3 text-left text-xs font-medium text-slate-500 dark:text-slate-400 uppercase">Agent</th>
-                            <th className="px-6 py-3 text-left text-xs font-medium text-slate-500 dark:text-slate-400 uppercase">Campagne</th>
-                            <th className="px-6 py-3 text-left text-xs font-medium text-slate-500 dark:text-slate-400 uppercase">Numéro Appelé</th>
-                            <th className="px-6 py-3 text-left text-xs font-medium text-slate-500 dark:text-slate-400 uppercase">Durée</th>
+                            <th className="px-6 py-3 text-left text-xs font-medium text-slate-500 dark:text-slate-400 uppercase">{t('recordsManager.headers.dateTime')}</th>
+                            <th className="px-6 py-3 text-left text-xs font-medium text-slate-500 dark:text-slate-400 uppercase">{t('common.agent')}</th>
+                            <th className="px-6 py-3 text-left text-xs font-medium text-slate-500 dark:text-slate-400 uppercase">{t('common.campaign')}</th>
+                            <th className="px-6 py-3 text-left text-xs font-medium text-slate-500 dark:text-slate-400 uppercase">{t('recordsManager.headers.calledNumber')}</th>
+                            <th className="px-6 py-3 text-left text-xs font-medium text-slate-500 dark:text-slate-400 uppercase">{t('recordsManager.headers.duration')}</th>
                             <th className="px-6 py-3"></th>
-                            <th className="px-6 py-3 text-right text-xs font-medium text-slate-500 dark:text-slate-400 uppercase">Actions</th>
+                            <th className="px-6 py-3 text-right text-xs font-medium text-slate-500 dark:text-slate-400 uppercase">{t('common.actions')}</th>
                         </tr></thead>
                         <tbody className="bg-white dark:bg-slate-800 divide-y divide-slate-200 dark:divide-slate-700">
                             {paginatedRecords.map(record => (
                                 <tr key={record.id}>
-                                    <td className="px-6 py-4 whitespace-nowrap text-sm text-slate-500 dark:text-slate-400">{new Date(record.startTime).toLocaleString('fr-FR')}</td>
+                                    <td className="px-6 py-4 whitespace-nowrap text-sm text-slate-500 dark:text-slate-400">{new Date(record.startTime).toLocaleString()}</td>
                                     <td className="px-6 py-4 whitespace-nowrap font-medium text-slate-800 dark:text-slate-100">{findEntityName(record.agentId, users)}</td>
-                                    <td className="px-6 py-4 whitespace-nowrap text-sm text-slate-500 dark:text-slate-400">{record.campaignId ? findEntityName(record.campaignId, campaigns) : 'Entrant'}</td>
+                                    <td className="px-6 py-4 whitespace-nowrap text-sm text-slate-500 dark:text-slate-400">{record.campaignId ? findEntityName(record.campaignId, campaigns) : t('recordsManager.inbound')}</td>
                                     <td className="px-6 py-4 whitespace-nowrap text-sm font-mono text-slate-500 dark:text-slate-400">{record.callerNumber}</td>
                                     <td className="px-6 py-4 whitespace-nowrap text-sm font-mono text-slate-500 dark:text-slate-400">{formatDuration(record.duration)}</td>
                                     <td className="px-6 py-4">
                                         <InlineAudioPlayer fileId={record.id} src={`/api/recordings/${record.id}.mp3`} duration={record.duration} />
                                     </td>
                                     <td className="px-6 py-4 whitespace-nowrap text-right text-sm font-medium space-x-2">
-                                        <button onClick={() => alert("Simulation: Téléchargement de l'enregistrement.")} className="text-link hover:underline inline-flex items-center"><ArrowDownTrayIcon className="w-4 h-4 mr-1"/>Télécharger</button>
-                                        <button onClick={() => alert("Simulation: Suppression de l'enregistrement.")} className="text-red-600 hover:text-red-900 dark:hover:text-red-400 inline-flex items-center"><TrashIcon className="w-4 h-4 mr-1"/>Supprimer</button>
+                                        <button onClick={() => alert("Simulation: Téléchargement de l'enregistrement.")} className="text-link hover:underline inline-flex items-center"><ArrowDownTrayIcon className="w-4 h-4 mr-1"/>{t('recordsManager.download')}</button>
+                                        <button onClick={() => alert("Simulation: Suppression de l'enregistrement.")} className="text-red-600 hover:text-red-900 dark:hover:text-red-400 inline-flex items-center"><TrashIcon className="w-4 h-4 mr-1"/>{t('common.delete')}</button>
                                     </td>
                                 </tr>
                             ))}
                         </tbody>
                     </table>
                      {filteredRecords.length === 0 && (
-                        <p className="text-center text-slate-500 py-8">Aucun enregistrement trouvé pour les filtres sélectionnés.</p>
+                        <p className="text-center text-slate-500 py-8">{t('recordsManager.noRecords')}</p>
                     )}
                 </div>
                 {totalPages > 1 && <div className="flex justify-between items-center mt-4 text-sm">
-                    <p className="text-slate-600 dark:text-slate-400">Page {currentPage} sur {totalPages}</p>
+                    <p className="text-slate-600 dark:text-slate-400">{t('recordsManager.pagination', { currentPage, totalPages })}</p>
                     <div className="flex gap-2">
-                        <button onClick={() => setCurrentPage(p => Math.max(1, p - 1))} disabled={currentPage === 1} className="px-3 py-1 border rounded-md disabled:opacity-50 dark:border-slate-600 dark:hover:bg-slate-700">Précédent</button>
-                        <button onClick={() => setCurrentPage(p => Math.min(totalPages, p + 1))} disabled={currentPage === totalPages} className="px-3 py-1 border rounded-md disabled:opacity-50 dark:border-slate-600 dark:hover:bg-slate-700">Suivant</button>
+                        <button onClick={() => setCurrentPage(p => Math.max(1, p - 1))} disabled={currentPage === 1} className="px-3 py-1 border rounded-md disabled:opacity-50 dark:border-slate-600 dark:hover:bg-slate-700">{t('common.previous')}</button>
+                        <button onClick={() => setCurrentPage(p => Math.min(totalPages, p + 1))} disabled={currentPage === totalPages} className="px-3 py-1 border rounded-md disabled:opacity-50 dark:border-slate-600 dark:hover:bg-slate-700">{t('common.next')}</button>
                     </div>
                 </div>}
             </div>
