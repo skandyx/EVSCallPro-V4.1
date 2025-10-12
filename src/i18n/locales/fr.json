@@ -1005,5 +1005,40 @@
     },
     "noSessions": "Aucune session trouvée pour les filtres sélectionnés.",
     "activeNow": "Actif"
+  },
+  "systemConnection": {
+    "db": {
+      "title": "Base de Données (PostgreSQL)",
+      "host": "Hôte",
+      "port": "Port",
+      "user": "Utilisateur",
+      "password": "Mot de passe",
+      "database": "Nom de la base",
+      "testButton": "Tester la connexion",
+      "testSuccess": "Connexion à la base de données réussie !",
+      "testFailure": "Échec de la connexion à la base de données."
+    },
+    "asterisk": {
+      "title": "Téléphonie (Asterisk)",
+      "ami": {
+        "title": "Interface de Management (AMI)",
+        "host": "Hôte AMI",
+        "port": "Port AMI",
+        "user": "Utilisateur AMI",
+        "password": "Mot de passe AMI"
+      },
+      "agi": {
+        "title": "Interface de Gateway (AGI)",
+        "port": "Port AGI du Backend",
+        "help": "Ce port doit correspondre à celui configuré dans le fichier '.env' du backend et dans le 'extensions.conf' d'Asterisk."
+      },
+      "testButton": "Tester la connexion AMI",
+      "testSuccess": "Connexion à l'AMI réussie !",
+      "testFailure": "Échec de la connexion à l'AMI."
+    },
+    "passwordPlaceholder": "Laisser vide pour ne pas changer",
+    "warning": "Modifier ces paramètres peut rendre l'application indisponible. Un redémarrage du serveur backend est nécessaire pour appliquer les changements.",
+    "saveButton": "Enregistrer les Modifications",
+    "saveSuccess": "Paramètres enregistrés. Veuillez redémarrer le serveur backend pour appliquer les changements."
   }
 }

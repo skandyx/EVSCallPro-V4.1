@@ -918,5 +918,40 @@
     },
     "noSessions": "No sessions found for the selected filters.",
     "activeNow": "Active"
+  },
+  "systemConnection": {
+    "db": {
+      "title": "Database (PostgreSQL)",
+      "host": "Host",
+      "port": "Port",
+      "user": "User",
+      "password": "Password",
+      "database": "Database Name",
+      "testButton": "Test Connection",
+      "testSuccess": "Database connection successful!",
+      "testFailure": "Database connection failed."
+    },
+    "asterisk": {
+      "title": "Telephony (Asterisk)",
+      "ami": {
+        "title": "Management Interface (AMI)",
+        "host": "AMI Host",
+        "port": "AMI Port",
+        "user": "AMI User",
+        "password": "AMI Password"
+      },
+      "agi": {
+        "title": "Gateway Interface (AGI)",
+        "port": "Backend AGI Port",
+        "help": "This port must match the one configured in the backend's '.env' file and in Asterisk's 'extensions.conf'."
+      },
+      "testButton": "Test AMI Connection",
+      "testSuccess": "AMI connection successful!",
+      "testFailure": "AMI connection failed."
+    },
+    "passwordPlaceholder": "Leave blank to keep unchanged",
+    "warning": "Changing these settings can make the application unavailable. A restart of the backend server is required to apply changes.",
+    "saveButton": "Save Changes",
+    "saveSuccess": "Settings saved. Please restart the backend server to apply the changes."
   }
 }

@@ -10,6 +10,8 @@ const dotenv = require('dotenv');
 const { exec } = require('child_process');
 const net = require('net');
 const logger = require('../services/logger');
+const { Pool } = require('pg');
+const AsteriskManager = require('asterisk-manager');
 
 // Middleware to check for SuperAdmin role
 const isSuperAdmin = (req, res, next) => {
@@ -460,6 +462,65 @@ router.delete('/backups/:fileName', isSuperAdmin, (req, res) => {
     logger.logSystem('INFO', 'Backup', `Backup file '${fileName}' deleted by ${req.user.id}`);
     // SIMULATION: In a real app, this would delete the file from disk.
     res.status(204).send();
+});
+
+router.post('/test-db', isSuperAdmin, async (req, res) => {
+    const { host, port, user, password, database } = req.body;
+    const testPool = new Pool({ host, port, user, password, database, connectionTimeoutMillis: 5000 });
+    try {
+        const client = await testPool.connect();
+        await client.query('SELECT 1');
+        client.release();
+        res.json({ message: 'Database connection successful.' });
+    } catch (error) {
+        res.status(500).json({ error: 'Database connection failed.', details: error.message });
+    } finally {
+        await testPool.end();
+    }
+});
+
+router.post('/test-ami', isSuperAdmin, (req, res) => {
+    const { amiHost, amiPort, amiUser, amiPassword } = req.body;
+    const testAmi = new AsteriskManager(amiPort, amiHost, amiUser, amiPassword, true);
+    
+    let responded = false;
+    const timeout = setTimeout(() => {
+        if (!responded) {
+            responded = true;
+            testAmi.disconnect();
+            res.status(500).json({ error: 'AMI connection timed out.' });
+        }
+    }, 5000);
+
+    testAmi.on('connect', () => {
+        if (!responded) {
+            responded = true;
+            clearTimeout(timeout);
+            testAmi.disconnect();
+            res.json({ message: 'AMI connection successful.' });
+        }
+    });
+
+    testAmi.on('managerevent', (evt) => {
+        // Some AMI servers only confirm connection on event, not 'connect'
+        if (!responded && evt.event === 'FullyBooted') {
+             responded = true;
+             clearTimeout(timeout);
+             testAmi.disconnect();
+             res.json({ message: 'AMI connection successful.' });
+        }
+    });
+
+    testAmi.on('error', (err) => {
+        if (!responded) {
+            responded = true;
+            clearTimeout(timeout);
+            testAmi.disconnect();
+            res.status(500).json({ error: 'AMI connection failed.', details: err.message });
+        }
+    });
+    
+    testAmi.connect(() => {}); // Connect callback is often needed
 });
 
 

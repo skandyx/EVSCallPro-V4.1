@@ -518,7 +518,14 @@ export const useStore = create<AppState>()(
                     await apiClient.put(`/system/${type}-settings`, settings);
                 },
                 saveConnectionSettings: async (settings) => {
-                     await apiClient.post('/system-connection', settings);
+                    try {
+                        const response = await apiClient.post('/system-connection', settings);
+                        get().showAlert(response.data.message || 'Settings saved.', 'success');
+                        set({ systemConnectionSettings: settings });
+                    } catch (error: any) {
+                        get().showAlert(error.response?.data?.error || 'Failed to save settings.', 'error');
+                        throw error;
+                    }
                 },
                 saveModuleVisibility: async (visibility) => {
                     // This is a client-side only implementation as a real backend endpoint is not available.
