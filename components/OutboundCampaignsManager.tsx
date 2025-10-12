@@ -171,9 +171,16 @@ const CampaignModal: React.FC<CampaignModalProps> = ({ campaign, users, scripts,
 
     const handleRuleChange = (type: 'quota' | 'filter', index: number, field: string, value: any) => {
         const key = type === 'quota' ? 'quotaRules' : 'filterRules';
-        const updatedRules = [...(formData[key] || [])];
-        (updatedRules[index] as any)[field] = value;
-        setFormData(prev => ({ ...prev, [key]: updatedRules }));
+        setFormData(prev => {
+            const rules = prev[key] || [];
+            const updatedRules = rules.map((rule, i) => {
+                if (i === index) {
+                    return { ...rule, [field]: value };
+                }
+                return rule;
+            });
+            return { ...prev, [key]: updatedRules as any };
+        });
     };
     
     const addRule = (type: 'quota' | 'filter') => {
@@ -299,7 +306,7 @@ const CampaignModal: React.FC<CampaignModalProps> = ({ campaign, users, scripts,
                                 <select value={rule.contactField} onChange={e => handleRuleChange('quota', index, 'contactField', e.target.value)} className="col-span-3 p-1.5 border bg-white rounded-md text-sm dark:bg-slate-900 dark:border-slate-600 dark:text-slate-200">
                                     {availableFields.map(f => <option key={f.id} value={f.id}>{f.name}</option>)}
                                 </select>
-                                <select value={rule.operator} onChange={e => handleRuleChange('quota', index, 'operator', e.target.value)} className="col-span-3 p-1.5 border bg-white rounded-md text-sm dark:bg-slate-900 dark:border-slate-600 dark:text-slate-200"><option value="equals">{t('outboundCampaignsManager.modal.operators.equals')}</option><option value="starts_with">{t('outboundCampaignsManager.modal.operators.startsWith')}</option></select><input type="text" value={rule.value} onChange={e => handleRuleChange('quota', index, 'value', e.target.value)} placeholder={t('outboundCampaignsManager.modal.valuePlaceholder')} className="col-span-3 p-1.5 border rounded-md text-sm dark:bg-slate-900 dark:border-slate-600 dark:text-slate-200" /><input type="number" value={rule.limit} onChange={e => handleRuleChange('quota', index, 'limit', parseInt(e.target.value))} placeholder={t('outboundCampaignsManager.modal.limitPlaceholder')} className="col-span-2 p-1.5 border rounded-md text-sm dark:bg-slate-900 dark:border-slate-600 dark:text-slate-200" /><button type="button" onClick={() => removeRule('quota', index)} className="text-red-500 hover:text-red-700 p-1"><TrashIcon className="w-4 h-4" /></button></div>)}
+                                <select value={rule.operator} onChange={e => handleRuleChange('quota', index, 'operator', e.target.value)} className="col-span-3 p-1.5 border bg-white rounded-md text-sm dark:bg-slate-900 dark:border-slate-600 dark:text-slate-200"><option value="equals">{t('outboundCampaignsManager.modal.operators.equals')}</option><option value="starts_with">{t('outboundCampaignsManager.modal.operators.startsWith')}</option></select><input type="text" value={rule.value} onChange={e => handleRuleChange('quota', index, 'value', e.target.value)} placeholder={t('outboundCampaignsManager.modal.valuePlaceholder')} className="col-span-3 p-1.5 border rounded-md text-sm dark:bg-slate-900 dark:border-slate-600 dark:text-slate-200" /><input type="number" value={rule.limit} onChange={e => handleRuleChange('quota', index, 'limit', parseInt(e.target.value, 10))} placeholder={t('outboundCampaignsManager.modal.limitPlaceholder')} className="col-span-2 p-1.5 border rounded-md text-sm dark:bg-slate-900 dark:border-slate-600 dark:text-slate-200" /><button type="button" onClick={() => removeRule('quota', index)} className="text-red-500 hover:text-red-700 p-1"><TrashIcon className="w-4 h-4" /></button></div>)}
                             <button type="button" onClick={() => addRule('quota')} className="text-sm font-medium text-indigo-600 hover:text-indigo-800 dark:text-indigo-400 dark:hover:text-indigo-300 inline-flex items-center gap-1"><PlusIcon className="w-4 h-4"/>{t('outboundCampaignsManager.modal.addQuotaRule')}</button>
                         </div>}
                         {activeTab === 'filters' && <div className="space-y-3">

@@ -250,11 +250,20 @@ const AgentView: React.FC<AgentViewProps> = ({ onUpdatePassword, onUpdateProfile
     }, []);
 
     useEffect(() => {
-        if (currentContact && currentCampaign && campaigns) {
-            const campaign = campaigns.find(c => c.id === currentCampaign.id);
-            const updatedContact = campaign?.contacts.find(c => c.id === currentContact.id);
-            if (updatedContact && JSON.stringify(updatedContact) !== JSON.stringify(currentContact)) {
-                setCurrentContact(updatedContact);
+        if (currentCampaign && campaigns) {
+            const updatedCampaign = campaigns.find(c => c.id === currentCampaign.id);
+            if (updatedCampaign) {
+                const campaignWithoutContacts = (c: Campaign) => { const { contacts, ...rest } = c; return rest; };
+                if (JSON.stringify(campaignWithoutContacts(updatedCampaign)) !== JSON.stringify(campaignWithoutContacts(currentCampaign))) {
+                    setCurrentCampaign(updatedCampaign);
+                }
+    
+                if (currentContact) {
+                    const updatedContact = updatedCampaign.contacts.find(c => c.id === currentContact.id);
+                    if (updatedContact && JSON.stringify(updatedContact) !== JSON.stringify(currentContact)) {
+                        setCurrentContact(updatedContact);
+                    }
+                }
             }
         }
     }, [campaigns, currentContact, currentCampaign]);
