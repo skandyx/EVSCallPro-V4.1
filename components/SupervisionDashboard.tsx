@@ -29,18 +29,19 @@ const KpiCard: React.FC<{ title: string; value: string | number; icon: React.FC<
 
 const SupervisionDashboard: React.FC<{ feature: Feature }> = ({ feature }) => {
     const { 
-        users, campaigns, currentUser, agentStates, activeCalls, campaignStates,
-        userGroups, sites, showAlert
+        users, campaigns, currentUser, agentStates, activeCalls, 
+        userGroups, sites, showAlert, callHistory, qualifications
     } = useStore(state => ({
         users: state.users,
         campaigns: state.campaigns,
         currentUser: state.currentUser,
         agentStates: state.agentStates,
         activeCalls: state.activeCalls,
-        campaignStates: state.campaignStates,
         userGroups: state.userGroups,
         sites: state.sites,
         showAlert: state.showAlert,
+        callHistory: state.callHistory,
+        qualifications: state.qualifications,
     }));
     
     const [activeTab, setActiveTab] = useState<Tab>('agents');
@@ -53,6 +54,41 @@ const SupervisionDashboard: React.FC<{ feature: Feature }> = ({ feature }) => {
         agentsOnPause: agentStates.filter(a => a.status === 'En Pause').length,
         activeCalls: activeCalls.length,
     }), [agentStates, activeCalls]);
+
+    const derivedCampaignStates = useMemo(() => {
+        return campaigns
+            .filter(campaign => campaign.isActive)
+            .map(campaign => {
+                const historyForCampaign = callHistory.filter(c => c.campaignId === campaign.id);
+                const offered = historyForCampaign.length;
+                const answered = historyForCampaign.filter(c => c.duration > 0).length;
+
+                const positiveCalls = historyForCampaign.filter(call => {
+                    const qual = qualifications.find(q => q.id === call.qualificationId);
+                    return qual?.type === 'positive';
+                }).length;
+
+                const hitRate = answered > 0 ? (positiveCalls / answered) * 100 : 0;
+
+                const agentsOnCampaign = agentStates.filter(agent => 
+                    campaign.assignedUserIds.includes(agent.id) && agent.status !== 'Déconnecté'
+                ).length;
+
+                const status: CampaignState['status'] = agentsOnCampaign > 0 ? 'running' : 'paused';
+
+                const campaignState: CampaignState = {
+                    id: campaign.id,
+                    name: campaign.name,
+                    status: status,
+                    offered: offered,
+                    answered: answered,
+                    hitRate: hitRate,
+                    agentsOnCampaign: agentsOnCampaign
+                };
+                return campaignState;
+            });
+    }, [campaigns, callHistory, qualifications, agentStates]);
+
 
     const handleContactAgent = (agentId: string, agentName: string, message: string) => {
         if (currentUser) {
@@ -76,7 +112,7 @@ const SupervisionDashboard: React.FC<{ feature: Feature }> = ({ feature }) => {
             case 'calls':
                 return <CallBoard calls={activeCalls} agents={users} campaigns={campaigns} />;
             case 'campaigns':
-                return <CampaignBoard campaignStates={campaignStates} />;
+                return <CampaignBoard campaignStates={derivedCampaignStates} />;
             case 'groups':
                 return <GroupSupervisionBoard agentStates={agentStates} userGroups={userGroups} onContactAgent={handleContactAgent} />;
             case 'sites':
