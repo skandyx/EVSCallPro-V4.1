@@ -1,4 +1,3 @@
-
 {
   "common": {
     "save": "Enregistrer",
@@ -707,5 +706,36 @@
     "activeCampaigns": "Campagnes Actives",
     "noCampaigns": "Aucune campagne assignée.",
     "callNumber": "Appeler {phoneName}"
+  },
+  "systemConnection": {
+    "database": {
+      "title": "Base de Données (PostgreSQL)"
+    },
+    "telephony": {
+      "title": "Téléphonie (Asterisk)",
+      "amiTitle": "Interface de Management (AMI)",
+      "agiTitle": "Interface de Gateway (AGI)",
+      "agiHelp": "Ce port doit correspondre à celui configuré dans le fichier .env du backend et dans extensions.conf d'Asterisk."
+    },
+    "labels": {
+      "host": "Hôte",
+      "port": "Port",
+      "dbName": "Nom de la base",
+      "user": "Utilisateur",
+      "password": "Mot de passe",
+      "amiHost": "Hôte AMI",
+      "amiPort": "Port AMI",
+      "amiUser": "Utilisateur AMI",
+      "amiPassword": "Mot de passe AMI",
+      "agiPort": "Port AGI du Backend"
+    },
+    "placeholders": {
+      "leaveBlank": "Laisser vide pour ne pas changer"
+    },
+    "buttons": {
+      "testDb": "Tester la connexion",
+      "testAmi": "Tester la connexion AMI",
+      "save": "Enregistrer les changements"
+    }
   }
 }
