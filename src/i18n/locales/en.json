@@ -547,10 +547,6 @@
   },
   "reporting": {
     "exportPdf": "Export PDF",
-    "pdf": {
-      "title": "Analytics Report",
-      "chartsTitle": "Charts Overview"
-    },
     "filters": {
       "dateRanges": {
         "last7days": "Last 7 days",
@@ -570,10 +566,8 @@
     "tabs": {
       "charts": "Charts",
       "timesheet": "Timesheet",
-      "campaign": "Campaign",
-      "agent": "Agent",
-      "group": "Group",
-      "site": "Site",
+      "campaign": "Campaign Performance",
+      "agent": "Agent Performance",
       "history": "Call History"
     },
     "charts": {
@@ -605,18 +599,6 @@
           "avgDuration": "Avg. Duration",
           "successRate": "Success Rate"
         }
-      },
-      "groupPerf": {
-          "title": "Group Performance",
-          "headers": {
-              "group": "Group"
-          }
-      },
-      "sitePerf": {
-          "title": "Site Performance",
-          "headers": {
-              "site": "Site"
-          }
       },
       "timesheet": {
         "title": "Agent Timesheet",

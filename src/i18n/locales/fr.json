@@ -450,6 +450,8 @@
       },
       "actions": {
         "import": "Importer",
+        "edit": "Modifier",
+        "delete": "Supprimer",
         "deleteDisabledTooltip": "Impossible de supprimer une campagne active. Veuillez la désactiver d'abord."
       }
     },
@@ -633,10 +635,6 @@
   },
   "reporting": {
     "exportPdf": "Exporter en PDF",
-     "pdf": {
-      "title": "Rapport d'Analytique",
-      "chartsTitle": "Aperçu Graphique"
-    },
     "filters": {
       "dateRanges": {
         "last7days": "7 derniers jours",
@@ -656,10 +654,8 @@
     "tabs": {
       "charts": "Graphiques",
       "timesheet": "Feuille de Temps",
-      "campaign": "Campagne",
-      "agent": "Agent",
-      "group": "Groupe",
-      "site": "Site",
+      "campaign": "Performance Campagne",
+      "agent": "Performance Agent",
       "history": "Historique des Appels"
     },
     "charts": {
@@ -691,18 +687,6 @@
           "avgDuration": "Durée Moyenne",
           "successRate": "Taux de Réussite"
         }
-      },
-       "groupPerf": {
-          "title": "Performance par Groupe",
-          "headers": {
-              "group": "Groupe"
-          }
-      },
-      "sitePerf": {
-          "title": "Performance par Site",
-          "headers": {
-              "site": "Site"
-          }
       },
       "timesheet": {
         "title": "Feuille de Temps des Agents",
