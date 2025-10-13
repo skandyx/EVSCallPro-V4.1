@@ -1,5 +1,3 @@
-
-
 {
   "common": {
     "save": "Enregistrer",
@@ -190,6 +188,14 @@
     "confirmDelete": "Êtes-vous sûr de vouloir supprimer cet élément ? Cette action est irréversible."
   },
   "systemSettings": {
+    "tabs": {
+      "appearance": "Apparence",
+      "smtp": "E-mail (SMTP)",
+      "licences": "Licences"
+    },
+    "licences": {
+      "placeholder": "La gestion des licences sera implémentée ici."
+    },
     "appearance": {
       "title": "Apparence & Marque",
       "appName": "Nom de l'application",
@@ -536,7 +542,7 @@
       "addFilterRule": "Ajouter une règle de filtrage",
       "operators": {
         "equals": "est égal à",
-        "startsWith": "commence par",
+        "starts_with": "commence par",
         "contains": "contient",
         "isNotEmpty": "n'est pas vide"
       },
