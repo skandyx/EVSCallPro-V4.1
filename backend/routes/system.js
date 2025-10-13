@@ -4,7 +4,7 @@ const router = express.Router();
 const os = require('os');
 const pool = require('../services/db/connection');
 const nodemailer = require('nodemailer');
-const fs = require('fs/promises');
+const fs = require('fs').promises;
 const path = require('path');
 const dotenv = require('dotenv');
 const { exec } = require('child_process');
@@ -12,6 +12,7 @@ const net = require('net');
 const logger = require('../services/logger');
 const { Pool } = require('pg');
 const AsteriskManager = require('asterisk-manager');
+const crypto = require('crypto');
 
 // Middleware to check for SuperAdmin role
 const isSuperAdmin = (req, res, next) => {
@@ -521,6 +522,30 @@ router.post('/test-ami', isSuperAdmin, (req, res) => {
     });
     
     testAmi.connect(() => {}); // Connect callback is often needed
+});
+
+router.post('/generate-fingerprint', isSuperAdmin, async (req, res) => {
+    try {
+        const fingerprint = crypto.createHash('sha256').update(os.hostname() + os.arch() + os.platform() + (os.cpus()[0]?.model || '')).digest('hex');
+        const envPath = path.join(__dirname, '..', '.env');
+        let envContent = await fs.readFile(envPath, 'utf-8');
+        
+        const key = 'MACHINE_FINGERPRINT';
+        const regex = new RegExp(`^${key}=.*`, 'm');
+        const replacement = `${key}=${fingerprint}`;
+        
+        if (envContent.match(regex)) {
+            envContent = envContent.replace(regex, replacement);
+        } else {
+            envContent += `\n${replacement}`;
+        }
+        
+        await fs.writeFile(envPath, envContent);
+        res.json({ message: 'Empreinte générée et enregistrée avec succès.' });
+    } catch (error) {
+        console.error("Failed to generate machine fingerprint:", error);
+        res.status(500).json({ error: "Échec de la génération de l'empreinte machine." });
+    }
 });
 
 

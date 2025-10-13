@@ -115,7 +115,16 @@
       "licences": "Licences"
     },
     "licences": {
-        "placeholder": "Licence management will be implemented here."
+      "machineFingerprint": "Machine Fingerprint",
+      "notGenerated": "Not generated",
+      "copy": "Copy fingerprint",
+      "generate": "Generate new fingerprint",
+      "fingerprintHelp": "This is a unique identifier for your server, used for license generation.",
+      "activeUntil": "License active until",
+      "maxAgents": "Authorized simultaneous agents",
+      "maxChannels": "Authorized channels",
+      "agentsUsage": "Simultaneous agents usage",
+      "channelsUsage": "Simultaneous channels usage"
     },
     "appearance": {
       "title": "Appearance & Branding",

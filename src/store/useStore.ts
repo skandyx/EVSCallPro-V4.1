@@ -5,7 +5,8 @@ import type {
     User, Campaign, SavedScript, Qualification, QualificationGroup, IvrFlow, AudioFile, Trunk, Did, Site,
     UserGroup, ActivityType, PersonalCallback, CallHistoryRecord, AgentSession, ContactNote,
     SystemConnectionSettings, SystemSmtpSettings, SystemAppSettings, ModuleVisibility,
-    BackupLog, BackupSchedule, SystemLog, VersionInfo, ConnectivityService, AgentState, ActiveCall, CampaignState, PlanningEvent, AgentStatus
+    BackupLog, BackupSchedule, SystemLog, VersionInfo, ConnectivityService, AgentState, ActiveCall, CampaignState, PlanningEvent, AgentStatus,
+    SystemLicenseInfo
 } from '../../types.ts';
 import apiClient, { publicApiClient } from '../lib/axios.ts';
 import wsClient from '../services/wsClient.ts';
@@ -55,6 +56,7 @@ interface AppState {
     systemLogs: SystemLog[];
     versionInfo: VersionInfo | null;
     connectivityServices: ConnectivityService[];
+    licenseInfo: SystemLicenseInfo | null;
 
     // Real-time Data
     agentStates: AgentState[];
@@ -94,6 +96,7 @@ interface AppState {
     saveSystemSettings: (type: 'smtp' | 'app', settings: any) => Promise<void>;
     saveConnectionSettings: (settings: SystemConnectionSettings) => Promise<void>;
     saveModuleVisibility: (visibility: ModuleVisibility) => Promise<void>;
+    generateMachineFingerprint: () => Promise<void>;
 
 
     // Utility
@@ -122,6 +125,7 @@ export const useStore = create<AppState>()(
                 // System
                 systemConnectionSettings: null, smtpSettings: null, appSettings: null, moduleVisibility: { categories: {}, features: {} },
                 backupLogs: [], backupSchedule: null, systemLogs: [], versionInfo: null, connectivityServices: [],
+                licenseInfo: null,
                 // Real-time
                 agentStates: [], activeCalls: [], campaignStates: [],
 
@@ -343,13 +347,18 @@ export const useStore = create<AppState>()(
                                         });
                                     }
                                 }
+                                if (state.licenseInfo) {
+                                    state.licenseInfo.currentAgents = state.agentStates.filter(a => a.status !== 'Déconnecté').length;
+                                }
                                 break;
                             }
                             case 'newCall':
                                 state.activeCalls.push(payload);
+                                if(state.licenseInfo) state.licenseInfo.currentChannels = state.activeCalls.length;
                                 break;
                             case 'callHangup':
                                 state.activeCalls = state.activeCalls.filter(c => c.id !== payload.callId);
+                                if(state.licenseInfo) state.licenseInfo.currentChannels = state.activeCalls.length;
                                 break;
                             case 'agentRaisedHand':
                                 state.notifications.push({ ...payload, id: Date.now(), type: 'help' });
@@ -544,6 +553,15 @@ export const useStore = create<AppState>()(
                     // In a real app, an API call would be made here:
                     // await apiClient.put('/system/module-visibility', visibility);
                     set({ moduleVisibility: visibility });
+                },
+                generateMachineFingerprint: async () => {
+                    try {
+                        await apiClient.post('/system/generate-fingerprint');
+                        get().showAlert('Nouvelle empreinte machine générée.', 'success');
+                        await get().fetchApplicationData(); // Re-fetch all data to get the new fingerprint
+                    } catch (error: any) {
+                        get().showAlert(error.response?.data?.error || "Erreur lors de la génération de l'empreinte.", 'error');
+                    }
                 },
 
 

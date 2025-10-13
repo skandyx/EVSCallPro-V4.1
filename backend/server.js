@@ -282,6 +282,15 @@ app.get('/api/application-data', async (req, res) => {
             defaultLanguage: envConfig.DEFAULT_LANGUAGE || 'en',
         };
 
+        const licenseInfo = {
+            machineFingerprint: envConfig.MACHINE_FINGERPRINT || '',
+            activeUntil: envConfig.LICENSE_ACTIVE_UNTIL || new Date(Date.now() + 30 * 24 * 60 * 60 * 1000).toISOString(),
+            maxAgents: parseInt(envConfig.LICENSE_MAX_AGENTS || '20'),
+            maxChannels: parseInt(envConfig.LICENSE_MAX_CHANNELS || '50'),
+            currentAgents: users.filter(u => u.is_active && u.role === 'Agent').length,
+            currentChannels: Math.floor(Math.random() * 10), // Simulated for now
+        };
+
         const backupLogs = [
             { id: 'backup-1', timestamp: new Date(Date.now() - 86400000).toISOString(), status: 'success', fileName: 'backup-2024-07-27.sql.gz' },
             { id: 'backup-2', timestamp: new Date(Date.now() - 172800000).toISOString(), status: 'success', fileName: 'backup-2024-07-26.sql.gz' }
@@ -295,6 +304,7 @@ app.get('/api/application-data', async (req, res) => {
             systemConnectionSettings,
             smtpSettings,
             appSettings,
+            licenseInfo,
             moduleVisibility: { categories: {}, features: {} },
             backupLogs,
             backupSchedule: { frequency: 'daily', time: '02:00' },

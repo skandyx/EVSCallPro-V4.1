@@ -1,3 +1,12 @@
+export interface SystemLicenseInfo {
+  machineFingerprint: string;
+  activeUntil: string; // ISO string date
+  maxAgents: number;
+  maxChannels: number;
+  currentAgents: number;
+  currentChannels: number;
+}
+
 import React from 'react';
 
 export type FeatureId =

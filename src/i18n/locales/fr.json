@@ -194,7 +194,16 @@
       "licences": "Licences"
     },
     "licences": {
-      "placeholder": "La gestion des licences sera implémentée ici."
+      "machineFingerprint": "Empreinte machine",
+      "notGenerated": "Non générée",
+      "copy": "Copier l'empreinte",
+      "generate": "Générer une nouvelle empreinte",
+      "fingerprintHelp": "Ceci est un identifiant unique pour votre serveur, utilisé pour la génération de la licence.",
+      "activeUntil": "Licence active jusqu'au",
+      "maxAgents": "Agents autorisés simultanés",
+      "maxChannels": "Canaux autorisés",
+      "agentsUsage": "Utilisation des agents simultanés",
+      "channelsUsage": "Utilisation des canaux simultanés"
     },
     "appearance": {
       "title": "Apparence & Marque",
