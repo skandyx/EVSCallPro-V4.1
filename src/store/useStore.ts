@@ -93,10 +93,11 @@ interface AppState {
     deletePlanningEventsBulk: (eventIds: string[]) => Promise<void>;
     clearAllPlanningEvents: () => Promise<void>;
     saveBackupSchedule: (schedule: BackupSchedule) => Promise<void>;
-    saveSystemSettings: (type: 'smtp' | 'app', settings: any) => Promise<void>;
+    saveSystemSettings: (type: 'smtp' | 'app' | 'license', settings: any) => Promise<void>;
     saveConnectionSettings: (settings: SystemConnectionSettings) => Promise<void>;
     saveModuleVisibility: (visibility: ModuleVisibility) => Promise<void>;
     generateMachineFingerprint: () => Promise<void>;
+    applyLicense: (licenseKey: string) => Promise<void>;
 
 
     // Utility
@@ -230,7 +231,6 @@ export const useStore = create<AppState>()(
                             case 'newUser': 
                                 state.users.push(payload); 
                                 if (payload.role === 'Agent') {
-// FIX: Replace unsafe spread `...payload` with `Object.assign` to prevent "Spread types may only be created from object types" error when payload is of type `any`.
                                      state.agentStates.push(Object.assign({}, payload, {
                                         status: 'Déconnecté' as AgentStatus,
                                         statusDuration: 0, callsHandledToday: 0, averageHandlingTime: 0, averageTalkTime: 0,
@@ -245,22 +245,17 @@ export const useStore = create<AppState>()(
                                 const agentStateIndex = state.agentStates.findIndex(a => a.id === payload.id);
                                 if (agentStateIndex > -1) {
                                     const { status, statusDuration } = state.agentStates[agentStateIndex];
-// FIX: Replace spread with Object.assign to handle 'any' type payload safely within immer.
                                     Object.assign(state.agentStates[agentStateIndex], payload);
                                     state.agentStates[agentStateIndex].status = status;
                                     state.agentStates[agentStateIndex].statusDuration = statusDuration;
                                 } else if (payload.role === 'Agent') {
-// FIX: Use Object.assign to safely create the new state object from an 'any' type payload.
                                      state.agentStates.push(Object.assign({}, payload, {
                                         status: 'Déconnecté' as AgentStatus,
                                         statusDuration: 0, callsHandledToday: 0, averageHandlingTime: 0, averageTalkTime: 0,
                                         pauseCount: 0, trainingCount: 0, totalPauseTime: 0, totalTrainingTime: 0, totalConnectedTime: 0
                                     }));
                                 }
-                                // Keep the currently logged-in user object in sync
                                 if (state.currentUser && state.currentUser.id === payload.id) {
-// FIX: Using Object.assign within an immer producer is safer for merging objects
-// of type 'any' or 'unknown' than using the spread syntax, which can cause type errors.
                                     Object.assign(state.currentUser, payload);
                                 }
                                 break;
@@ -526,13 +521,7 @@ export const useStore = create<AppState>()(
                  saveSystemSettings: async (type, settings) => {
                     try {
                         await apiClient.put(`/system/${type}-settings`, settings);
-                        set(state => {
-                            if (type === 'app') {
-                                state.appSettings = settings;
-                            } else if (type === 'smtp') {
-                                state.smtpSettings = settings;
-                            }
-                        });
+                        // No state update here, we rely on fetchApplicationData after successful save.
                     } catch (error) {
                         console.error(`Failed to save ${type} settings`, error);
                         throw error;
@@ -549,21 +538,26 @@ export const useStore = create<AppState>()(
                     }
                 },
                 saveModuleVisibility: async (visibility) => {
-                    // This is a client-side only implementation as a real backend endpoint is not available.
-                    // In a real app, an API call would be made here:
-                    // await apiClient.put('/system/module-visibility', visibility);
                     set({ moduleVisibility: visibility });
                 },
                 generateMachineFingerprint: async () => {
                     try {
                         await apiClient.post('/system/generate-fingerprint');
                         get().showAlert('Nouvelle empreinte machine générée.', 'success');
-                        await get().fetchApplicationData(); // Re-fetch all data to get the new fingerprint
+                        await get().fetchApplicationData();
                     } catch (error: any) {
                         get().showAlert(error.response?.data?.error || "Erreur lors de la génération de l'empreinte.", 'error');
                     }
                 },
-
+                applyLicense: async (licenseKey) => {
+                    try {
+                        const response = await apiClient.post('/system/apply-license', { licenseKey });
+                        get().showAlert(response.data.message, 'success');
+                        await get().fetchApplicationData();
+                    } catch (error: any) {
+                        get().showAlert(error.response?.data?.error || "Erreur lors de l'application de la licence.", 'error');
+                    }
+                },
 
                 showAlert: (message, status) => {
                     alert(`${status.toUpperCase()}: ${message}`);

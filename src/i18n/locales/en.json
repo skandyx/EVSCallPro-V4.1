@@ -124,7 +124,11 @@
       "maxAgents": "Authorized simultaneous agents",
       "maxChannels": "Authorized channels",
       "agentsUsage": "Simultaneous agents usage",
-      "channelsUsage": "Simultaneous channels usage"
+      "channelsUsage": "Simultaneous channels usage",
+      "pasteKey": "Paste license key",
+      "pasteKeyPlaceholder": "Paste the license key provided by your reseller here...",
+      "applyKey": "Verify and Apply License",
+      "manualConfigWarning": "This section is for advanced use or troubleshooting. A valid license will override these settings."
     },
     "appearance": {
       "title": "Appearance & Branding",

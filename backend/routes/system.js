@@ -23,6 +23,69 @@ const isSuperAdmin = (req, res, next) => {
     }
 };
 
+const updateEnvFile = async (updates) => {
+    const envPath = path.join(__dirname, '..', '.env');
+    let envContent = await fs.readFile(envPath, 'utf-8');
+
+    for (const [key, value] of Object.entries(updates)) {
+        const escapedKey = key.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+        const regex = new RegExp(`^${escapedKey}=.*`, 'm');
+        const replacement = `${key}=${value || ''}`;
+        
+        if (envContent.match(regex)) {
+            envContent = envContent.replace(regex, replacement);
+        } else {
+            envContent += `\n${replacement}`;
+        }
+    }
+    await fs.writeFile(envPath, envContent);
+};
+
+router.put('/license-settings', isSuperAdmin, async (req, res) => {
+    try {
+        const { activeUntil, maxAgents, maxChannels } = req.body;
+        const updates = {
+            LICENSE_ACTIVE_UNTIL: new Date(activeUntil).toISOString().split('T')[0],
+            LICENSE_MAX_AGENTS: maxAgents,
+            LICENSE_MAX_CHANNELS: maxChannels,
+        };
+        await updateEnvFile(updates);
+        res.json({ message: 'Paramètres de licence enregistrés.' });
+    } catch (err) {
+        res.status(500).json({ error: "Échec de l'enregistrement des paramètres de licence." });
+    }
+});
+
+router.post('/apply-license', isSuperAdmin, async (req, res) => {
+    try {
+        const { licenseKey } = req.body;
+        
+        // --- SIMULATION de la validation de licence ---
+        // Dans une vraie application, vous décoderiez et vérifieriez la signature ici.
+        // Pour la démo, nous utilisons une "clé magique".
+        const magicPrefix = 'EVS-LICENSE-KEY-VALID-';
+        if (licenseKey.startsWith(magicPrefix)) {
+            const parts = licenseKey.replace(magicPrefix, '').split('-');
+            const [year, month, day, agents, channels] = parts;
+            
+            if (parts.length === 5) {
+                 const updates = {
+                    LICENSE_ACTIVE_UNTIL: `${year}-${month}-${day}`,
+                    LICENSE_MAX_AGENTS: agents,
+                    LICENSE_MAX_CHANNELS: channels,
+                };
+                await updateEnvFile(updates);
+                return res.json({ message: `Licence valide appliquée. Active jusqu'au ${day}/${month}/${year} pour ${agents} agents.` });
+            }
+        }
+        
+        return res.status(400).json({ error: "La clé de licence fournie est invalide ou a expiré." });
+    } catch (err) {
+        res.status(500).json({ error: "Échec de l'application de la licence." });
+    }
+});
+
+
 /**
  * @openapi
  * /system/stats:
@@ -219,37 +282,9 @@ router.post('/db-query', isSuperAdmin, async (req, res) => {
     }
 });
 
-/**
- * @openapi
- * /system/smtp-settings:
- *   put:
- *     summary: Met à jour les paramètres SMTP.
- *     tags: [Système]
- *     security:
- *       - bearerAuth: []
- *     requestBody:
- *       required: true
- *       content:
- *         application/json:
- *           schema:
- *             type: object
- *             properties:
- *               server: { type: string }
- *               port: { type: number }
- *               auth: { type: boolean }
- *               secure: { type: boolean }
- *               user: { type: string }
- *               password: { type: string, description: "Laisser vide pour ne pas changer" }
- *               from: { type: string }
- *     responses:
- *       '200':
- *         description: "Paramètres SMTP enregistrés."
- */
 router.put('/smtp-settings', isSuperAdmin, async (req, res) => {
     try {
         const { password, ...settings } = req.body;
-        const envPath = path.join(__dirname, '..', '.env');
-        let envContent = await fs.readFile(envPath, 'utf-8');
         const updates = {
             SMTP_SERVER: settings.server,
             SMTP_PORT: settings.port,
@@ -259,56 +294,13 @@ router.put('/smtp-settings', isSuperAdmin, async (req, res) => {
             SMTP_FROM: settings.from,
             ...(password && { SMTP_PASSWORD: password }),
         };
-
-        for (const [key, value] of Object.entries(updates)) {
-            const regex = new RegExp(`^${key}=.*`, 'm');
-            if (envContent.match(regex)) {
-                envContent = envContent.replace(regex, `${key}=${value}`);
-            } else {
-                envContent += `\n${key}=${value}`;
-            }
-        }
-        await fs.writeFile(envPath, envContent);
+        await updateEnvFile(updates);
         res.json({ message: 'Paramètres enregistrés. Un redémarrage du serveur peut être nécessaire pour appliquer les changements.' });
     } catch (err) {
-        console.error("Failed to save SMTP settings:", err);
         res.status(500).json({ error: "Échec de l'enregistrement des paramètres SMTP." });
     }
 });
 
-
-/**
- * @openapi
- * /system/test-email:
- *   post:
- *     summary: Envoie un e-mail de test avec la configuration fournie.
- *     tags: [Système]
- *     security:
- *       - bearerAuth: []
- *     requestBody:
- *       required: true
- *       content:
- *         application/json:
- *           schema:
- *             type: object
- *             properties:
- *               smtpConfig:
- *                 type: object
- *                 properties:
- *                   server: { type: string }
- *                   port: { type: number }
- *                   auth: { type: boolean }
- *                   secure: { type: boolean }
- *                   user: { type: string }
- *                   password: { type: string }
- *                   from: { type: string }
- *               recipient: { type: string }
- *     responses:
- *       '200':
- *         description: "Email de test envoyé."
- *       '500':
- *         description: "Échec de l'envoi."
- */
 router.post('/test-email', isSuperAdmin, async (req, res) => {
     const { smtpConfig, recipient } = req.body;
     
@@ -359,31 +351,6 @@ router.post('/test-email', isSuperAdmin, async (req, res) => {
     }
 });
 
-/**
- * @openapi
- * /system/app-settings:
- *   put:
- *     summary: Met à jour les paramètres de l'application.
- *     tags: [Système]
- *     security:
- *       - bearerAuth: []
- *     requestBody:
- *       required: true
- *       content:
- *         application/json:
- *           schema:
- *             type: object
- *             properties:
- *               companyAddress: { type: string }
- *               appLogoDataUrl: { type: string, description: "Data URL de l'image (base64)" }
- *               appFaviconDataUrl: { type: string, description: "Data URL de l'icône (base64)" }
- *               colorPalette: { type: string }
- *               appName: { type: string }
- *               defaultLanguage: { type: string, enum: ['fr', 'en'] }
- *     responses:
- *       '200':
- *         description: "Paramètres de l'application enregistrés."
- */
 router.put('/app-settings', isSuperAdmin, async (req, res) => {
     try {
         const settings = req.body;
@@ -402,30 +369,16 @@ router.put('/app-settings', isSuperAdmin, async (req, res) => {
         if (!validateBase64Size(settings.appFaviconDataUrl, 50 * 1024)) { // 50KB
             return res.status(413).json({ error: "Le favicon est trop volumineux (max 50KB)." });
         }
-
-        const envPath = path.join(__dirname, '..', '.env');
-        let envContent = await fs.readFile(envPath, 'utf-8');
+        
         const updates = {
-            COMPANY_ADDRESS: `"${settings.companyAddress.replace(/\n/g, '\\n')}"`, // Handle newlines
+            COMPANY_ADDRESS: `"${settings.companyAddress.replace(/\n/g, '\\n')}"`,
             APP_LOGO_DATA_URL: settings.appLogoDataUrl,
             APP_FAVICON_DATA_URL: settings.appFaviconDataUrl,
             COLOR_PALETTE: settings.colorPalette,
-            APP_NAME: `"${settings.appName}"`, // Wrap in quotes to handle spaces
+            APP_NAME: `"${settings.appName}"`,
             DEFAULT_LANGUAGE: settings.defaultLanguage,
         };
-
-        for (const [key, value] of Object.entries(updates)) {
-            const escapedKey = key.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
-            const regex = new RegExp(`^${escapedKey}=.*`, 'm');
-            const replacement = `${key}=${value || ''}`;
-            
-            if (envContent.match(regex)) {
-                envContent = envContent.replace(regex, replacement);
-            } else {
-                envContent += `\n${replacement}`;
-            }
-        }
-        await fs.writeFile(envPath, envContent);
+        await updateEnvFile(updates);
         res.json({ message: 'Paramètres enregistrés. Un rafraîchissement de la page est nécessaire pour appliquer les changements.' });
     } catch (err) {
         console.error("Failed to save App settings:", err);
@@ -436,7 +389,6 @@ router.put('/app-settings', isSuperAdmin, async (req, res) => {
 // --- NEW BACKUP ENDPOINTS ---
 router.post('/backups', isSuperAdmin, (req, res) => {
     logger.logSystem('INFO', 'Backup', `Manual backup initiated by ${req.user.id}`);
-    // SIMULATION: In a real app, this would trigger `pg_dump`.
     setTimeout(() => {
         res.status(201).json({ message: 'Sauvegarde manuelle lancée avec succès.' });
     }, 1500);
@@ -445,14 +397,12 @@ router.post('/backups', isSuperAdmin, (req, res) => {
 router.put('/backup-schedule', isSuperAdmin, (req, res) => {
     const { frequency, time } = req.body;
     logger.logSystem('INFO', 'Backup', `Backup schedule updated by ${req.user.id} to: ${frequency} at ${time}`);
-    // SIMULATION: In a real app, this would update a cron job.
     res.json({ message: 'Planification de sauvegarde mise à jour.' });
 });
 
 router.post('/backups/restore', isSuperAdmin, (req, res) => {
     const { fileName } = req.body;
     logger.logSystem('WARNING', 'Backup', `Restore from backup '${fileName}' initiated by ${req.user.id}. THIS IS A DESTRUCTIVE ACTION.`);
-    // SIMULATION: In a real app, this would trigger `pg_restore`.
     setTimeout(() => {
         res.json({ message: `Restauration depuis ${fileName} terminée.` });
     }, 5000);
@@ -461,7 +411,6 @@ router.post('/backups/restore', isSuperAdmin, (req, res) => {
 router.delete('/backups/:fileName', isSuperAdmin, (req, res) => {
     const { fileName } = req.params;
     logger.logSystem('INFO', 'Backup', `Backup file '${fileName}' deleted by ${req.user.id}`);
-    // SIMULATION: In a real app, this would delete the file from disk.
     res.status(204).send();
 });
 
@@ -503,7 +452,6 @@ router.post('/test-ami', isSuperAdmin, (req, res) => {
     });
 
     testAmi.on('managerevent', (evt) => {
-        // Some AMI servers only confirm connection on event, not 'connect'
         if (!responded && evt.event === 'FullyBooted') {
              responded = true;
              clearTimeout(timeout);
@@ -521,32 +469,19 @@ router.post('/test-ami', isSuperAdmin, (req, res) => {
         }
     });
     
-    testAmi.connect(() => {}); // Connect callback is often needed
+    testAmi.connect(() => {});
 });
 
 router.post('/generate-fingerprint', isSuperAdmin, async (req, res) => {
     try {
         const fingerprint = crypto.createHash('sha256').update(os.hostname() + os.arch() + os.platform() + (os.cpus()[0]?.model || '')).digest('hex');
-        const envPath = path.join(__dirname, '..', '.env');
-        let envContent = await fs.readFile(envPath, 'utf-8');
-        
-        const key = 'MACHINE_FINGERPRINT';
-        const regex = new RegExp(`^${key}=.*`, 'm');
-        const replacement = `${key}=${fingerprint}`;
-        
-        if (envContent.match(regex)) {
-            envContent = envContent.replace(regex, replacement);
-        } else {
-            envContent += `\n${replacement}`;
-        }
-        
-        await fs.writeFile(envPath, envContent);
+        const updates = { MACHINE_FINGERPRINT: fingerprint };
+        await updateEnvFile(updates);
         res.json({ message: 'Empreinte générée et enregistrée avec succès.' });
     } catch (error) {
         console.error("Failed to generate machine fingerprint:", error);
         res.status(500).json({ error: "Échec de la génération de l'empreinte machine." });
     }
 });
-
 
 module.exports = router;

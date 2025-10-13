@@ -8,34 +8,44 @@ import LicencesTab from './system-settings/LicencesTab.tsx';
 
 type Tab = 'appearance' | 'smtp' | 'licences';
 
+// A local type for the manual license settings form
+type LicenseSettingsForm = {
+    activeUntil: string;
+    maxAgents: number;
+    maxChannels: number;
+};
+
 const SystemSettingsManager: React.FC<{ feature: Feature }> = ({ feature }) => {
     const { t } = useI18n();
-    const { appSettings: storeAppSettings, smtpSettings: storeSmtpSettings, saveSystemSettings, showAlert, setTheme } = useStore(state => ({
+    const { appSettings: storeAppSettings, smtpSettings: storeSmtpSettings, licenseInfo, saveSystemSettings, showAlert } = useStore(state => ({
         appSettings: state.appSettings,
         smtpSettings: state.smtpSettings,
+        licenseInfo: state.licenseInfo,
         saveSystemSettings: state.saveSystemSettings,
         showAlert: state.showAlert,
-        setTheme: state.setTheme,
     }));
     
     const [activeTab, setActiveTab] = useState<Tab>('appearance');
     const [appSettings, setAppSettings] = useState<SystemAppSettings | null>(storeAppSettings);
     const [smtpSettings, setSmtpSettings] = useState<SystemSmtpSettings | null>(storeSmtpSettings);
+    const [licenseSettings, setLicenseSettings] = useState<LicenseSettingsForm>({
+        activeUntil: licenseInfo?.activeUntil || new Date().toISOString(),
+        maxAgents: licenseInfo?.maxAgents || 0,
+        maxChannels: licenseInfo?.maxChannels || 0,
+    });
     const [isSaving, setIsSaving] = useState(false);
     
     useEffect(() => {
         setAppSettings(storeAppSettings);
-        
-        let suggestedSmtpSettings = storeSmtpSettings;
-        if (storeSmtpSettings && !storeSmtpSettings.server && storeSmtpSettings.user?.includes('@')) {
-            const domain = storeSmtpSettings.user.split('@')[1];
-            if (domain) {
-                suggestedSmtpSettings = { ...storeSmtpSettings, server: `mail.${domain}` };
-            }
+        setSmtpSettings(storeSmtpSettings);
+        if (licenseInfo) {
+            setLicenseSettings({
+                activeUntil: licenseInfo.activeUntil,
+                maxAgents: licenseInfo.maxAgents,
+                maxChannels: licenseInfo.maxChannels,
+            });
         }
-        setSmtpSettings(suggestedSmtpSettings);
-
-    }, [storeAppSettings, storeSmtpSettings]);
+    }, [storeAppSettings, storeSmtpSettings, licenseInfo]);
 
     const handleAppChange = (field: keyof SystemAppSettings, value: any) => {
         setAppSettings(prev => prev ? ({ ...prev, [field]: value }) : null);
@@ -43,6 +53,10 @@ const SystemSettingsManager: React.FC<{ feature: Feature }> = ({ feature }) => {
 
     const handleSmtpChange = (field: string, value: any) => {
         setSmtpSettings(prev => prev ? ({ ...prev, [field]: value }) : null);
+    };
+
+    const handleLicenseChange = (field: string, value: any) => {
+        setLicenseSettings(prev => ({ ...prev, [field]: value }));
     };
 
     const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>, field: 'appLogoDataUrl' | 'appFaviconDataUrl', maxSizeKB: number) => {
@@ -76,6 +90,7 @@ const SystemSettingsManager: React.FC<{ feature: Feature }> = ({ feature }) => {
             await Promise.all([
                 saveSystemSettings('app', appSettings),
                 saveSystemSettings('smtp', smtpPayload),
+                saveSystemSettings('license', licenseSettings),
             ]);
             showAlert(t('systemSettings.saveSuccess'), 'success');
             document.documentElement.setAttribute('data-theme', appSettings.colorPalette);
@@ -86,7 +101,7 @@ const SystemSettingsManager: React.FC<{ feature: Feature }> = ({ feature }) => {
         }
     };
     
-    if (!appSettings || !smtpSettings) return <div>{t('common.loading')}...</div>;
+    if (!appSettings || !smtpSettings || !licenseInfo) return <div>{t('common.loading')}...</div>;
 
     const TabButton: React.FC<{ tab: Tab, label: string }> = ({ tab, label }) => (
         <button
@@ -120,7 +135,7 @@ const SystemSettingsManager: React.FC<{ feature: Feature }> = ({ feature }) => {
                 <div className="p-6">
                     {activeTab === 'appearance' && <AppearanceTab appSettings={appSettings} handleChange={handleAppChange} handleFileChange={handleFileChange} />}
                     {activeTab === 'smtp' && <SmtpTab smtpSettings={smtpSettings} handleChange={handleSmtpChange} />}
-                    {activeTab === 'licences' && <LicencesTab />}
+                    {activeTab === 'licences' && <LicencesTab licenseSettings={licenseSettings} onLicenseChange={handleLicenseChange} />}
                 </div>
 
                 <div className="bg-slate-50 dark:bg-slate-900/50 px-6 py-4 flex justify-end rounded-b-lg border-t dark:border-slate-700">

@@ -203,7 +203,11 @@
       "maxAgents": "Agents autorisés simultanés",
       "maxChannels": "Canaux autorisés",
       "agentsUsage": "Utilisation des agents simultanés",
-      "channelsUsage": "Utilisation des canaux simultanés"
+      "channelsUsage": "Utilisation des canaux simultanés",
+      "pasteKey": "Coller la clé de licence",
+      "pasteKeyPlaceholder": "Collez ici la clé de licence fournie par votre revendeur...",
+      "applyKey": "Vérifier et Appliquer la Licence",
+      "manualConfigWarning": "Cette section est réservée à un usage avancé ou au dépannage. Une licence valide écrasera ces paramètres."
     },
     "appearance": {
       "title": "Apparence & Marque",
